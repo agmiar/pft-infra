@@ -1,0 +1,12 @@
+Fecha: 2026-08-30
+Tarea: P2.2
+Equipo: BorderRouter-1
+Tipo: post
+Origen: salida de consola aportada por el operador.
+
+ACL 1 sin cambios:
+10 permit 10.0.0.0 wildcard 0.255.255.255
+20 permit 192.168.0.0 wildcard 0.0.255.255
+
+NAT sin cambios: ACL 1 hacia GigabitEthernet0/0 overload; inside GigabitEthernet0/1 y GigabitEthernet0/2; traducciones activas 0 al momento de captura.
+

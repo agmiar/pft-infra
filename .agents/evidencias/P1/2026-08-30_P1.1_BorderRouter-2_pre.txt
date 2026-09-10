@@ -1,0 +1,202 @@
+  Booting `IOSv: flash0:vios-adventerprisek9-m (hd0,msdos1)'
+
+Booted IOSv. Boot args: [/vios-adventerprisek9-m]
+
+Smart Init is enabled
+
+              Restricted Rights Legend
+
+Use, duplication, or disclosure by the Government is
+subject to restrictions as set forth in subparagraph
+(c) of the Commercial Computer Software - Restricted
+Rights clause at FAR sec. 52.227-19 and subparagraph
+(c) (1) (ii) of the Rights in Technical Data and Computer
+Software clause at DFARS sec. 252.227-7013.
+
+           cisco Systems, Inc.
+           170 West Tasman Drive
+           San Jose, California 95134-1706
+
+
+
+Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.6(2)T, RELEASE SOFTWARE (fc2)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2016 by Cisco Systems, Inc.
+Compiled Tue 22-Mar-16 16:19 by prod_rel_team
+
+
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+Cisco IOSv (revision 1.0) with  with 410881K/111616K bytes of memory.Installed image archive
+
+Processor board ID 9690HWD81WXPSM78B1AIJ
+8 Gigabit Ethernet interfaces
+DRAM configuration is 72 bits wide with parity disabled.
+256K bytes of non-volatile configuration memory.
+2097144K bytes of ATA System CompactFlash 0 (Read/Write)
+0K bytes of ATA CompactFlash 1 (Read/Write)
+0K bytes of ATA CompactFlash 2 (Read/Write)
+0K bytes of ATA CompactFlash 3 (Read/Write)
+
+
+
+Press RETURN to get started!
+
+
+*Mar  1 00:00:00.625: %ATA-6-DEV_FOUND: device 0x1F0
+*Mar  1 00:00:10.512: %NVRAM-5-CONFIG_NVRAM_READ_OK: NVRAM configuration 'flash:/nvram' was read from disk.
+*Aug 30 18:49:49.563: %PA-3-PA_INIT_FAILED: Performance Agent failed to initialize (Missing Data License)
+*Aug 30 18:49:50.800: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up
+*Aug 30 18:49:50.801: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+*Aug 30 18:49:50.801: %LINK-3-UPDOWN: Interface GigabitEthernet0/2, changed state to up
+*Aug 30 18:49:50.802: %LINK-3-UPDOWN: Interface GigabitEthernet0/3, changed state to down
+*Aug 30 18:49:50.802: %LINK-3-UPDOWN: Interface GigabitEthernet0/4, changed state to down
+*Aug 30 18:49:50.802: %LINK-3-UPDOWN: Interface GigabitEthernet0/5, changed state to down
+*Aug 30 18:49:50.802: %LINK-3-UPDOWN: Interface GigabitEthernet0/6, changed state to down
+*Aug 30 18:49:50.802: %LINK-3-UPDOWN: Interface GigabitEthernet0/7, changed state to down
+*Aug 30 18:49:51.075: %CVAC-4-FILE_IGNORED: Configuration file flash0:/ios_config.txt is ignored : empty file
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/2, changed state to up
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/3, changed state to down
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/4, changed state to down
+*Aug 30 18:49:51.826: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/5, changed state to down
+*Aug 30 18:49:51.827: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/6, changed state to down
+*Aug 30 18:49:51.827: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/7, changed state to down
+*Aug 30 18:49:52.299: %LINEPROTO-5-UPDOWN: Line protocol on Interface NVI0, changed state to up
+*Aug 30 18:49:52.311: %SYS-5-CONFIG_I: Configured from memory by console
+*Aug 30 18:49:52.989: %CVAC-4-FILE_IGNORED: Configuration file flash0:/ios_config.txt is ignored : empty file
+*Aug 30 18:49:53.466: %SYS-5-RESTART: System restarted --
+Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.6(2)T, RELEASE SOFTWARE (fc2)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2016 by Cisco Systems, Inc.
+Compiled Tue 22-Mar-16 16:19 by prod_rel_team
+*Aug 30 18:49:53.490: %CRYPTO-6-ISAKMP_ON_OFF: ISAKMP is OFF
+*Aug 30 18:49:53.490: %CRYPTO-6-GDOI_ON_OFF: GDOI is OFF
+*Aug 30 18:49:54.295: %LINK-5-CHANGED: Interface GigabitEthernet0/3, changed state to administratively down
+*Aug 30 18:49:54.296: %LINK-5-CHANGED: Interface GigabitEthernet0/4, changed state to administratively down
+*Aug 30 18:49:54.296: %LINK-5-CHANGED: Interface GigabitEthernet0/5, changed state to administratively down
+*Aug 30 18:49:54.296: %LINK-5-CHANGED: Interface GigabitEthernet0/6, changed state to administratively down
+*Aug 30 18:49:54.296: %LINK-5-CHANGED: Interface GigabitEthernet0/7, changed state to administratively down
+*Aug 30 18:50:22.052: %PLATFORM-5-SIGNATURE_VERIFIED: Image 'flash0:/vios-adventerprisek9-m' passed code signing verification
+*Aug 30 18:50:33.489: %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on GigabitEthernet0/2 from LOADING to FULL, Loading Done
+*Aug 30 18:50:33.491: %OSPF-5-ADJCHG: Process 1, Nbr 1.1.1.1 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************
+BorderRouter-2>
+BorderRouter-2>
+BorderRouter-2>
+BorderRouter-2>enable
+BorderRouter-2#$ section ^ip access-list|^access-list|^interface|ip nat      
+interface GigabitEthernet0/0
+ ip address 200.0.0.6 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/1
+ ip address 10.0.4.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/2
+ ip address 10.0.2.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/3
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/4
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/5
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/6
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/7
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+access-list 1 permit 10.0.0.0 0.255.255.255
+access-list 1 permit 192.168.0.0 0.0.255.255
+BorderRouter-2#
+BorderRouter-2#
+BorderRouter-2#
+BorderRouter-2#
+BorderRouter-2#
+BorderRouter-2#
+BorderRouter-2#show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         200.0.0.6       YES NVRAM  up                    up      
+GigabitEthernet0/1         10.0.4.2        YES NVRAM  up                    up      
+GigabitEthernet0/2         10.0.2.2        YES NVRAM  up                    up      
+GigabitEthernet0/3         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/4         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/5         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/6         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/7         unassigned      YES NVRAM  administratively down down    
+NVI0                       200.0.0.6       YES unset  up                    up      
+BorderRouter-2#show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Peak translations: 0
+Outside interfaces:
+  GigabitEthernet0/0
+Inside interfaces: 
+  GigabitEthernet0/1, GigabitEthernet0/2
+Hits: 0  Misses: 0
+CEF Translated packets: 0, CEF Punted packets: 0
+Expired translations: 0
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list 1 interface GigabitEthernet0/0 refcount 0
+
+Total doors: 0
+Appl doors: 0
+Normal doors: 0
+Queued Packets: 0
+BorderRouter-2#show ip nat translations
+BorderRouter-2#

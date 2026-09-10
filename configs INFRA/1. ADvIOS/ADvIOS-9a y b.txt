@@ -1,0 +1,53 @@
+enable
+configure terminal
+hostname ADvIOS-9a
+no ip domain-lookup
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan 50
+ name SERVIDORES
+!
+vlan 99
+ name NATIVE_BLACKHOLE
+!
+interface GigabitEthernet0/0
+ description UPLINK_A_CorevIOS-1_Gi2/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 50,99
+ switchport nonegotiate
+ no shutdown
+!
+interface Port-channel9
+ description DATACENTER_L2_LACP_A_ADvIOS-9b
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 50,99
+ switchport nonegotiate
+ no shutdown
+!
+interface range GigabitEthernet0/1 - 2
+ description LACP_A_ADvIOS-9b
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 50,99
+ switchport nonegotiate
+ channel-group 9 mode active
+ no shutdown
+!
+
+
+interface Gi0/3
+ description PVE_VM_BRIDGE_VLAN50
+ switchport mode access
+ switchport access vlan 50
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+end
+
+# REPETIR PARA ADvIOS-9b

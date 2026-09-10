@@ -1,0 +1,55 @@
+enable
+conf t
+
+hostname BorderRouter-1
+
+# para evitar bugs de OSPF en vIOS images
+no ip cef
+
+ip routing
+
+# Interfaces
+interface GigabitEthernet0/0
+ description Hacia ISPRouter-1
+ ip address 200.0.0.2 255.255.255.252
+ ip nat outside
+ no shutdown
+
+interface GigabitEthernet0/1
+ description Hacia CorevIOS-1 Gi3/2
+ ip address 10.0.1.2 255.255.255.252
+ ip nat inside
+ no shutdown
+
+interface GigabitEthernet0/2
+ description To CorevIOS-2 Gi3/2
+ ip address 10.0.3.2 255.255.255.252
+ ip nat inside
+ no shutdown
+
+# Configuración de NAT (PAT)
+ip access-list standard NAT_INSIDE
+ permit 192.168.10.0 0.0.0.31
+ permit 192.168.20.0 0.0.0.63
+ permit 192.168.30.0 0.0.0.63
+ permit 192.168.40.0 0.0.0.63
+ permit 192.168.50.0 0.0.0.7
+ permit 192.168.60.0 0.0.0.63
+ permit 192.168.90.0 0.0.0.31
+ permit 192.168.100.0 0.0.0.7
+ permit 10.0.0.0 0.255.255.255
+
+ip nat inside source list NAT_INSIDE interface GigabitEthernet0/0 overload
+
+# Default route hacia ISP
+ip route 0.0.0.0 0.0.0.0 200.0.0.1
+
+# OSPF
+router ospf 1
+ router-id 200.0.0.2
+ network 10.0.1.0 0.0.0.3 area 0
+ network 10.0.3.0 0.0.0.3 area 0
+ default-information originate
+
+end
+write memory

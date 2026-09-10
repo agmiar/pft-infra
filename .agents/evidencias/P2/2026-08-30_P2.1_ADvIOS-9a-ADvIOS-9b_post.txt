@@ -1,0 +1,32 @@
+Fecha: 2026-08-30
+Tarea: P2.1 — EtherChannel LACP ADvIOS-9a/ADvIOS-9b
+Fuente: salidas de consola aportadas por el operador
+
+Estado EtherChannel en ambos ADvIOS:
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+9      Po9(SD)         LACP      Gi0/1(s)    Gi0/2(s)
+
+Configuración relevante confirmada en Gi0/1 y Gi0/2 de ambos extremos:
+- switchport trunk allowed vlan 50,99
+- switchport trunk encapsulation dot1q
+- switchport trunk native vlan 99
+- switchport mode trunk
+- switchport nonegotiate
+- channel-group 9 mode active
+
+Configuración relevante confirmada en Port-channel9 de ambos extremos:
+- trunk permitido 50,99; nativa 99; modo trunk; nonegotiate.
+
+CDP interswitch confirmado:
+- ADvIOS-9a Gi0/1 -> ADvIOS-9b Gi0/1.
+- ADvIOS-9a Gi0/2 -> ADvIOS-9b Gi0/2.
+
+LACP:
+- `show lacp neighbor` no devolvió vecinos en ninguno de los dos switches.
+
+Discrepancias observadas:
+- ADvIOS-9a Gi0/0 descubre por CDP a CorevIOS-1 en Gi2/1, no en Gi0/9 como se había declarado.
+- ADvIOS-9b Gi0/0 figura conectado/trunk, pero su salida CDP no muestra vecino por ese puerto; el extremo real queda sin verificar.
+
+Resultado: no conforme. La simetría de configuración y el enlace físico interswitch no bastan para formar LACP; falta determinar por qué no se intercambian PDU LACP y corregir el uplink real de ADvIOS-9b.

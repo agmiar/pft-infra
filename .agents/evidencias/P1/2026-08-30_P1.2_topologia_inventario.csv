@@ -1,0 +1,41 @@
+nodo,interfaz_principal_o_SVI,ip_mascara,gateway,VLAN,rol,plataforma_version,fuente,observaciones
+Alpine-SSHClient-1,eth0,192.168.90.10/27,192.168.90.1,90,cliente SSH temporal,Alpine Linux 3.24.1,consola 2026-08-30,estado operativo confirmado
+mgmtPC-1,eth0,192.168.90.11/27,192.168.90.1,90,cliente de gestión,Alpine Linux 3.18.4,consola y planilla,hostname observado: alpine
+mgmtPC-2,eth1,192.168.90.12/27,192.168.90.1,90,cliente de gestión,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+adminPC-1,eth0,192.168.10.11/27,192.168.10.1,10,cliente administrativo,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+adminPC-2,eth1,192.168.10.12/27,192.168.10.1,10,cliente administrativo,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+ADvIOS-1,Gi0/1-Gi0/2 y Gi1/1,N/A,N/A,90,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración y declaración del operador,puerto de cliente VLAN 90
+ADvIOS-2,Gi0/1-Gi0/2 y Gi1/1,N/A,N/A,90,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración y declaración del operador,puerto de cliente VLAN 90
+ADvIOS-3,Gi0/1-Gi0/2 y Gi1/1,N/A,N/A,10,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración agrupada y declaración del operador,misma configuración que ADvIOS-4
+ADvIOS-4,Gi0/1-Gi0/2 y Gi1/1,N/A,N/A,10,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración agrupada y declaración del operador,misma configuración que ADvIOS-3
+ADvIOS-5,Gi0/1-Gi0/2 Gi1/1-Gi1/2 Gi2/1-Gi2/2,N/A,N/A,20 y 30,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,Port-channel 2 con ADvIOS-6
+ADvIOS-6,Gi0/1-Gi0/2 Gi1/1-Gi1/2 Gi2/1-Gi2/2,N/A,N/A,20 y 30,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,Port-channel 2 con ADvIOS-5
+ADvIOS-7,Gi0/1-Gi0/2 Gi1/1-Gi1/2 Gi2/1-Gi2/2,N/A,N/A,30 y 60,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,Port-channel 3 con ADvIOS-8
+ADvIOS-8,Gi0/1-Gi0/2 Gi1/1-Gi1/2 Gi2/1-Gi2/2,N/A,N/A,20 y 60,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,Port-channel 3 con ADvIOS-7
+ADvIOS-9,Gi0/1-Gi0/2 y Gi1/2,N/A,N/A,50,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,conecta WebUbuntuServer-1 actual
+ADvIOS-10,Gi0/1-Gi0/2 y Gi1/1,N/A,N/A,100,acceso/distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración válida,conecta WebUbuntuServer-2 actual
+CorevIOS-1,Vlan10 Vlan20 Vlan30 Vlan40 Vlan50 Vlan60 Vlan90 Vlan100 y Gi3/2-Gi3/3,192.168.10.2/27;192.168.20.2/26;192.168.30.2/26;192.168.40.2/26;192.168.50.2/29;192.168.60.2/26;192.168.90.2/27;192.168.100.2/29;10.0.1.1/30;10.0.4.1/30,10.0.1.2,VLAN 10/20/30/40/50/60/90/100,Core L3 y HSRP,Cisco IOS vios_l2 15.2(4.0.55)E,consola P1.1 y configuración válida,VLAN 50 sigue /29 antes de P2.2
+CorevIOS-2,Vlan10 Vlan20 Vlan30 Vlan40 Vlan50 Vlan60 Vlan90 Vlan100 y Gi3/2-Gi3/3,192.168.10.3/27;192.168.20.3/26;192.168.30.3/26;192.168.40.3/26;192.168.50.3/29;192.168.60.3/26;192.168.90.3/27;192.168.100.3/29;10.0.3.1/30;10.0.2.1/30,10.0.2.2,VLAN 10/20/30/40/50/60/90/100,Core L3 y HSRP,Cisco IOS vios_l2 15.2(4.0.55)E,consola P1.1 y configuración válida,VLAN 50 sigue /29 antes de P2.2
+BorderRouter-1,Gi0/0 Gi0/1 Gi0/2,200.0.0.2/30;10.0.1.2/30;10.0.3.2/30,200.0.0.1,transito WAN,router de borde y NAT,Cisco IOSv 15.6(2)T,consola P1.1 y configuración válida,ACL 1 selecciona NAT según P1.1
+BorderRouter-2,Gi0/0 Gi0/1 Gi0/2,200.0.0.6/30;10.0.4.2/30;10.0.2.2/30,200.0.0.5,transito WAN,router de borde y NAT,Cisco IOSv 15.6(2)T,consola P1.1 y configuración válida,ACL 1 selecciona NAT según P1.1
+ISPRouter-1,Gi0/0 Gi0/1,200.0.0.10/30;200.0.0.1/30,200.0.0.9,transito WAN,router ISP,Cisco IOSv 15.6(2)T,configuración y declaración del operador,N/A
+ISPRouter-2,Gi0/0 Gi0/1,200.0.0.14/30;200.0.0.5/30,200.0.0.13,transito WAN,router ISP,Cisco IOSv 15.6(2)T,configuración y declaración del operador,N/A
+WebUbuntuServer-1,ens3,192.168.50.6/29,192.168.50.1,50,servidor actual a reemplazar,Ubuntu Server 26.04,consola y captura 2026-08-30,será reemplazado por clúster Proxmox
+WebUbuntuServer-2,ens3,192.168.100.6/29,192.168.100.1,100,frontend actual que será renombrado,Ubuntu Server 26.04,consola y switch ADvIOS-10 Gi1/1 P1.3,DNS no configurado; será renombrado a WebUbuntuServer-1
+DummyInternet,eth0 eth1 eth2,200.0.0.9/30;200.0.0.13/30;192.168.122.37/24,192.168.122.1,transito WAN y NAT GNS3,router/NAT intermedio,Alpine Linux 3.24.1,consola 2026-08-30,iptables declarado instalado por el operador
+NAT GNS3,cloud,N/A,N/A,192.168.122.0/24,servicio NAT externo,GNS3 2.2.61 NAT predeterminado,declaración del operador,N/A
+labPC-1,eth0,192.168.40.11/26,192.168.40.1,40,cliente laboratorio,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+labPC-2,eth0,192.168.40.12/26,192.168.40.1,40,cliente laboratorio,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+labPC-3,eth1,192.168.40.13/26,192.168.40.1,40,cliente laboratorio,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+AccvIOS-1,Gi0/1-Gi0/2 y Gi1/1-Gi1/2,N/A,N/A,40,acceso L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración y declaración del operador,N/A
+AccvIOS-2,Gi0/1-Gi0/2 y Gi1/3,N/A,N/A,40,acceso L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración y declaración del operador,N/A
+DistvIOS-1,Gi0/1-Gi0/2 y Gi1/1-Gi1/2,N/A,N/A,troncales L2,distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración agrupada y declaración del operador,misma configuración que DistvIOS-2
+DistvIOS-2,Gi0/1-Gi0/2 y Gi1/1-Gi1/2,N/A,N/A,troncales L2,distribución L2,Cisco IOS vios_l2 15.2(4.0.55)E,configuración agrupada y declaración del operador,misma configuración que DistvIOS-1
+estudPC-1,eth0,192.168.30.11/26,192.168.30.1,30,cliente estudiante,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+estudPC-2,eth0,192.168.30.12/26,192.168.30.1,30,cliente estudiante,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+estudPC-3,eth0,192.168.30.13/26,192.168.30.1,30,cliente estudiante,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+docenPC-1,eth0,192.168.20.11/26,192.168.20.1,20,cliente docente,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+docenPC-2,eth0,192.168.20.12/26,192.168.20.1,20,cliente docente,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+docenPC-3,eth0,192.168.20.13/26,192.168.20.1,20,cliente docente,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+guestPC-1,eth0,192.168.60.11/26,192.168.60.1,60,cliente invitado,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada
+guestPC-2,eth0,192.168.60.12/26,192.168.60.1,60,cliente invitado,Alpine Linux 3.18.4,planilla y declaración del operador,IP de DHCP documentada

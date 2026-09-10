@@ -1,0 +1,21 @@
+Fecha/hora UTC: 2026-08-31 01:54–01:55
+Tarea: P2.4
+Equipos: ADvIOS-9a y ADvIOS-9b
+Tipo: prueba
+Origen: salida de consola aportada por el operador.
+
+Ambos ADvIOS reiniciaron y recuperaron su configuración desde NVRAM antes de la captura.
+
+ADvIOS-9a:
+- Gi0/0 y Po9 son trunks con VLAN 50/99 únicamente; VLAN 100 no aparece permitida.
+- Po9(SU), LACP, Gi0/1(P) y Gi0/2(P).
+- CDP: Gi0/0 hacia CorevIOS-1 Gi2/1; Gi0/1–2 hacia ADvIOS-9b.
+- RSTP VLAN 50: Gi0/0 Root FWD; Po9 Desg LRN en la captura de 01:54:15.
+
+ADvIOS-9b:
+- Gi0/0 y Po9 son trunks con VLAN 50/99 únicamente; VLAN 100 no aparece permitida.
+- Po9(SU), LACP, Gi0/1(P) y Gi0/2(P).
+- CDP: Gi0/0 hacia CorevIOS-2 Gi2/1; Gi0/1–2 hacia ADvIOS-9a.
+- RSTP VLAN 50: Gi0/0 Root FWD; Po9 Altn BLK a las 01:55:15.
+
+Resultado: LACP y la restricción de VLAN son correctos. La captura de ADvIOS-9a corresponde al periodo inmediatamente posterior a su reinicio y muestra Po9 en aprendizaje; el supervisor humano confirmó posteriormente que el dominio L2 convergió y funcionó correctamente. Se acepta la validación de P2.4.

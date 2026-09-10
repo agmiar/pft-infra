@@ -1,0 +1,36 @@
+hostname ADvIOS-1
+
+interface range Gi0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport nonegotiate
+
+int Gi0/3
+switchport mode access
+switchport access vlan 90
+switchport port-security
+switchport port-security maximum 2
+switchport port-security violation restrict
+switchport port-security mac-address sticky
+spanning-tree portfast
+
+interface Gi1/1
+ switchport mode access
+ switchport access vlan 90
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ spanning-tree portfast
+ 
+interface Gi2/0
+ description PVE_QDEVICE_192.168.90.28
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+
+end
+write memory

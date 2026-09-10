@@ -1,0 +1,102 @@
+Crear un Dockerfile en el Escritorio con lo siguiente:
+FROM gns3/ipterm:latest
+RUN apt-get update && apt-get install -y iptables && rm -rf /var/lib/apt/lists/*
+
+Abrir una terminal desde el Escritorio y correr:
+docker build -t pft/dummy-internet:1.0 .
+
+# PARA CREAR EL CONTENEDOR
+Edit --> Preferences
+"Docker containers" --> "New"
+(Existing Image)
+    Name: pft/dummy-internet:1.0
+    Adapters: 3
+    Start command: vacío
+    Console type: telnet
+
+----------
+
+# Click derecho en la instancia de Docker --> luego "Edit config"
+
+auto eth0
+iface eth0 inet static
+address 200.0.0.9
+netmask 255.255.255.252
+post-up /bin/sh -c 'printf "nameserver 192.168.122.1\n" > /etc/resolv.conf'
+
+auto eth1
+iface eth1 inet static
+address 200.0.0.13
+netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet dhcp
+post-up sysctl -w net.ipv4.ip_forward=1
+post-up ip route replace 200.0.0.0/30 via 200.0.0.10 dev eth0
+post-up iptables -A FORWARD -i eth0 -o eth2 -j ACCEPT
+post-up iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
+post-up iptables -A FORWARD -i eth2 -o eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+post-up iptables -A FORWARD -i eth2 -o eth1 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+post-up iptables -t nat -A POSTROUTING -s 200.0.0.0/30 -o eth2 -j MASQUERADE
+post-up iptables -t nat -A POSTROUTING -s 200.0.0.12/30 -o eth2 -j MASQUERADE
+
+
+# PRENDER EL CONTAINER
+ 
+----------
+
+Una vez conectado el Dummy Internet a la nube NAT de GNS3,
+	apk update
+	apk add iptables
+
+----------
+
+# PARA GENERAR EL BANNER A MOSTRAR POR CONSOLA:
+https://manytools.org/hacker-tools/ascii-banner/
+Fuente: Georgia11
+
+
+# en el servidor que hace de Dummy Internet...
+
+cat > mensaje.txt << "EOF"
+                                                                                                                              
+                                                                                                                              
+                                                       mm                             mm                                      
+                                                       MM                             MM                                      
+`7MMpdMAo.`7Mb,od8 ,pW"Wq.`7M'   `MF'.gP"Ya   ,p6"bo mmMMmm ,pW"Wq.      `7MM  `7MM mmMMmm .gP"Ya   ,p6"bo                    
+  MM   `Wb  MM' "'6W'   `Wb VA   ,V ,M'   Yb 6M'  OO   MM  6W'   `Wb       MM    MM   MM  ,M'   Yb 6M'  OO                    
+  MM    M8  MM    8M     M8  VA ,V  8M"""""" 8M        MM  8M     M8       MM    MM   MM  8M"""""" 8M                         
+  MM   ,AP  MM    YA.   ,A9   VVV   YM.    , YM.    ,  MM  YA.   ,A9       MM    MM   MM  YM.    , YM.    ,                   
+  MMbmmd' .JMML.   `Ybmd9'    ,V     `Mbmmd'  YMbmd'   `Mbmo`Ybmd9'        `Mbod"YML. `Mbmo`Mbmmd'  YMbmd'                    
+  MM                         ,V                                                                                               
+.JMML.                    OOb"                                                                                                
+                                                                                                                              
+                                                                                                                              
+  mm                                                                                                    mm                    
+  MM                                                                                                    MM                    
+mmMMmm .gP"Ya `7Mb,od8 ,p6"bo   .gP"Ya `7Mb,od8     ,pP"Ybd  .gP"Ya `7MMpMMMb.pMMMb.  .gP"Ya  ,pP"Ybd mmMMmm `7Mb,od8 .gP"Ya  
+  MM  ,M'   Yb  MM' "'6M'  OO  ,M'   Yb  MM' "'     8I   `" ,M'   Yb  MM    MM    MM ,M'   Yb 8I   `"   MM     MM' "',M'   Yb 
+  MM  8M""""""  MM    8M       8M""""""  MM         `YMMMa. 8M""""""  MM    MM    MM 8M"""""" `YMMMa.   MM     MM    8M"""""" 
+  MM  YM.    ,  MM    YM.    , YM.    ,  MM         L.   I8 YM.    ,  MM    MM    MM YM.    , L.   I8   MM     MM    YM.    , 
+  `Mbmo`Mbmmd'.JMML.   YMbmd'   `Mbmmd'.JMML.       M9mmmP'  `Mbmmd'.JMML  JMML  JMML.`Mbmmd' M9mmmP'   `Mbmo.JMML.   `Mbmmd' 
+                                                                                                                              
+
+
+                                                                                                               
+darle 'Enter' un par de veces
+escribir "EOF" (sin las comillas) a mano y presionar 'Enter'  
+
+# usar el puerto 80 para servir el mensaje mediante HTTP
+while true; do
+(
+echo "HTTP/1.1 200 OK"
+echo "Content-Type: text/plain"
+echo
+cat mensaje.txt
+) | nc -l -p 80
+done
+
+// en la PC linux Alpine...
+wget -qO- http://200.0.0.9:80/mensaje.txt
+o...
+wget -qO- http://200.0.0.13:80/mensaje.txt

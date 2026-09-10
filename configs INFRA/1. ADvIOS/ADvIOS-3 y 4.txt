@@ -1,0 +1,21 @@
+hostname ADvIOS-3
+
+interface range Gi0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport nonegotiate
+
+interface Gi1/1
+ switchport mode access
+ switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ spanning-tree portfast
+
+end
+write memory
+
+# Igual config para ADvIOS-4

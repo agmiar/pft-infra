@@ -1,0 +1,13 @@
+Fecha/hora UTC: 2026-08-31 01:52:27
+Tarea: P2.4
+Equipo: CorevIOS-2
+Tipo: pre
+Origen: salida de consola aportada por el operador.
+
+HSRP VLAN 50: prioridad 100, Standby; Active 192.168.50.2; VIP 192.168.50.1.
+Vlan50: up/up, 192.168.50.3/27; ACL de entrada VLAN_50_IN.
+OSPF: vecinos 1.1.1.1, 200.0.0.2 y 200.0.0.6 en FULL.
+Ruta: 192.168.50.0/27 conectada por Vlan50.
+Trunks: Gi2/1 permite y reenvía solamente VLAN 50/99 hacia ADvIOS-9b; Po1 presente.
+EtherChannel Core: Po1(SU), Gi0/0(P) y Gi2/3(P).
+RSTP VLAN 50: root por Po1 en FWD; Gi2/1 y los demás puertos listados en FWD.

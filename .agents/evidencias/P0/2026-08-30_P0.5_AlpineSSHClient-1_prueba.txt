@@ -1,0 +1,24 @@
+Fecha: 2026-08-30
+Tarea: P0.5 — Salida controlada por Border NAT
+Host temporal: AlpineSSHClient-1
+Estado: Aprobado
+
+Ruta validada:
+AlpineSSHClient-1 -> BorderRouter-1 -> ISPRouter-1 -> DummyInternet -> NAT de GNS3 -> Internet real
+
+Resultados reales aportados por el operador:
+- Ping extremo a extremo a 1.1.1.1: confirmado.
+- DNS: /etc/resolv.conf contiene nameserver 192.168.122.1.
+- DNS: pool.ntp.org resolvió, entre otras, 164.73.232.34, 190.64.134.53, 200.40.115.74 y 164.73.225.4.
+- HTTPS: dl-cdn.alpinelinux.org conectó a 151.101.218.132:443 y respondió HTTP/1.1 200 OK.
+- NTP, comando: busybox ntpd -d -n -q -p pool.ntp.org
+  ntpd: 'pool.ntp.org' is 164.73.225.4
+  ntpd: reply from 164.73.225.4: offset:+0.001687 delay:0.018286 status:0x24 strat:2 refid:0x47a2d349 rootdelay:0.069427 reach:0x01
+  ntpd: reply from 164.73.225.4: offset:+0.001692 delay:0.018499 status:0x24 strat:2 refid:0x47a2d349 rootdelay:0.069427 reach:0x03
+  Código de salida: 0
+
+Resultado:
+Se valida salida exclusiva por Border NAT para IP, DNS, HTTPS y NTP externo.
+
+Limitación:
+Antes de AD, el host temporal usa el DNS relay 192.168.122.1 de la red NAT de GNS3. Tras crear AD, sólo el PDC sincronizará NTP externo y los clientes usarán AD DNS.

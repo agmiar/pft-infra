@@ -1,0 +1,47 @@
+Fecha: 2026-08-31
+Tarea: P4.1 — QDevice Debian, QNetd y tercer miembro etcd
+Equipo: ADvIOS-1
+Origen: salida real de consola aportada por el operador.
+
+Acciones verificadas:
+- Gi2/0 configurado como access VLAN 90 para PVE_QDEVICE_192.168.90.28.
+- Configuración persistida con `do wr` y resultado `[OK]`.
+
+ADvIOS-1#show running-config interface GigabitEthernet2/0
+interface GigabitEthernet2/0
+ description PVE_QDEVICE_192.168.90.28
+ switchport access vlan 90
+ switchport mode access
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+ADvIOS-1#show int Gi2/0 status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Gi2/0     PVE_QDEVICE_192.16 connected    90           auto   auto unknown
+
+ADvIOS-1#show int Gi2/0 switchport
+Name: Gi2/0
+Switchport: Enabled
+Administrative Mode: static access
+Operational Mode: static access
+Negotiation of Trunking: Off
+Access Mode VLAN: 90 (MGMT)
+
+ADvIOS-1#show mac address-table int Gi2/0
+Mac Address Table
+-----------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+90      0c93.d2ae.0000    DYNAMIC     Gi2/0
+Total Mac Addresses for this criterion: 1
+
+ADvIOS-1#show spanning-tree int Gi2/0 detail
+Port 9 (GigabitEthernet2/0) of VLAN0090 is designated forwarding
+The port is in the portfast edge mode
+Bpdu guard is enabled
+BPDU: sent 2073, received 0
+
+Resultado: enlace operativo en VLAN 90, MAC de QDevice aprendida y protección PortFast/BPDU Guard confirmada. La documentación operativa fue actualizada para reflejar el extremo real: ADvIOS-1 Gi2/0.
+Limitación: no se aportó captura pre ni la comprobación previa formal de ausencia de conflicto IP.

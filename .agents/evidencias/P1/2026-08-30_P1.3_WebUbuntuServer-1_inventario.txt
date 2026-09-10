@@ -1,0 +1,40 @@
+PFT-S1 — Evidencia de inventario P1.3
+Fecha: 2026-08-30
+Tarea: P1.3 — Confirmar IP estática, gateway, DNS y VLAN 100 del frontend DMZ
+Estado: Bloqueado
+
+Origen de las salidas
+- Consola de WebUbuntuServer-2 aportada por el operador mediante capturas.
+- Consola de ADvIOS-10 aportada por el operador en texto.
+- Sin cambios aplicados a red, VM, servidor, VLAN, DNS ni ACL.
+
+Identidad observada del frontend actual
+- Hostname estático: ubuntu-server.
+- Sistema operativo: Ubuntu 26.04 LTS sobre QEMU/KVM.
+- Interfaz conectada: ens3 (alias enp0s3), estado UP/LOWER_UP.
+- MAC de ens3: 0c:f8:f8:60:00:00.
+
+Red observada en WebUbuntuServer-2
+- ip -br address: ens3 UP 192.168.100.6/29; también tiene la dirección IPv6 link-local fe80::ef8:f8ff:fe60:0/64.
+- ip route: default via 192.168.100.1 dev ens3 proto static.
+- ip route: 192.168.100.0/29 dev ens3 proto kernel scope link src 192.168.100.6.
+- Otras interfaces ens4, ens5 y ens6: DOWN/no carrier, sin participación en el frontend.
+- resolvectl status: no presenta servidores DNS configurados ni ámbitos DNS en ens3; el modo mostrado es resolv.conf stub. Este es el estado previo real.
+
+Validación L2 en ADvIOS-10
+- show interfaces status: Gi1/1 ("## conectado a Web") connected, VLAN 100.
+- show interfaces switchport: Gi1/1 tiene modo administrativo y operativo static access; Access Mode VLAN 100 (DMZ).
+- show mac address-table interface Gi1/1: VLAN 100, MAC 0cf8.f860.0000, puerto Gi1/1. La MAC coincide con ens3 del frontend.
+- Gi0/1 y Gi0/2 son trunks; no son el puerto del frontend.
+
+Resultado y limitaciones
+- Confirmado: el actual WebUbuntuServer-2 es el frontend de DMZ en VLAN 100 por ADvIOS-10 Gi1/1 y usa 192.168.100.6/29 con gateway HSRP 192.168.100.1.
+- Confirmado: su configuración de ruta por defecto es estática.
+- Bloqueo: no hay DNS efectivo configurado en el frontend. Configurar y verificar DNS contra DC1/DC2 (.12/.13) requiere que AD/DNS esté desplegado; no se modifica durante P1.3.
+- La evidencia no renombra el host. Hasta que se ejecute y verifique ese cambio, el nombre efectivo sigue siendo WebUbuntuServer-2/ubuntu-server.
+
+Rollback
+No aplica. P1.3 fue un inventario de solo lectura.
+
+Condición de reanudación
+Con DC1/DC2 disponibles, configurar el DNS autorizado en WebUbuntuServer-2 y registrar una nueva comprobación de resolvectl y resolución de nombres. Luego podrá cerrarse P1.3.

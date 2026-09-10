@@ -1,0 +1,12 @@
+# Una vez creados ambos PVE's (Proxmox Virtual Environments)
+cp -a /etc/chrony/chrony.conf /etc/chrony/chrony.conf.pre-P4.2
+printf '\n# P4.2: fuente NTP externa validada por P0.5\nserver 164.73.225.4 iburst\n' >> /etc/chrony/chrony.conf
+systemctl restart chrony
+chronyc -a makestep
+chronyc waitsync 30 0.1
+systemctl is-active chrony
+timedatectl
+chronyc tracking
+chronyc sources -v -n
+
+# El IP 164.73.225.4 corresponde al IP público del CURE de Rocha (UdelaR)

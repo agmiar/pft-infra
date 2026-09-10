@@ -1,0 +1,24 @@
+Fecha: 2026-08-31
+Tarea: P4.3
+Equipo: CorevIOS-2
+Tipo: pre
+Origen: salidas reales aportadas por el operador.
+
+Resumen de estado comprobado:
+- CorevIOS-2 es HSRP Standby para VLAN 50 y VLAN 90; CorevIOS-1 es Active.
+- Vlan50 (`192.168.50.3/27`) tiene `ip access-group VLAN_50_IN in`.
+- Vlan90 (`192.168.90.3/27`) tiene `ip access-group VLAN_90_IN in`.
+
+Fragmentos relevantes de `VLAN_50_IN`:
+    40 permit icmp 192.168.50.0 0.0.0.31 192.168.90.0 0.0.0.31 echo-reply
+    50 permit tcp 192.168.50.0 0.0.0.31 192.168.90.0 0.0.0.31 established
+    70 permit tcp any 192.168.50.0 0.0.0.31 established
+    80 deny ip 192.168.50.0 0.0.0.31 192.168.0.0 0.0.255.255
+    90 permit ip 192.168.50.0 0.0.0.31 any (657 matches)
+
+Fragmentos relevantes de `VLAN_90_IN`:
+    40 permit ip 192.168.90.0 0.0.0.31 any (858 matches)
+    50 permit ip any 192.168.90.0 0.0.0.31
+
+Resultado:
+CorevIOS-2 tiene la misma carencia que CorevIOS-1: no autoriza el SYN TCP de `.10/.11` a `.90.28:5403` antes de la denegación interna. No se realizaron cambios.

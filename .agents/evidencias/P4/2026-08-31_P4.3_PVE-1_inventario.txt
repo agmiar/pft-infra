@@ -1,0 +1,17 @@
+Fecha: 2026-08-31
+Tarea: P4.3
+Equipo: PVE-1 y PVE-2
+Tipo: inventario
+Origen: salida real de PVE-1 aportada por el operador y confirmación explícita de resultado idéntico en PVE-2.
+
+Comandos ejecutados en PVE-1:
+$ ls -lh /var/lib/vz/template/iso/
+total 353M
+-rw-r--r-- 1 root root 352M Aug 31 04:49 alpine-standard-3.24.1-x86_64.iso
+$ sha256sum /var/lib/vz/template/iso/alpine-standard-3.24.1-x86_64.iso
+f4dd613206676c62949144c8ad75fc64582099f444dd1485bae104a60f51dd26  /var/lib/vz/template/iso/alpine-standard-3.24.1-x86_64.iso
+
+Resultado:
+- PVE-1 dispone de Alpine Linux Standard 3.24.1 en almacenamiento `local`.
+- El operador confirmó el mismo archivo y hash en PVE-2.
+- Este medio se utilizará exclusivamente para las VMs temporales P4.3 y no acredita su arranque ni conectividad.

@@ -1,0 +1,20 @@
+hostname ADvIOS-10
+
+interface range Gi0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport nonegotiate
+
+interface range Gi1/1 - 2
+ switchport mode access
+ switchport access vlan 100
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ spanning-tree portfast
+
+end
+write memory
+

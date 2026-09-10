@@ -1,0 +1,117 @@
+Fecha: 2026-08-31
+Tarea: P4.3
+Equipo: PVE-1 / VM temporal P4T-PVE1 (VMID 901)
+Tipo: captura
+Origen: salida real aportada por el operador desde consola serial de Proxmox.
+
+Comando ejecutado en PVE-1:
+$ qm terminal 901
+
+Salida:
+starting serial terminal on interface serial0 (press Ctrl+O to exit)
+localhost login: root
+Welcome to Alpine!
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See https://wiki.alpinelinux.org/.
+You can setup the system with the command: setup-alpine
+You may change this message by editing /etc/motd.
+localhost:~#
+
+Resultado:
+La VM temporal 901 arrancó desde la ISO Alpine y es accesible por consola serial con `root`. No se instaló sistema, ni se asignó aún una IP, ni se acredita conectividad por `vmbr0`.
+
+Configuración posterior aportada por el operador:
+$ ip -br link
+BusyBox v1.37.0 (2026-01-10 15:38:28 UTC) multi-call binary.
+Usage: ip [OPTIONS] address|route|link|tunnel|neigh|rule [ARGS]
+
+$ ip addr add 192.168.50.18/27 dev eth0
+$ ip link set eth0 up
+$ ip route add default via 192.168.50.1
+$ ip -br address
+BusyBox v1.37.0 (2026-01-10 15:38:28 UTC) multi-call binary.
+Usage: ip [OPTIONS] address|route|link|tunnel|neigh|rule [ARGS]
+
+$ ip route
+default via 192.168.50.1 dev eth0
+192.168.50.0/27 dev eth0 scope link  src 192.168.50.18
+
+Interpretación limitada:
+BusyBox no admite `-br`; no obstante, los comandos de asignación no devolvieron error y la tabla de rutas confirma la red y origen configurados. Faltan `ip addr show dev eth0`, el ping al gateway y las pruebas de aceptación.
+
+Verificación posterior:
+$ ip addr show dev eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+link/ether bc:24:11:b9:03:50 brd ff:ff:ff:ff:ff:ff
+inet 192.168.50.18/27 scope global eth0
+valid_lft forever preferred_lft forever
+inet6 fe80::be24:11ff:feb9:350/64 scope link
+valid_lft forever preferred_lft forever
+
+$ ip link show eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+link/ether bc:24:11:b9:03:50 brd ff:ff:ff:ff:ff:ff
+
+$ ping -c 4 192.168.50.1
+PING 192.168.50.1 (192.168.50.1): 56 data bytes
+64 bytes from 192.168.50.1: seq=0 ttl=255 time=63.226 ms
+64 bytes from 192.168.50.1: seq=1 ttl=255 time=2.551 ms
+64 bytes from 192.168.50.1: seq=2 ttl=255 time=2.322 ms
+64 bytes from 192.168.50.1: seq=3 ttl=255 time=2.574 ms
+--- 192.168.50.1 ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 2.322/17.668/63.226 ms
+
+Resultado parcial:
+La VM temporal P4T-PVE1 alcanza el gateway HSRP por `vmbr0`. No se infiere aún conectividad con P4T-PVE2, QDevice, Web DMZ ni el aprendizaje MAC en los switches.
+
+Pruebas adicionales aportadas:
+$ ping -c 4 192.168.90.28
+PING 192.168.90.28 (192.168.90.28): 56 data bytes
+--- 192.168.90.28 ping statistics ---
+4 packets transmitted, 0 packets received, 100% packet loss
+
+$ traceroute 192.168.90.28
+traceroute to 192.168.90.28 (192.168.90.28), 30 hops max, 46 byte packets
+1  192.168.50.2 (192.168.50.2)  8.518 ms !A  10.429 ms !A  *
+
+$ traceroute 192.168.100.6
+traceroute to 192.168.100.6 (192.168.100.6), 30 hops max, 46 byte packets
+1  192.168.50.2 (192.168.50.2)  9.552 ms  8.177 ms  6.260 ms
+2  *  192.168.100.6 (192.168.100.6)  7.299 ms  13.156 ms
+
+Resultado adicional:
+El Core `.50.2` denegó administrativamente ICMP hacia QDevice. El trazado llegó a Web `.100.6`, pero no sustituye el ping exigido ni prueba una sesión de aplicación. No se infiere conectividad TCP hacia QNetd ni aprobación de P4.3.
+
+Prueba funcional y Web aportadas:
+$ nc -z -w 3 192.168.90.28 5403
+$ echo $?
+1
+
+$ ping -c 4 192.168.100.6
+PING 192.168.100.6 (192.168.100.6): 56 data bytes
+64 bytes from 192.168.100.6: seq=0 ttl=63 time=11.725 ms
+64 bytes from 192.168.100.6: seq=1 ttl=63 time=3.244 ms
+64 bytes from 192.168.100.6: seq=2 ttl=63 time=3.496 ms
+64 bytes from 192.168.100.6: seq=3 ttl=63 time=3.574 ms
+--- 192.168.100.6 ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 3.244/5.509/11.725 ms
+
+Resultado:
+Web DMZ responde desde P4T-PVE1. La conexión TCP a QNetd no quedó establecida (código de salida `1`), por lo que la conectividad anidada requerida para el clúster no quedó validada.
+
+Reprueba tras excepción temporal ICMP autorizada:
+$ ping -c 4 192.168.90.28
+PING 192.168.90.28 (192.168.90.28): 56 data bytes
+64 bytes from 192.168.90.28: seq=0 ttl=63 time=16.988 ms
+64 bytes from 192.168.90.28: seq=1 ttl=63 time=3.616 ms
+64 bytes from 192.168.90.28: seq=2 ttl=63 time=3.295 ms
+64 bytes from 192.168.90.28: seq=3 ttl=63 time=5.267 ms
+--- 192.168.90.28 ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 3.295/7.291/16.988 ms
+
+Resultado parcial:
+QDevice responde ICMP desde P4T-PVE1. Esta prueba acredita el permiso temporal de ping, pero no sustituye la prueba TCP/5403 desde el host PVE ni las restantes condiciones de P4.3.

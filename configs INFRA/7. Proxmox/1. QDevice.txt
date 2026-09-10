@@ -1,0 +1,149 @@
+# Descargar Debian 12 oficial
+En el host Ubuntu, abrir una terminal
+cd ~/Downloads
+curl -fLO https://cdimage.debian.org/cdimage/archive/12.12.0/amd64/iso-cd/debian-12.12.0-amd64-netinst.iso
+curl -fLO https://cdimage.debian.org/cdimage/archive/12.12.0/amd64/iso-cd/SHA512SUMS
+grep 'debian-12.12.0-amd64-netinst.iso$' SHA512SUMS > debian-12.12.0-amd64-netinst.iso.sha512
+sha512sum -c debian-12.12.0-amd64-netinst.iso.sha512
+
+--------
+
+En GNS3:
+1. Edit → Preferences → QEMU VMs → New.
+2. Crear una VM QEMU vacía con estos valores:
+   - Nombre: PVE-QDEVICE
+   - RAM: 512 MB
+   - vCPU: 1
+   - Disco: nuevo, qcow2, 8 GB
+   - Adaptadores: 1
+   - Tipo de adaptador: e1000
+   - Consola: VNC
+3. En las propiedades de la VM, monta debian-12.12.0-amd64-netinst.iso como CD/DVD.
+
+
+--------
+
+Arrancar PVE-QDEVICE y elegir
+- Install
+- Nombre de host: pve-qdevice
+- Dominio: pft.test
+- Red: usa DHCP sólo durante la instalación.
+- Particionado: Guided - use entire disk.
+- Selección de software: desmarcar entorno de escritorio; dejar sólo SSH server y standard system utilities.
+- Instala GRUB en el disco principal y reinicia.
+- Retirar la ISO al reiniciar.
+
+---------
+
+PARA DETERMINAR LA INTERFAZ REAL
+ip -br link
+ip -br address
+
+PARA ASIGNAR IP ESTATICO
+su # para hacerse superusuario (sin sudo)
+nano /etc/network/interfaces
+
+auto ens3
+iface ens3 inet static
+    address 192.168.90.28/27
+    gateway 192.168.90.1
+
+# reiniciar la interfaz
+sudo systemctl restart networking
+ip -br address
+ip route
+ping -c 3 192.168.90.1
+
+---------
+
+
+nano /etc/apt/sources.list
+Una línea que empieza con deb cdrom:..., ponerle un # al principio para comentarla (# deb cdrom:...). 
+
+Pegar estas tres lineas
+deb http://deb.debian.org/debian bookworm main non-free-firmware
+deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware
+deb http://deb.debian.org/debian bookworm-updates main non-free-firmware
+
+Guardar con Ctrl+O, Enter, y salir con Ctrl+X.
+
+apt update
+
+---------------------
+
+apt install openssh-server
+systemctl enable --now ssh
+
+ip a # para saber el IP
+
+(desde el equipo SSH client)
+ssh-keygen -R 192.168.90.28
+
+hacerle SSH
+ssh usuario@IP_DEL_QDEVICE
+e.j. ssh student@192.168.90.28
+
+--------------
+
+
+apt update
+apt install -y corosync-qnetd curl ca-certificates chrony
+systemctl enable --now corosync-qnetd
+systemctl status corosync-qnetd --no-pager
+ss -lntp | grep ':5403'
+
+cd /tmp
+curl -fLO https://github.com/etcd-io/etcd/releases/download/v3.5.33/etcd-v3.5.33-linux-amd64.tar.gz
+curl -fLO https://github.com/etcd-io/etcd/releases/download/v3.5.33/SHA256SUMS
+grep 'etcd-v3.5.33-linux-amd64.tar.gz$' SHA256SUMS > etcd-v3.5.33-linux-amd64.tar.gz.sha256
+sha256sum -c etcd-v3.5.33-linux-amd64.tar.gz.sha256
+tar -xzf etcd-v3.5.33-linux-amd64.tar.gz
+su - # para hacerme superusuario (CON el guion incluido)
+install -m 0755 etcd-v3.5.33-linux-amd64/etcd /usr/local/bin/etcd
+install -m 0755 etcd-v3.5.33-linux-amd64/etcdctl /usr/local/bin/etcdctl
+etcd --version
+
+useradd --system --home /var/lib/etcd --shell /usr/sbin/nologin etcd
+install -d -o etcd -g etcd -m 0750 /var/lib/etcd
+
+nano /etc/systemd/system/etcd.service
+----------
+
+
+[Unit]
+Description=etcd key-value store
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=etcd
+Group=etcd
+ExecStart=/usr/local/bin/etcd \
+  --name etcd-qd \
+  --data-dir /var/lib/etcd \
+  --listen-peer-urls http://192.168.90.28:2380 \
+  --initial-advertise-peer-urls http://192.168.90.28:2380 \
+  --listen-client-urls http://192.168.90.28:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls http://192.168.90.28:2379 \
+  --initial-cluster etcd-pg1=http://192.168.50.14:2380,etcd-pg2=http://192.168.50.15:2380,etcd-qd=http://192.168.90.28:2380 \
+  --initial-cluster-state new \
+  --initial-cluster-token pft-etcd-1
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+----------------
+
+CTRL + X --> "Y" --> ENTER
+
+systemctl daemon-reload
+systemctl cat etcd
+:q # para salir
+systemctl is-enabled etcd
+
+timedatectl
+timedatectl show -p TimeUSec -p Timezone -p NTP -p NTPSynchronized

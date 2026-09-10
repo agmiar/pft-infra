@@ -1,0 +1,18 @@
+hostname ISPRouter-1
+
+# hacia BorderRouter-1
+interface Gi0/1
+ ip address 200.0.0.1 255.255.255.252
+ no shutdown
+
+# hacia DummyInternet
+interface Gi0/0
+ ip address 200.0.0.10 255.255.255.252
+ no shutdown
+
+# ruta estática para compartir tráfico entre los dos ISP Routers
+# se usa al Dummy Internet (200.0.0.9) como nexo
+ip route 200.0.0.12 255.255.255.252 200.0.0.9
+
+# ruta por defecto para salida a internet real mediante Dummy Internet
+ip route 0.0.0.0 0.0.0.0 200.0.0.9

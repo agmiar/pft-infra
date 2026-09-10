@@ -1,0 +1,20 @@
+Fecha: 2026-08-31
+Tarea: P4.3
+Equipo: CorevIOS-1 y CorevIOS-2
+Tipo: post
+Origen: salidas reales aportadas por el operador.
+
+Modificaciones observadas en `VLAN_50_IN`, en ambos Core:
+    75 permit tcp host 192.168.50.10 host 192.168.90.28 eq 5403
+    76 permit tcp host 192.168.50.11 host 192.168.90.28 eq 5403
+    77 permit icmp host 192.168.50.18 host 192.168.90.28 echo
+    78 permit icmp host 192.168.50.19 host 192.168.90.28 echo
+
+Resultado comprobado:
+- PVE-1 comprobó QNetd TCP/5403 hacia `192.168.90.28` con código de salida `0`.
+- En CorevIOS-1, HSRP Active para VLAN 50, la secuencia 75 aumentó a `1 match` y la secuencia temporal 77 a `4 matches`.
+- CorevIOS-2 contiene las mismas cuatro líneas. Sus contadores no incrementaron durante esta prueba, coherente con su estado HSRP Standby de VLAN 50.
+
+Limitaciones:
+- No se suministró la salida completa del `nc`; el operador informó explícitamente el código `0`.
+- Pendiente prueba desde PVE-2, verificación MAC, retiro de las líneas 77/78 y persistencia controlada de 75/76.

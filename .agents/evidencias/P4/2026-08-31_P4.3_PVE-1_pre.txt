@@ -1,0 +1,21 @@
+Fecha: 2026-08-31
+Tarea: P4.3
+Equipo: PVE-1
+Tipo: pre
+Origen: salida real aportada por el operador desde la consola de Proxmox.
+
+Comandos ejecutados:
+$ qm list
+$ pvesm status
+Name             Type     Status           Total            Used       Available        %
+local             dir     active        34712224         2939252        29977492    8.47%
+local-lvm     lvmthin     active        41865216               0        41865216    0.00%
+$ ls -1 /var/lib/vz/template/iso/
+
+Resultado:
+- `qm list` no mostró VMs.
+- `local` y `local-lvm` están activos.
+- No se listaron ISOs en `/var/lib/vz/template/iso/`.
+
+Limitación:
+No hay medio de arranque disponible para crear la VM temporal de P4.3. No se infiere la existencia de una ISO en otra ruta ni se descargó software.

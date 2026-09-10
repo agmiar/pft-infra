@@ -1,0 +1,23 @@
+P2.3 — CorevIOS-1 — evidencia previa aportada por el operador
+Fecha de registro: 2026-08-30
+Nota temporal: el syslog del equipo muestra "Aug 31" sin zona horaria; no se infiere la hora real.
+
+Comandos ejecutados:
+terminal length 0
+show running-config | section ^ip dhcp
+show ip dhcp binding
+show ip dhcp conflict
+show ip interface Vlan50
+show standby brief
+
+Resultados relevantes antes del cambio:
+- No existía `ip dhcp excluded-address 192.168.50.1 192.168.50.30`.
+- VLAN10 y VLAN60/VLAN90 no mostraban `dns-server` ni `domain-name`.
+- VLAN20/VLAN30/VLAN40 mostraban solamente `dns-server 192.168.50.2`.
+- `show ip dhcp binding`: sin concesiones.
+- `show ip dhcp conflict`: sin conflictos.
+- `Vlan50 is up, line protocol is up`, dirección `192.168.50.2/27`.
+- HSRP de Vlan50: CorevIOS-1 Active; virtual `192.168.50.1`; standby `192.168.50.3`.
+- No se observó un pool DHCP para VLAN50 ni para VLAN100.
+
+Fuente: salida de consola pegada por el operador en esta conversación.

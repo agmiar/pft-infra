@@ -1,0 +1,57 @@
+# Recargar modulo de KVM de virtualizacion anidada
+# (en el host Ubuntu de mi PC fisico)
+# reemplazar intel por amd, si aplica
+# CORRERLO CON GNS3 CERRADO
+sudo modprobe -r kvm_intel
+sudo modprobe kvm_intel nested=1
+
+# (Debe retornar Y o 1) --> Nested virtualization
+cat /sys/module/kvm_intel/parameters/nested
+
+# SI devuelve Y o 1:
+echo "options kvm_intel nested=1" | sudo tee /etc/modprobe.d/kvm-intel.conf
+
+Dentro del appliance de Proxmox (click derecho --> Configure)
+Ir a la pestaña "Advanced" y agregar esto en "Options"
+	"-cpu host,kvm=on,+vmx" (sin las comillas)
+
+(en Proxmox)
+modprobe kvm_intel
+ls -l /dev/kvm
+
+
+-------------
+
+
+# Con una VM de prueba:
+
+qm create 901 --name P4T-PVE1 --memory 512 --cores 1 --ostype l26 --scsihw virtio-scsi-pci --scsi0 local-lvm:4 --ide2 local:iso/alpine-standard-3.24.1-x86_64.iso,media=cdrom --net0 virtio,bridge=vmbr0 --boot 'order=scsi0;ide2' --serial0 socket --vga serial0
+
+qm start 901
+qm status 901
+qm terminal 901
+
+(para loguearse en Alpine - VM anidada)
+root
+
+-------------
+
+
+PRUEBA RAPIDA DE VIRTUALIZACION ANIDADA
+(desde VM efimera anidada en Proxmox - PVE1)
+ip addr show
+
+ip addr add 192.168.50.18/27 dev eth0
+ip link set eth0 up
+ip route add default via 192.168.50.1
+ip addr show dev eth0
+ip route
+
+(para salir de la consola de la VM anidada)
+Ctrl + O 
+
+qm list
+qm stop 901
+qm destroy 901 --purge 1
+
+-------------

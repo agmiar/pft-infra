@@ -1,0 +1,60 @@
+Fecha: 2026-08-30
+Tarea: P1.2 — Inventario de topología y direccionamiento
+Estado: Pendiente
+
+Fuente: salidas de consola y captura aportadas por el operador el 2026-08-30.
+Acciones: ejecución de `show version`, `hostname`, `cat /etc/os-release`, `ip -br address` e `ip route`; sin cambios de infraestructura.
+
+1. Imagen de Core y switches L2 (declarada común por el operador)
+   - Plataforma: Cisco IOS vios_l2-ADVENTERPRISEK9-M.
+   - Versión: 15.2(4.0.55)E, TEST ENGINEERING ESTG_WEEKLY BUILD.
+   - Imagen: flash0:/vios_l2-adventerprisek9-m.
+   - Muestra directa: CorevIOS-1.
+   - Alcance declarado: Core y todos los switches de distribución y acceso usan la misma imagen.
+
+2. Imagen de routers (declarada común por el operador)
+   - Plataforma: Cisco IOSv, VIOS-ADVENTERPRISEK9-M.
+   - Versión: 15.6(2)T, RELEASE SOFTWARE (fc2).
+   - Imagen: flash0:/vios-adventerprisek9-m.
+   - Muestra directa: BorderRouter-1.
+   - Alcance declarado: todos los routers usan la misma imagen.
+
+3. AlpineSSHClient-1
+   - Hostname: Alpine-SSHClient-1.
+   - Sistema operativo: Alpine Linux 3.24.1 (PRETTY_NAME: Alpine Linux v3.24).
+   - Interfaz: eth0, 192.168.90.10/27.
+   - Gateway: 192.168.90.1 por eth0.
+
+4. mgmtPC-1
+   - Asociación: 192.168.90.11 coincide con la asignación de mgmtPC-1 aportada por el operador y con la tabla de direccionamiento.
+   - Prompt/hostname mostrado: alpine.
+   - Sistema operativo: Alpine Linux 3.18.4 (PRETTY_NAME: Alpine Linux v3.18).
+   - Interfaz: eth0, 192.168.90.11/27.
+   - Gateway: 192.168.90.1 por eth0.
+   - Rol: cliente de gestión en VLAN 90.
+
+5. WebUbuntuServer-1 actual
+   - Asociación: 192.168.50.6 coincide con el registro histórico de WebUbuntuServer-1 y con la transición indicada por el operador.
+   - Hostname estático: ubuntu-server.
+   - Sistema operativo: Ubuntu 26.04 LTS, VERSION_ID=26.04, nombre de versión Resolute Raccoon.
+   - Virtualización: KVM; hardware QEMU pc-i440fx-resolute.
+   - Interfaz: ens3, 192.168.50.6/29.
+   - Gateway: 192.168.50.1 por ens3.
+   - Transición prevista: será reemplazado por el clúster Proxmox; no se reasigna esa IP durante P1.2.
+
+6. WebUbuntuServer-2 actual
+   - Plataforma declarada por el operador: Ubuntu Server 26.04, igual a la del servidor Ubuntu ya capturado.
+   - Direccionamiento y rol: se toman de la planilla aceptada como fuente válida: VLAN 100, 192.168.100.6/29, gateway 192.168.100.1; será renombrado a WebUbuntuServer-1 conforme a la transición documentada.
+
+7. DummyInternet
+   - Hostname: DummyInternet.
+   - Sistema operativo: Alpine Linux 3.24.1 (PRETTY_NAME: Alpine Linux v3.24).
+   - Rol: encaminamiento/NAT entre 200.0.0.0/30, 200.0.0.12/30 y la nube NAT GNS3.
+   - Interfaces y rutas observadas: eth0 200.0.0.9/30; eth1 200.0.0.13/30; eth2 DHCP 192.168.122.37/24; default vía 192.168.122.1 por eth2.
+   - Observación correctiva: durante su arranque se registró `/bin/sh: iptables: not found`. La configuración fuente requiere iptables para reglas FORWARD y MASQUERADE. No se aplicó cambio alguno; verificar la instalación y el funcionamiento efectivo antes de cualquier modificación de red.
+
+8. NAT GNS3
+   - Plataforma: nube NAT predeterminada de GNS3 2.2.61, declarada por el operador.
+
+Resultado: se verificaron versiones de imágenes de red, AlpineSSHClient-1, mgmtPC-1, ambos servidores Ubuntu actuales, DummyInternet y NAT GNS3. El operador declaró que las PCs restantes usan la misma plataforma y versión que Alpine; debe precisar si el grupo de referencia es Alpine 3.18.4 o Alpine 3.24.1. La ausencia observada de iptables en DummyInternet queda registrada como ítem correctivo.
+Rollback: no aplica; relevamiento sin cambios.

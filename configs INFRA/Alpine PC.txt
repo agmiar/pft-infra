@@ -1,0 +1,23 @@
+vi /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+lbu commit -d
+
+
+# Excepción mgmtPC-2 y adminPC-2 y labPC-3 (usan eth1):
+
+# /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+auto eth1
+iface eth1 inet dhcp
+
+
+lbu commit -d
+

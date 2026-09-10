@@ -1,0 +1,17 @@
+Fecha: 2026-08-30
+Tarea: P2.2
+Equipo: CorevIOS-1
+Tipo: post
+Origen: salida de consola aportada por el operador.
+
+Vlan50: up/up, 192.168.50.2/27; ACL de entrada VLAN_50_IN.
+Ruta conectada: 192.168.50.0/27 por Vlan50.
+HSRP VLAN 50: prioridad 200, preempt, Active local; standby 192.168.50.3; VIP 192.168.50.1.
+OSPF: 2.2.2.2, 200.0.0.6 y 200.0.0.2 en FULL.
+ACL VLAN_50_IN: reglas 10, 40, 50, 60, 70, 80, 90 y 100 con wildcard 0.0.0.31; reglas DHCP 20 y 30 conservadas.
+Trunks: VLAN 50 permitida; Port-channel1 presente.
+STP VLAN 50: CorevIOS-1 es root; todos los puertos listados, incluido Po1, están FWD.
+
+Incidencia no bloqueante: `terminal length 0` fue introducido en modo `config-if` y devolvió entrada inválida; no modificó la configuración.
+
+Persistencia confirmada por el operador: `startup-config` conserva Vlan50 con `192.168.50.2 255.255.255.224`, HSRP `.1`, prioridad 200/preempt y `VLAN_50_IN` con wildcard `0.0.0.31` en sus referencias a VLAN 50.

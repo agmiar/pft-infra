@@ -1,0 +1,22 @@
+P2.3 — CorevIOS-1 — evidencia posterior aportada por el operador
+Fecha de registro: 2026-08-30
+Nota temporal: el syslog del equipo muestra "Aug 31" sin zona horaria; no se infiere la hora real.
+
+Acciones ejecutadas:
+- Se añadió `ip dhcp excluded-address 192.168.50.1 192.168.50.30`.
+- Se configuraron `dns-server 192.168.50.12 192.168.50.13` y `domain-name pft.test` en VLAN10, VLAN20, VLAN30, VLAN40 y VLAN60.
+- Inicialmente VLAN90 se configuró sin `domain-name pft.test`; la corrección posterior aportada ejecutó `ip dhcp pool VLAN90` y `domain-name pft.test`.
+
+Verificación aportada:
+- `show ip dhcp binding`: sin concesiones.
+- `show ip dhcp conflict`: sin conflictos.
+- `Vlan50` permanece up/up con `192.168.50.2/27`.
+- HSRP Vlan50 permanece con CorevIOS-1 Active, virtual `.1` y CorevIOS-2 `.3` Standby.
+- No se observó un pool DHCP para VLAN50 ni para VLAN100.
+- La verificación final de `show running-config | section ^ip dhcp` muestra DNS `.12/.13` y `domain-name pft.test` en VLAN10, VLAN20, VLAN30, VLAN40, VLAN60 y VLAN90.
+- Persistencia comprobada: el operador ejecutó `do wr`, con resultado `[OK]`; el equipo informó que la configuración GRUB fue escrita en disco correctamente.
+- `do show startup-config | section ^ip dhcp` confirma en `startup-config` la exclusión `192.168.50.1` a `192.168.50.30` y DNS `.12/.13` más `domain-name pft.test` en VLAN10, VLAN20, VLAN30, VLAN40, VLAN60 y VLAN90.
+
+Resultado: aprobado. La configuración y su persistencia cumplen P2.3. La renovación de clientes y validación efectiva de DNS se difieren a P5.4, tras desplegar DC/DNS `.12/.13`.
+
+Fuente: salida de consola pegada por el operador en esta conversación.

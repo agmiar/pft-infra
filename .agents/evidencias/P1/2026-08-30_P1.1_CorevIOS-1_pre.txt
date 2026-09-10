@@ -1,0 +1,727 @@
+  Booting `IOSv: flash0:vios_l2-adventerprisek9-m (hd0,msdos1)'
+
+Booted IOSv. Boot args: [/vios_l2-adventerprisek9-m]
+
+Smart Init is enabled
+
+              Restricted Rights Legend
+
+Use, duplication, or disclosure by the Government is
+subject to restrictions as set forth in subparagraph
+(c) of the Commercial Computer Software - Restricted
+Rights clause at FAR sec. 52.227-19 and subparagraph
+(c) (1) (ii) of the Rights in Technical Data and Computer
+Software clause at DFARS sec. 252.227-7013.
+
+           cisco Systems, Inc.
+           170 West Tasman Drive
+           San Jose, California 95134-1706
+
+
+
+Cisco IOS Software, vios_l2 Software (vios_l2-ADVENTERPRISEK9-M), Version 15.2(4.0.55)E, TEST ENGINEERING ESTG_WEEKLY BUILD, synced to  END_OF_FLO_ISP
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2015 by Cisco Systems, Inc.
+Compiled Tue 28-Jul-15 18:52 by sasyamal
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+Cisco IOSv () processor (revision 1.0) with 1361153K/209920K bytes of memory.
+Processor board ID 9HD41KKZLJN
+16 Gigabit Ethernet interfaces
+DRAM configuration is 72 bits wide with parity disabled.
+256K bytes of non-volatile configuration memory.
+2097144K bytes of ATA System CompactFlash 0 (Read/Write)
+0K bytes of ATA CompactFlash 1 (Read/Write)
+0K bytes of ATA CompactFlash 2 (Read/Write)
+0K bytes of ATA CompactFlash 3 (Read/Write)
+
+
+
+Press RETURN to get started!
+
+
+*Mar  1 00:00:00.572: %ATA-6-DEV_FOUND: device 0x1F0
+*Mar  1 00:00:00.798: %NVRAM-5-CONFIG_NVRAM_READ_OK: NVRAM configuration 'flash:/nvram' was read from disk.
+*Aug 30 18:49:18.127: %SPANTREE-5-EXTENDED_SYSID: Extended SysId enabled for type vlan
+*Aug 30 18:49:20.794: %LINK-5-CHANGED: Interface GigabitEthernet0/0, changed state to reset
+*Aug 30 18:49:20.794: %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to reset
+*Aug 30 18:49:20.794: %LINK-5-CHANGED: Interface GigabitEthernet0/2, changed state to reset
+*Aug 30 18:49:20.795: %LINK-5-CHANGED: Interface GigabitEthernet0/3, changed state to reset
+*Aug 30 18:49:20.795: %LINK-5-CHANGED: Interface GigabitEthernet1/0, changed state to reset
+*Aug 30 18:49:20.795: %LINK-5-CHANGED: Interface GigabitEthernet1/1, changed state to reset
+*Aug 30 18:49:20.795: %LINK-5-CHANGED: Interface GigabitEthernet1/2, changed state to reset
+*Aug 30 18:49:21.858: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up
+*Aug 30 18:49:21.858: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+*Aug 30 18:49:21.858: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/2, changed state to up
+*Aug 30 18:49:21.858: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/3, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/1, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/2, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/3, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet2/0, changed state to up
+*Aug 30 18:49:21.859: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet2/1, changed state to up
+*Aug 30 18:49:22.691: %SYS-5-CONFIG_I: Configured from memory by console
+*Aug 30 18:49:22.732: %SYS-5-RESTART: System restarted --
+Cisco IOS Software, vios_l2 Software (vios_l2-ADVENTERPRISEK9-M), Version 15.2(4.0.55)E, TEST ENGINEERING ESTG_WEEKLY BUILD, synced to  END_OF_FLO_ISP
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2015 by Cisco Systems, Inc.
+Compiled Tue 28-Jul-15 18:52 by sasyamal
+*Aug 30 18:49:22.749: %SSH-5-ENABLED: SSH 2.0 has been enabled
+*Aug 30 18:49:23.141: %LINK-3-UPDOWN: Interface GigabitEthernet3/1, changed state to up
+*Aug 30 18:49:23.142: %LINK-3-UPDOWN: Interface GigabitEthernet3/0, changed state to up
+*Aug 30 18:49:23.142: %LINK-3-UPDOWN: Interface GigabitEthernet2/3, changed state to up
+*Aug 30 18:49:23.143: %LINK-3-UPDOWN: Interface GigabitEthernet2/2, changed state to up
+*Aug 30 18:49:23.143: %LINK-3-UPDOWN: Interface GigabitEthernet2/1, changed state to up
+*Aug 30 18:49:23.143: %LINK-3-UPDOWN: Interface GigabitEthernet2/0, changed state to up
+*Aug 30 18:49:23.144: %LINK-3-UPDOWN: Interface GigabitEthernet1/3, changed state to up
+*Aug 30 18:49:23.144: %LINK-3-UPDOWN: Interface GigabitEthernet1/2, changed state to up
+*Aug 30 18:49:23.144: %LINK-3-UPDOWN: Interface GigabitEthernet1/1, changed state to up
+*Aug 30 18:49:23.148: %LINK-3-UPDOWN: Interface GigabitEthernet1/0, changed state to up
+*Aug 30 18:49:23.358: %LINK-3-UPDOWN: Interface GigabitEthernet0/3, changed state to up
+*Aug 30 18:49:23.358: %LINK-3-UPDOWN: Interface GigabitEthernet0/2, changed state to up
+*Aug 30 18:49:23.358: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+*Aug 30 18:49:23.359: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up
+*Aug 30 18:49:23.592: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan39, changed state to down
+*Aug 30 18:49:24.315: %LINK-3-UPDOWN: Interface GigabitEthernet3/2, changed state to up
+*Aug 30 18:49:24.535: %LINK-3-UPDOWN: Interface GigabitEthernet3/3, changed state to up
+*Aug 30 18:49:24.535: %LINK-5-CHANGED: Interface Vlan39, changed state to administratively down
+*Aug 30 18:49:25.469: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet3/2, changed state to up
+*Aug 30 18:49:25.689: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet3/3, changed state to up
+*Aug 30 18:49:28.529: %LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up
+*Aug 30 18:49:29.015: %LINK-3-UPDOWN: Interface Vlan40, changed state to up
+*Aug 30 18:49:30.030: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan40, changed state to up
+*Aug 30 18:49:30.933: %LINK-3-UPDOWN: Interface Vlan20, changed state to up
+*Aug 30 18:49:30.933: %LINK-3-UPDOWN: Interface Vlan60, changed state to up
+*Aug 30 18:49:30.934: %LINK-3-UPDOWN: Interface Vlan100, changed state to up
+*Aug 30 18:49:32.049: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan20, changed state to up
+*Aug 30 18:49:32.049: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan60, changed state to up
+*Aug 30 18:49:32.049: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan100, changed state to up
+*Aug 30 18:49:53.829: %PLATFORM-5-SIGNATURE_VERIFIED: Image 'flash0:/vios_l2-adventerprisek9-m' passed code signing verification
+*Aug 30 18:49:55.008: %LINK-3-UPDOWN: Interface Vlan10, changed state to up
+*Aug 30 18:49:55.008: %LINK-3-UPDOWN: Interface Vlan30, changed state to up
+*Aug 30 18:49:55.008: %LINK-3-UPDOWN: Interface Vlan50, changed state to up
+*Aug 30 18:49:55.008: %LINK-3-UPDOWN: Interface Vlan90, changed state to up
+*Aug 30 18:49:56.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan10, changed state to up
+*Aug 30 18:49:56.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan30, changed state to up
+*Aug 30 18:49:56.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan50, changed state to up
+*Aug 30 18:49:56.008: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan90, changed state to up
+*Aug 30 18:49:59.812: %HSRP-5-STATECHANGE: Vlan100 Grp 100 state Standby -> Active
+*Aug 30 18:50:00.387: %HSRP-5-STATECHANGE: Vlan20 Grp 20 state Standby -> Active
+*Aug 30 18:50:01.366: %HSRP-5-STATECHANGE: Vlan40 Grp 40 state Standby -> Active
+*Aug 30 18:50:02.248: %HSRP-5-STATECHANGE: Vlan60 Grp 60 state Standby -> Active
+*Aug 30 18:50:04.690: %HSRP-5-STATECHANGE: Vlan60 Grp 60 state Active -> Speak
+*Aug 30 18:50:04.740: %HSRP-5-STATECHANGE: Vlan100 Grp 100 state Active -> Speak
+*Aug 30 18:50:05.722: %HSRP-5-STATECHANGE: Vlan20 Grp 20 state Active -> Speak
+*Aug 30 18:50:06.731: %HSRP-5-STATECHANGE: Vlan40 Grp 40 state Active -> Speak
+*Aug 30 18:50:15.005: %HSRP-5-STATECHANGE: Vlan100 Grp 100 state Speak -> Standby
+*Aug 30 18:50:15.645: %HSRP-5-STATECHANGE: Vlan60 Grp 60 state Speak -> Standby
+*Aug 30 18:50:16.004: %HSRP-5-STATECHANGE: Vlan20 Grp 20 state Speak -> Standby
+*Aug 30 18:50:18.595: %HSRP-5-STATECHANGE: Vlan40 Grp 40 state Speak -> Standby
+*Aug 30 18:50:22.291: %HSRP-5-STATECHANGE: Vlan90 Grp 90 state Standby -> Active
+*Aug 30 18:50:22.307: %HSRP-5-STATECHANGE: Vlan50 Grp 50 state Standby -> Active
+*Aug 30 18:50:22.637: %HSRP-5-STATECHANGE: Vlan10 Grp 10 state Standby -> Active
+*Aug 30 18:50:23.436: %HSRP-5-STATECHANGE: Vlan30 Grp 30 state Standby -> Active
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************
+
+User Access Verification
+
+Password: 
+*Aug 30 18:50:30.018: %OSPF-5-ADJCHG: Process 1, Nbr 200.0.0.2 on GigabitEthernet3/2 from LOADING to FULL, Loading Done
+Password: 
+*Aug 30 18:50:32.820: %OSPF-5-ADJCHG: Process 1, Nbr 200.0.0.6 on GigabitEthernet3/3 from LOADING to FULL, Loading Done
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************
+CorevIOS-1>  
+*Aug 30 18:50:38.009: %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on Vlan90 from LOADING to FULL, Loading Done
+CorevIOS-1>
+CorevIOS-1>$list|^access-list|^interface Vlan|ip access-group|ip nat         
+show running-config | section ^ip access-list|^access-list|^interface Vlan|ip ac      ^cess-group|ip nat
+
+% Invalid input detected at '^' marker.
+
+CorevIOS-1>enable
+CorevIOS-1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+CorevIOS-1(config)#$ccess-list|^interface Vlan|ip access-group|ip nat        
+interface Vlan10
+ ip address 192.168.10.2 255.255.255.224
+ ip access-group VLAN_10_IN in
+ standby 10 ip 192.168.10.1
+ standby 10 priority 200
+ standby 10 preempt
+interface Vlan20
+ ip address 192.168.20.2 255.255.255.192
+ ip access-group VLAN_20_IN in
+ standby 20 ip 192.168.20.1
+interface Vlan30
+ ip address 192.168.30.2 255.255.255.192
+ ip access-group VLAN_30_IN in
+ standby 30 ip 192.168.30.1
+ standby 30 priority 200
+ standby 30 preempt
+interface Vlan39
+ no ip address
+ shutdown
+interface Vlan40
+ ip address 192.168.40.2 255.255.255.192
+ ip access-group VLAN_40_IN in
+ standby 40 ip 192.168.40.1
+interface Vlan50
+ ip address 192.168.50.2 255.255.255.248
+ ip access-group VLAN_50_IN in
+ standby 50 ip 192.168.50.1
+ standby 50 priority 200
+ standby 50 preempt
+interface Vlan60
+ ip address 192.168.60.2 255.255.255.192
+ ip access-group VLAN_60_IN in
+ standby 60 ip 192.168.60.1
+interface Vlan90
+ ip address 192.168.90.2 255.255.255.224
+ ip access-group VLAN_90_IN in
+ standby 90 ip 192.168.90.1
+ standby 90 priority 200
+ standby 90 preempt
+interface Vlan100
+ ip address 192.168.100.2 255.255.255.248
+ ip access-group FILTRO_DMZ in
+ standby 100 ip 192.168.100.1
+ip access-list extended FILTRO_DMZ
+ permit icmp 192.168.100.0 0.0.0.7 any echo-reply
+ deny   icmp 192.168.100.0 0.0.0.7 192.168.0.0 0.0.255.255 echo
+ deny   icmp 192.168.100.0 0.0.0.7 10.0.0.0 0.255.255.255 echo
+ permit ip any any
+ip access-list extended VLAN_100_IN
+ permit ip 192.168.100.0 0.0.0.7 192.168.100.0 0.0.0.7
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.100.0 0.0.0.7 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.90.0 0.0.0.31 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.10.0 0.0.0.31 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.10.0 0.0.0.31 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.20.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.20.0 0.0.0.63 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.30.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.30.0 0.0.0.63 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.40.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.40.0 0.0.0.63 established
+ permit ip 192.168.100.0 0.0.0.7 192.168.50.0 0.0.0.7
+ permit tcp any 192.168.100.0 0.0.0.7 established
+ deny   ip 192.168.100.0 0.0.0.7 192.168.0.0 0.0.255.255
+ permit ip 192.168.100.0 0.0.0.7 any
+ permit ip any 192.168.100.0 0.0.0.7
+ip access-list extended VLAN_10_IN
+ permit ip 192.168.10.0 0.0.0.31 192.168.10.0 0.0.0.31
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.10.0 0.0.0.31 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.10.0 0.0.0.31 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.10.0 0.0.0.31 192.168.20.0 0.0.0.63
+ permit ip 192.168.10.0 0.0.0.31 192.168.30.0 0.0.0.63
+ permit ip 192.168.10.0 0.0.0.31 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.10.0 0.0.0.31 established
+ deny   ip 192.168.10.0 0.0.0.31 192.168.0.0 0.0.255.255
+ permit ip 192.168.10.0 0.0.0.31 any
+ permit ip any 192.168.10.0 0.0.0.31
+ip access-list extended VLAN_20_IN
+ permit ip 192.168.20.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.20.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.20.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.20.0 0.0.0.63 192.168.10.0 0.0.0.31
+ permit ip 192.168.20.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit ip 192.168.20.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit ip 192.168.20.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.20.0 0.0.0.63 established
+ deny   ip 192.168.20.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.20.0 0.0.0.63 any
+ permit ip any 192.168.20.0 0.0.0.63
+ip access-list extended VLAN_30_IN
+ permit ip 192.168.30.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.30.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.30.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.30.0 0.0.0.63 192.168.10.0 0.0.0.31
+ permit ip 192.168.30.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit ip 192.168.30.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit ip 192.168.30.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.30.0 0.0.0.63 established
+ deny   ip 192.168.30.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.30.0 0.0.0.63 any
+ permit ip any 192.168.30.0 0.0.0.63
+ip access-list extended VLAN_40_IN
+ permit ip 192.168.40.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.40.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit ip 192.168.40.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit ip 192.168.40.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.40.0 0.0.0.63 established
+ deny   ip 192.168.40.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.40.0 0.0.0.63 any
+ permit ip any 192.168.40.0 0.0.0.63
+ip access-list extended VLAN_50_IN
+ permit ip 192.168.50.0 0.0.0.7 192.168.50.0 0.0.0.7
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.50.0 0.0.0.7 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.50.0 0.0.0.7 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.50.0 0.0.0.7 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.50.0 0.0.0.7 established
+ deny   ip 192.168.50.0 0.0.0.7 192.168.0.0 0.0.255.255
+ permit ip 192.168.50.0 0.0.0.7 any
+ permit ip any 192.168.50.0 0.0.0.7
+ip access-list extended VLAN_60_IN
+ permit ip 192.168.60.0 0.0.0.63 192.168.60.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.60.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.60.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit tcp any 192.168.60.0 0.0.0.63 established
+ deny   ip 192.168.60.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.60.0 0.0.0.63 any
+ permit ip any 192.168.60.0 0.0.0.63
+ip access-list extended VLAN_90_IN
+ permit ip 192.168.90.0 0.0.0.31 192.168.90.0 0.0.0.31
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit ip 192.168.90.0 0.0.0.31 any
+ permit ip any 192.168.90.0 0.0.0.31
+access-list 7 permit 192.168.90.10
+access-list 199 permit ip host 192.168.20.11 host 192.168.10.11
+access-list 199 permit ip host 192.168.10.11 host 192.168.20.11
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0     unassigned      YES unset  up                    up      
+GigabitEthernet0/1     unassigned      YES unset  up                    up      
+GigabitEthernet0/2     unassigned      YES unset  up                    up      
+GigabitEthernet0/3     unassigned      YES unset  up                    up      
+GigabitEthernet1/0     unassigned      YES unset  up                    up      
+GigabitEthernet1/1     unassigned      YES unset  up                    up      
+GigabitEthernet1/2     unassigned      YES unset  up                    up      
+GigabitEthernet1/3     unassigned      YES unset  up                    up      
+GigabitEthernet2/0     unassigned      YES unset  up                    up      
+GigabitEthernet2/1     unassigned      YES unset  up                    up      
+GigabitEthernet2/2     unassigned      YES unset  up                    up      
+GigabitEthernet2/3     unassigned      YES unset  up                    up      
+GigabitEthernet3/0     unassigned      YES unset  up                    up      
+GigabitEthernet3/1     unassigned      YES unset  up                    up      
+GigabitEthernet3/2     10.0.1.1        YES NVRAM  up                    up      
+GigabitEthernet3/3     10.0.4.1        YES NVRAM  up                    up      
+Port-channel1          unassigned      YES unset  up                    up      
+Vlan10                 192.168.10.2    YES NVRAM  up                    up      
+Vlan20                 192.168.20.2    YES NVRAM  up                    up      
+Vlan30                 192.168.30.2    YES NVRAM  up                    up      
+Vlan39                 unassigned      YES unset  administratively down down    
+Vlan40                 192.168.40.2    YES NVRAM  up                    up      
+Vlan50                 192.168.50.2    YES NVRAM  up                    up      
+Vlan60                 192.168.60.2    YES NVRAM  up                    up      
+Vlan90                 192.168.90.2    YES NVRAM  up                    up      
+Vlan100                192.168.100.2   YES NVRAM  up                    up      
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip interface Vlan50
+Vlan50 is up, line protocol is up
+  Internet address is 192.168.50.2/29
+  Broadcast address is 255.255.255.255
+  Address determined by non-volatile memory
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Multicast reserved groups joined: 224.0.0.2 224.0.0.5 224.0.0.6
+  Outgoing access list is not set
+  Inbound  access list is VLAN_50_IN
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+  Security level is default
+  Split horizon is enabled
+  ICMP redirects are always sent
+  ICMP unreachables are always sent
+  ICMP mask replies are never sent
+  IP fast switching is disabled
+  IP Flow switching is disabled
+  IP CEF switching is disabled
+  IP Null turbo vector
+  IP Null turbo vector
+  IP multicast fast switching is enabled
+  IP multicast distributed fast switching is disabled
+  IP route-cache flags are Fast
+  Router Discovery is disabled
+  IP output packet accounting is disabled
+  IP access violation accounting is disabled
+  TCP/IP header compression is disabled
+  RTP/IP header compression is disabled
+  Probe proxy name replies are disabled
+  Policy routing is disabled
+  Network address translation is disabled
+  BGP Policy Mapping is disabled
+  Input features: Access List, MCI Check
+  IPv4 WCCP Redirect outbound is disabled
+  IPv4 WCCP Redirect inbound is disabled
+  IPv4 WCCP Redirect exclude is disabled
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip interface Vlan60
+Vlan60 is up, line protocol is up
+  Internet address is 192.168.60.2/26
+  Broadcast address is 255.255.255.255
+  Address determined by non-volatile memory
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Multicast reserved groups joined: 224.0.0.2 224.0.0.5 224.0.0.6
+  Outgoing access list is not set
+  Inbound  access list is VLAN_60_IN
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+  Security level is default
+  Split horizon is enabled
+  ICMP redirects are always sent
+  ICMP unreachables are always sent
+  ICMP mask replies are never sent
+  IP fast switching is disabled
+  IP Flow switching is disabled
+  IP CEF switching is disabled
+  IP Null turbo vector
+  IP Null turbo vector
+  IP multicast fast switching is enabled
+  IP multicast distributed fast switching is disabled
+  IP route-cache flags are Fast
+  Router Discovery is disabled
+  IP output packet accounting is disabled
+  IP access violation accounting is disabled
+  TCP/IP header compression is disabled
+  RTP/IP header compression is disabled
+  Probe proxy name replies are disabled
+  Policy routing is disabled
+  Network address translation is disabled
+  BGP Policy Mapping is disabled
+  Input features: Access List, MCI Check
+  IPv4 WCCP Redirect outbound is disabled
+  IPv4 WCCP Redirect inbound is disabled
+  IPv4 WCCP Redirect exclude is disabled
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip interface Vlan90
+Vlan90 is up, line protocol is up
+  Internet address is 192.168.90.2/27
+  Broadcast address is 255.255.255.255
+  Address determined by non-volatile memory
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Multicast reserved groups joined: 224.0.0.2 224.0.0.5 224.0.0.6
+  Outgoing access list is not set
+  Inbound  access list is VLAN_90_IN
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+  Security level is default
+  Split horizon is enabled
+  ICMP redirects are always sent
+  ICMP unreachables are always sent
+  ICMP mask replies are never sent
+  IP fast switching is disabled
+  IP Flow switching is disabled
+  IP CEF switching is disabled
+  IP Null turbo vector
+  IP Null turbo vector
+  IP multicast fast switching is enabled
+  IP multicast distributed fast switching is disabled
+  IP route-cache flags are Fast
+  Router Discovery is disabled
+  IP output packet accounting is disabled
+  IP access violation accounting is disabled
+  TCP/IP header compression is disabled
+  RTP/IP header compression is disabled
+  Probe proxy name replies are disabled
+  Policy routing is disabled
+  Network address translation is disabled
+  BGP Policy Mapping is disabled
+  Input features: Access List, MCI Check
+  IPv4 WCCP Redirect outbound is disabled
+  IPv4 WCCP Redirect inbound is disabled
+  IPv4 WCCP Redirect exclude is disabled
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip interface Vlan100
+Vlan100 is up, line protocol is up
+  Internet address is 192.168.100.2/29
+  Broadcast address is 255.255.255.255
+  Address determined by non-volatile memory
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Multicast reserved groups joined: 224.0.0.2 224.0.0.5 224.0.0.6
+  Outgoing access list is not set
+  Inbound  access list is FILTRO_DMZ
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+  Security level is default
+  Split horizon is enabled
+  ICMP redirects are always sent
+  ICMP unreachables are always sent
+  ICMP mask replies are never sent
+  IP fast switching is disabled
+  IP Flow switching is disabled
+  IP CEF switching is disabled
+  IP Null turbo vector
+  IP Null turbo vector
+  IP multicast fast switching is enabled
+  IP multicast distributed fast switching is disabled
+  IP route-cache flags are Fast
+  Router Discovery is disabled
+  IP output packet accounting is disabled
+  IP access violation accounting is disabled
+  TCP/IP header compression is disabled
+  RTP/IP header compression is disabled
+  Probe proxy name replies are disabled
+  Policy routing is disabled
+  Network address translation is disabled
+  BGP Policy Mapping is disabled
+  Input features: Access List, MCI Check
+  IPv4 WCCP Redirect outbound is disabled
+  IPv4 WCCP Redirect inbound is disabled
+  IPv4 WCCP Redirect exclude is disabled
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show standby brief
+                     P indicates configured to preempt.
+                     |
+Interface   Grp  Pri P State   Active          Standby         Virtual IP
+Vl10        10   200 P Active  local           192.168.10.3    192.168.10.1
+Vl20        20   100   Standby 192.168.20.3    local           192.168.20.1
+Vl30        30   200 P Active  local           192.168.30.3    192.168.30.1
+Vl40        40   100   Standby 192.168.40.3    local           192.168.40.1
+Vl50        50   200 P Active  local           192.168.50.3    192.168.50.1
+Vl60        60   100   Standby 192.168.60.3    local           192.168.60.1
+Vl90        90   200 P Active  local           192.168.90.3    192.168.90.1
+Vl100       100  100   Standby 192.168.100.3   local           192.168.100.1
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/DR         00:00:39    192.168.90.3    Vlan90
+200.0.0.6         1   FULL/DR         00:00:33    10.0.4.2        GigabitEthernet3/3
+200.0.0.2         1   FULL/DR         00:00:39    10.0.1.2        GigabitEthernet3/2
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show ip route 192.168.50.0
+Routing entry for 192.168.50.0/24, 2 known subnets
+  Attached (2 connections)
+  Variably subnetted with 2 masks
+C        192.168.50.0/29 is directly connected, Vlan50
+L        192.168.50.2/32 is directly connected, Vlan50
+CorevIOS-1(config)#do show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Gi0/1       on               802.1q         trunking      99
+Gi0/2       on               802.1q         trunking      99
+Gi0/3       on               802.1q         trunking      99
+Gi1/0       on               802.1q         trunking      99
+Gi1/1       on               802.1q         trunking      99
+Gi1/2       on               802.1q         trunking      99
+Gi1/3       on               802.1q         trunking      99
+Gi2/0       on               802.1q         trunking      99
+Gi2/1       on               802.1q         trunking      99
+Gi2/2       on               802.1q         trunking      99
+Gi3/0       on               802.1q         trunking      99
+Gi3/1       on               802.1q         trunking      99
+Po1         on               802.1q         trunking      99
+
+Port        Vlans allowed on trunk
+Gi0/1       1-4094
+Gi0/2       1-4094
+Gi0/3       1-4094
+Gi1/0       1-4094
+Gi1/1       1-4094
+Gi1/2       1-4094
+Gi1/3       1-4094
+Gi2/0       1-4094
+Gi2/1       1-4094
+Gi2/2       1-4094
+Gi3/0       1-4094
+Gi3/1       1-4094
+Po1         1-4094
+          
+Port        Vlans allowed and active in management domain
+Gi0/1       1,10,20,30,40,50,60,90,99-100
+Gi0/2       1,10,20,30,40,50,60,90,99-100
+Gi0/3       1,10,20,30,40,50,60,90,99-100
+Gi1/0       1,10,20,30,40,50,60,90,99-100
+Gi1/1       1,10,20,30,40,50,60,90,99-100
+Gi1/2       1,10,20,30,40,50,60,90,99-100
+Gi1/3       1,10,20,30,40,50,60,90,99-100
+Gi2/0       1,10,20,30,40,50,60,90,99-100
+Gi2/1       1,10,20,30,40,50,60,90,99-100
+Gi2/2       1,10,20,30,40,50,60,90,99-100
+Gi3/0       1,10,20,30,40,50,60,90,99-100
+Gi3/1       1,10,20,30,40,50,60,90,99-100
+Po1         1,10,20,30,40,50,60,90,99-100
+          
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi0/1       1,10,20,30,40,50,60,90,99-100
+Gi0/2       1,10,20,30,40,50,60,90,99-100
+Gi0/3       1,10,20,30,40,50,60,90,99-100
+Gi1/0       1,10,20,30,40,50,60,90,99-100
+Gi1/1       1,10,20,30,40,50,60,90,99-100
+Gi1/2       1,10,20,30,40,50,60,90,99-100
+Gi1/3       1,10,20,30,40,50,60,90,99-100
+Gi2/0       1,10,20,30,40,50,60,90,99-100
+Gi2/1       1,10,20,30,40,50,60,90,99-100
+Gi2/2       1,10,20,30,40,50,60,90,99-100
+Gi3/0       1,10,20,30,40,50,60,90,99-100
+Gi3/1       1,10,20,30,40,50,60,90,99-100
+Po1         1,10,20,30,40,50,60,90,99-100
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      N - not in use, no aggregation
+        f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        m - not in use, port not aggregated due to minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 1
+Number of aggregators:           1
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)          -        Gi0/0(P)    Gi2/3(P)    
+
+CorevIOS-1(config)#
+CorevIOS-1(config)#do show spanning-tree vlan 50
+
+VLAN0050
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    4146
+             Address     0cc7.54d9.0000
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    4146   (priority 4096 sys-id-ext 50)
+             Address     0cc7.54d9.0000
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/1               Desg FWD 4         128.2    Shr 
+Gi0/2               Desg FWD 4         128.3    Shr 
+Gi0/3               Desg FWD 4         128.4    Shr 
+Gi1/0               Desg FWD 4         128.5    Shr 
+Gi1/1               Desg FWD 4         128.6    Shr 
+Gi1/2               Desg FWD 4         128.7    Shr 
+Gi1/3               Desg FWD 4         128.8    Shr 
+Gi2/0               Desg FWD 4         128.9    Shr 
+Gi2/1               Desg FWD 4         128.10   Shr 
+Gi2/2               Desg FWD 4         128.11   Shr 
+Gi3/0               Desg FWD 4         128.13   Shr 
+Gi3/1               Desg FWD 4         128.14   Shr 
+Po1                 Desg FWD 3         128.65   Shr 
+          
+          
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#
+CorevIOS-1(config)#

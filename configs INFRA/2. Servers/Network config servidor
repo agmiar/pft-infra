@@ -1,0 +1,60 @@
+4. Ubuntu Server
+----
+# muestra las interfaces que están activas 
+# (en estado 'up')
+cat /proc/net/bonding/bond0
+
+# muestra la interfaz que está conectada al switch L3
+ip link show 
+
+# crear un archivo de configuracion en Ubuntu server
+sudo nano /etc/netplan/00-installer-config.yaml
+
+# un bond en modo active-backup agrupa puertos del servidor y los usa bajo la misma interfaz para generar redundancia (si se cae el primario, entra en juego el otro)
+network:
+  version: 2
+  bonds:
+    bond0:
+      interfaces:
+        - ens3
+        - ens4
+      addresses:
+        - 192.168.50.6/29
+      routes:
+        - to: default
+          via: 192.168.50.1
+      parameters:
+        mode: active-backup
+        primary: ens3
+# para detectar caida rápida del enlace
+        mii-monitor-interval: 100 
+# para que los switches Core limpien la MAC del switch anterior al que estaba conectado el server
+        gratuitous-arp: 5
+        arp-all-targets: any 
+
+  # para especificar las direcciones MAC de cada interfaz
+  ethernets:
+    ens3:
+      match:
+        macaddress: 02:11:22:33:44:11
+      accept-ra: true 
+    ens4:
+      match:
+        macaddress: 02:11:22:33:44:22
+      set-name: ens4
+    ens5:
+      set-name: ens5
+
+
+Asegurarme que el MAC address sea igual al mostrado por ip link show
+
+---
+Ctrl + X --> Y (yes) --> Enter
+---
+
+# aplicar los cambios
+sudo netplan apply
+
+# para ver que haya quedado bien configurado:
+ip addr show [puerto en estado UP]
+e.j. ip addr show ens3

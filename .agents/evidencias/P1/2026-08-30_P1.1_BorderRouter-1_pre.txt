@@ -1,0 +1,270 @@
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+
+BorderRouter-1>enable
+BorderRouter-1#$ section ^ip access-list|^access-list|^interface|ip nat      
+interface GigabitEthernet0/0
+ ip address 200.0.0.2 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/1
+ ip address 10.0.1.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/2
+ ip address 10.0.3.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/3
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/4
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/5
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/6
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/7
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+access-list 1 permit 10.0.0.0 0.255.255.255
+access-list 1 permit 192.168.0.0 0.0.255.255
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         200.0.0.2       YES NVRAM  up                    up      
+GigabitEthernet0/1         10.0.1.2        YES NVRAM  up                    up      
+GigabitEthernet0/2         10.0.3.2        YES NVRAM  up                    up      
+GigabitEthernet0/3         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/4         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/5         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/6         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/7         unassigned      YES NVRAM  administratively down down    
+NVI0                       200.0.0.2       YES unset  up                    up      
+BorderRouter-1#
+BorderRouter-1#show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Peak translations: 0
+Outside interfaces:
+  GigabitEthernet0/0
+Inside interfaces: 
+  GigabitEthernet0/1, GigabitEthernet0/2
+Hits: 0  Misses: 0
+CEF Translated packets: 0, CEF Punted packets: 0
+Expired translations: 0
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list 1 interface GigabitEthernet0/0 refcount 0
+
+Total doors: 0
+Appl doors: 0
+Normal doors: 0
+Queued Packets: 0
+BorderRouter-1#
+BorderRouter-1#```
+% Bad IP address or host name
+% Unknown command or computer name, or unable to find computer address
+BorderRouter-1#```
+% Bad IP address or host name
+% Unknown command or computer name, or unable to find computer address
+BorderRouter-1#show ip nat translations
+BorderRouter-1#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BorderRouter-1 con0 is now available
+
+
+
+
+
+Press RETURN to get started.
+
+
+
+
+
+
+
+
+
+
+
+
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************
+BorderRouter-1>
+BorderRouter-1>$ section ^ip access-list|^access-list|^interface|ip nat      
+show running-config | section ^ip access-list|^access-list|^interface|ip nat
+      ^
+% Invalid input detected at '^' marker.
+
+BorderRouter-1>enable
+BorderRouter-1#$ section ^ip access-list|^access-list|^interface|ip nat      
+interface GigabitEthernet0/0
+ ip address 200.0.0.2 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/1
+ ip address 10.0.1.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/2
+ ip address 10.0.3.2 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/3
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/4
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/5
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/6
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+interface GigabitEthernet0/7
+ no ip address
+ shutdown 
+ duplex auto
+ speed auto
+ media-type rj45
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+access-list 1 permit 10.0.0.0 0.255.255.255
+access-list 1 permit 192.168.0.0 0.0.255.255
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#
+BorderRouter-1#show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         200.0.0.2       YES NVRAM  up                    up      
+GigabitEthernet0/1         10.0.1.2        YES NVRAM  up                    up      
+GigabitEthernet0/2         10.0.3.2        YES NVRAM  up                    up      
+GigabitEthernet0/3         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/4         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/5         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/6         unassigned      YES NVRAM  administratively down down    
+GigabitEthernet0/7         unassigned      YES NVRAM  administratively down down    
+NVI0                       200.0.0.2       YES unset  up                    up      
+BorderRouter-1#show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Peak translations: 0
+Outside interfaces:
+  GigabitEthernet0/0
+Inside interfaces: 
+  GigabitEthernet0/1, GigabitEthernet0/2
+Hits: 0  Misses: 0
+CEF Translated packets: 0, CEF Punted packets: 0
+Expired translations: 0
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list 1 interface GigabitEthernet0/0 refcount 0
+
+Total doors: 0
+Appl doors: 0
+Normal doors: 0
+Queued Packets: 0
+BorderRouter-1#show ip nat translations
+BorderRouter-1#

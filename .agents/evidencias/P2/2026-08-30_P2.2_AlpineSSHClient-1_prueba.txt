@@ -1,0 +1,24 @@
+Fecha: 2026-08-30
+Tarea: P2.2
+Equipo: AlpineSSHClient-1 / BorderRouter-1
+Tipo: prueba
+Origen: salida de consola aportada por el operador.
+
+AlpineSSHClient-1:
+- Dirección/ruta: 192.168.90.10/27, gateway 192.168.90.1.
+- `traceroute 1.1.1.1`: 192.168.90.2 -> 10.0.1.2 -> 200.0.0.1 -> 200.0.0.9; sin respuesta ICMP/UDP posterior antes de interrumpir la prueba.
+
+BorderRouter-1:
+- NAT dinámico activo: 10 traducciones de UDP `192.168.90.10:52844` a inside global `200.0.0.2:52844` con destino `1.1.1.1`.
+- Contadores: Hits 40, Misses 0, CEF translated packets 26.
+- ACL 1 continúa aplicada a `GigabitEthernet0/0 overload` y cubre `192.168.0.0/16`.
+
+Resultado:
+- La traducción NAT desde el host interno hasta BorderRouter-1 está comprobada.
+- No se concluye conectividad HTTPS extremo a extremo: el traceroute no recibe respuesta después de 200.0.0.9. ISPRouter-1 no tiene una ruta específica a 1.1.1.1 y su traceroute se detiene después de 200.0.0.9.
+- Decisión del operador: no aplicar rollback P2.2; el comportamiento posterior a 200.0.0.9 no se atribuye a este cambio.
+
+Limitación:
+- Falta ejecutar una solicitud HTTPS desde AlpineSSHClient-1 para distinguir un filtrado de ICMP/UDP de una falla real de salida externa.
+
+Reanudación y resultado final (2026-08-30): tras restaurar NAT en DummyInternet, AlpineSSHClient-1 recibió 3/3 respuestas de 1.1.1.1 y `wget` HTTPS a `dl-cdn.alpinelinux.org` devolvió HTTP/1.1 200 OK. BorderRouter-1 registró Hits 100, Misses 0 y traducciones ICMP, DNS UDP y HTTPS TCP. La salida NAT extremo a extremo queda comprobada.

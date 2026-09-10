@@ -1,0 +1,11 @@
+Fecha: 2026-08-30
+Tarea: P2.1 — EtherChannel LACP ADvIOS-9a/ADvIOS-9b
+Origen de consola: no informado por el operador
+Comando reportado: show etherchannel summary
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+9      Po9(SD)         LACP      Gi0/1(s)    Gi0/2(s)
+
+Resultado observado: no conforme. Po9 está down y ambos miembros están suspendidos; LACP no ha formado el Port-channel.
+Limitación: la salida no identifica el switch de origen ni incluye el estado/configuración del extremo opuesto.

@@ -1,0 +1,18 @@
+Fecha de registro: 2026-08-30
+Tarea: P2.1 — Uplink CorevIOS-2 a ADvIOS-9b
+Fuente: consola CorevIOS-2 aportada por el operador
+
+CDP confirmado:
+- CorevIOS-2 Gi2/1 -> ADvIOS-9b Gi0/0.
+- VLAN nativa anunciada: 99.
+
+Estado actual de trunk en CorevIOS-2:
+- Gi2/1 está trunking 802.1Q con nativa 99.
+- VLAN permitidas en Gi2/1: 1-4094.
+- VLAN activas/forwarding en Gi2/1 incluyen 1,10,20,30,40,50,60,90,99-100.
+
+Corrección posterior confirmada:
+- Gi2/1 quedó limitado a VLAN permitidas, activas y forwarding `50,99`.
+- `show spanning-tree vlan 50` muestra Gi2/1 como Desg FWD y Po1 como Root FWD.
+
+Resultado: conforme.

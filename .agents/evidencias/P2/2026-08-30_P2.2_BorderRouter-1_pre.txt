@@ -1,0 +1,17 @@
+Fecha: 2026-08-30
+Tarea: P2.2
+Equipo: BorderRouter-1
+Tipo: pre
+Origen: salida de consola aportada por el operador.
+
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+access-list 1 permit 10.0.0.0 0.255.255.255
+access-list 1 permit 192.168.0.0 0.0.255.255
+
+NAT outside: GigabitEthernet0/0
+NAT inside: GigabitEthernet0/1, GigabitEthernet0/2
+Dynamic mapping: ACL 1 -> GigabitEthernet0/0
+Active translations: 0
+
+Resultado: ACL 1 incluye VLAN 50 dentro de 192.168.0.0/16; se conserva sin cambios por decisión del operador.
+

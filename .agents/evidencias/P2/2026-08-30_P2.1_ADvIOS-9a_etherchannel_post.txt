@@ -1,0 +1,24 @@
+Fecha: 2026-08-30
+Tarea: P2.1 — EtherChannel LACP ADvIOS-9a/ADvIOS-9b
+Fuente: consola ADvIOS-9a aportada por el operador
+
+EtherChannel:
+9      Po9(SU)         LACP      Gi0/1(P)    Gi0/2(P)
+
+Gi0/1 y Gi0/2:
+- Port state: Up Mstr Assoc In-Bndl.
+- Partner LACP identificado y estado bndl.
+
+Trunks:
+- Gi0/0 y Po9: 802.1Q trunking; VLAN nativa 99.
+- VLAN permitidas, activas y forwarding: 50,99.
+
+STP VLAN 50:
+- Gi0/0: Root FWD.
+- Po9: Desg FWD.
+
+CDP:
+- Gi0/2 identifica ADvIOS-9b Gi0/2, VLAN nativa 99.
+- Gi0/0 identifica CorevIOS-1 Gi2/1, VLAN nativa 99.
+
+Resultado: conforme para ADvIOS-9a.

@@ -1,0 +1,75 @@
+PARA PASAR UN ARCHIVO ISO DESDE MI PC FISICO HACIA PROXMOX SOBRE QEMU EN GNS3
+----
+
+CREAR UN BRIDGE TEMPORAL EN MI PC FISICO:
+sudo ip link add br-pft-transfer type bridge
+sudo ip addr add 172.31.255.1/24 dev br-pft-transfer
+sudo ip link set br-pft-transfer up
+ip -4 addr show br-pft-transfer
+
+DEJAR HABILITADO UN SERVER HTTP TEMPORAL
+(EN MI PC FISICO)
+cd /home/agmiar/Desktop/PFT-S1/ISOs
+python3 -m http.server 9500 --bind 172.31.255.1
+
+-----
+
+
+En GNS3:
+   - Agregar un nodo Cloud.
+   - Darle doble click a la nubecita y marcar la opción "Show special Ethernet interfaces", luego "Add", seleccionar el BRIDGE --> "Apply".
+   - Agregar un Ethernet switch sencillo.
+   - Conectar Cloud al Ethernet switch.
+   - Conectar el switch a la segunda NIC de PVE-1.
+   - Conectar el switch a la segunda NIC de PVE-2.
+No tocar los enlaces actuales de ens3, vmbr0, ADvIOS-9a ni ADvIOS-9b.
+
+En PVE-1, identificar la segunda NIC:
+	ip -br link
+	Será normalmente ens4 o similar. 
+
+Suponiendo ens4:
+	ip link set ens4 up
+	ip addr add 172.31.255.2/24 dev ens4
+	ip neigh flush dev ens4
+	ping -c 3 172.31.255.1
+
+En PVE-2, hacer lo mismo con otra IP:
+	ip -br link
+	ip link set ens4 up
+	ip addr add 172.31.255.3/24 dev ens4
+	ip neigh flush dev ens4
+	ping -c 3 172.31.255.1
+	
+-----
+
+PARA OBTENER EL ARCHIVO:
+(DESDE PVE-1 Y PVE-2)
+wget -O <RUTA_A_GUARDAR>/<NOMBRE_ARCHIVO> http://172.31.255.1:<PUERTO>/<NOMBRE_ARCHIVO>
+
+e.j.
+RUTA_A_GUARDAR = /var/lib/vz/template/iso
+NOMBRE_ARCHIVO = alpine-standard-3.24.1-x86_64.iso
+PUERTO = 9500
+
+PARA VERIFICAR QUE HAYA QUEDADO GUARDADO:
+ls -lh /var/lib/vz/template/iso/
+
+-------------
+
+PARA LIMPIAR TODO, UNA VEZ TERMINADO,
+
+# En PVE-1
+ip addr del 172.31.255.2/24 dev ens4
+ip link set ens4 down
+
+# En PVE-2
+ip addr del 172.31.255.3/24 dev ens4
+ip link set ens4 down
+
+# En Ubuntu físico
+sudo ip addr del 172.31.255.1/24 dev br-pft-transfer
+sudo ip link set br-pft-transfer down
+sudo ip link delete br-pft-transfer type bridge
+
+----

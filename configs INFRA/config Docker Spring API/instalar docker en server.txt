@@ -1,0 +1,154 @@
+instanciar la nube NAT
+encender la imagen Ubuntu Server QEMU
+conectar la nube NAT al server
+
+sudo nano /etc/netplan/00-installer-config.yaml
+
+network:
+  version: 2
+  bonds:
+    bond0: # esto es dentro de la red LAN de GNS3
+      interfaces:
+        - ens3
+        - ens4
+        - ens5
+      addresses:
+        - 192.168.50.11/29
+      routes:
+        - to: default
+          via: 192.168.50.1
+      parameters:
+        mode: active-backup
+        primary: ens3
+# para detectar caida rápida del enlace
+        mii-monitor-interval: 100 
+# para que los switches Core limpien la MAC del switch anterior al que estaba conectado el server
+        gratuitous-arp: 5
+        arp-all-targets: any 
+
+  # para especificar las direcciones MAC de cada interfaz
+  ethernets:
+    ens3:
+      match:
+        macaddress: 02:11:22:33:44:11 
+    ens4:
+      match:
+        macaddress: 02:11:22:33:44:12
+      set-name: ens4
+      accept-ra: true
+    ens5:
+      match:
+        macaddress: 02:11:22:33:44:13
+      dhcp4: true # le permite agarrar IP desde la nube NAT
+      set-name: ens5
+      accept-ra: true
+    ens6:
+      accept-ra: true
+  version: 2
+
+Ctrl + X --> Y --> Enter
+
+sudo netplan apply
+
+
+INSTALAR DOCKER EN EL  UBUNTU SERVER
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-v2
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+
+# para ver IP asignado a la interfaz prinicipal
+ip a
+
+sudo apt install -y openssh-server
+
+# crear una carpeta para guardar los proyectos
+mkdir proyectos
+
+------
+
+en la terminal de mi Linux (mi PC real)
+scp -r /path/to/your/java-project-folder ubuntu_user@192.168.122.50:/home/ubuntu_user/
+
+# e.j. si la dirección IP del ubuntu server asignada por mi ISP es 192.168.122.29 ...
+scp -r /home/agmiar/Desktop/pdi-entrega-3 student@192.168.122.29:/home/student/proyectos/pdi-entrega-3
+
+
+# correr docker desde el servidor
+cd /home/ubuntu_user/java-project-folder
+
+# para generar el archivo .jar desde el servidor
+sudo apt install maven
+
+sudo apt install openjdk-21-jdk
+sudo update-alternatives --config java
+    Escribir el número que corresponde a algo como 
+    /usr/lib/jvm/java-21-openjdk-amd64/...) y apretar Enter
+nano ~/.bashrc
+    Agregar al final del archivo:
+    export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+    Ctrl + 0 --> Enter --> Ctrl X
+source ~/.bashrc
+
+mvn clean package -DskipTests
+
+restaurar el archivo de configuración de netplan del Ubuntu Server a como estaba antes
+
+
+network:
+  version: 2
+  bonds:
+    bond0:
+      interfaces:
+        - ens3
+        - ens4
+      addresses:
+        - 192.168.50.6/29
+      routes:
+        - to: default
+          via: 192.168.50.1
+      parameters:
+        mode: active-backup
+        primary: ens3
+# para detectar caida rápida del enlace
+        mii-monitor-interval: 100 
+# para que los switches Core limpien la MAC del switch anterior al que estaba conectado el server
+        gratuitous-arp: 5
+        arp-all-targets: any 
+
+  # para especificar las direcciones MAC de cada interfaz
+  ethernets:
+    ens3:
+      match:
+        macaddress: 02:11:22:33:44:11
+      accept-ra: true 
+    ens4:
+      match:
+        macaddress: 02:11:22:33:44:22
+      set-name: ens4
+    ens5:
+      set-name: ens5
+
+# generar los contenedores desde el servidor
+sudo docker compose up -d
+
+# para listar los contenedores activos
+sudo docker ps
+
+# para apagar los contenedores
+sudo docker compose down
+
+
+------
+
+DESDE ALPINE LINUX
+wget http://192.168.50.6:8080/api/v1/estudiantes
+cat 'estudiantes'
+
+
+------
+
+DESDE UBUNTU SERVER
+Ctrl + C para matar el proceso Docker si no lo inicié en modo detached
+
+

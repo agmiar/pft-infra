@@ -1,0 +1,9 @@
+Fecha de registro: 2026-08-30
+Tarea: P2.1 — Uplink ADvIOS-9b a CorevIOS-2
+Fuente: consola ADvIOS-9b aportada por el operador
+
+CDP confirmado:
+- ADvIOS-9b Gi0/0 -> CorevIOS-2 Gi2/1.
+- VLAN nativa anunciada: 99.
+
+Resultado: extremo físico y VLAN nativa confirmados. La restricción de VLAN en el extremo CorevIOS-2 queda pendiente; ver evidencia CorevIOS-2.
