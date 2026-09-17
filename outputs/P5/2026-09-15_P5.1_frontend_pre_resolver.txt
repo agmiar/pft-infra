@@ -1,0 +1,18 @@
+P5.1 — PREESTADO INMEDIATO ANTES DE CONFIGURAR EL RESOLUTOR DEL FRONTEND
+Fecha: 2026-09-15 12:20:22 UYT (15:20:22 UTC)
+Proyecto: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+Frontend: WebUbuntuServer-1 / ubuntu-server; ens3 0c:f8:f8:60:00:00.
+
+Configuración previa del invitado (sin cambios desde `2026-09-15_P5.1_frontend_pre_dns.txt`)
+- Dirección 192.168.100.6/29 y ruta estática por 192.168.100.1/ens3.
+- Netplan para ens3: coincidencia por MAC, dirección y ruta estática; no tenía clave `nameservers`.
+- `resolvectl status`: resolv.conf en modo stub; ens3 sin DNS Servers, Current Scopes none y Default Route no.
+
+Validación DNS inmediatamente previa al cambio del resolutor
+- DC2-PFT/192.168.50.13 creó sólo `web A 192.168.100.6` en `pft.test`, TTL 01:00:00; salida visible de `Add-DnsServerResourceRecordA -PassThru` en la consola de DC2.
+- `Get-DnsServerResourceRecord -ComputerName dc1-pft.pft.test -ZoneName pft.test -Name web` ejecutado desde DC2 muestra el host `web`, tipo A, en DC1.
+- `nslookup web.pft.test 192.168.50.12` y `.13`, ejecutados desde el frontend a las 12:20 UYT, responden ambos `192.168.100.6`.
+- `repadmin /replsummary` en DC2 a las 12:15:53: `0/5` fallos para DC1 y DC2; error 0. Mayor delta observado: 27m49s (origen DC1) y 19m09s (origen DC2). La convergencia del registro queda comprobada también por la consulta DNS directa exitosa a ambos servidores.
+- Inmediatamente después de crear el registro, DC2 respondió `.6` y DC1 dio NXDOMAIN; tras la convergencia, el registro apareció en la consulta remota de DC1 y ambos DNS respondieron `.6`. Se conserva este evento transitorio en el resultado; no se ocultó ni se marcó como aceptación.
+
+No se ha configurado todavía el resolutor del frontend. Previo a esta próxima acción, sólo se alteró el A mínimo autorizado en la zona AD integrada. Rollback previsto para el DNS del frontend: retirar únicamente `nameservers.addresses` de `ens3` en Netplan y aplicar, preservando IP/ruta; el A se revierte por separado con `Remove-DnsServerResourceRecord` si corresponde.

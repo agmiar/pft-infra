@@ -1,0 +1,51 @@
+# P5.2 — Postestado de los cambios DNS autorizados
+
+Fecha/hora de cierre local: 2026-09-16 14:03 -03:00. Los controladores reportan su zona horaria `-07:00`; la diferencia queda observada y se reserva a P5.3.
+Tarea: P5.2
+Fuente: sesiones WinRM autenticadas a DC1-PFT y DC2-PFT mediante túneles SSH temporales. Sin credenciales en este archivo.
+
+## Cambios realizados en DC1-PFT
+
+Preestado inmediato: [2026-09-16_P5.2_AD-DNS_pre_cambios.txt](2026-09-16_P5.2_AD-DNS_pre_cambios.txt) confirmó que los A `postgres` y `zabbix` estaban ausentes en ambos DC, y que no había registros con esos nombres que pudieran entrar en conflicto.
+
+Comandos ejecutados:
+
+```powershell
+Add-DnsServerResourceRecordA -ZoneName 'pft.test' -Name 'postgres' -IPv4Address '192.168.50.16'
+Add-DnsServerResourceRecordA -ZoneName 'pft.test' -Name 'zabbix' -IPv4Address '192.168.50.17'
+```
+
+Resultado inmediato: `postgres.pft.test` → `192.168.50.16`; `zabbix.pft.test` → `192.168.50.17`.
+
+No se cambiaron membresías AD: las cinco relaciones GG→DL documentadas ya existían en DC1 y DC2 antes de esta intervención.
+
+## Verificación en ambos DNS
+
+Desde DC1-PFT y DC2-PFT, `Get-DnsServerResourceRecord` informó ambos A con los destinos anteriores. Las consultas `Resolve-DnsName -Type A -Server <DC>` consultaron por separado a `192.168.50.12` y `192.168.50.13` y devolvieron:
+
+| Nombre | Respuesta desde ambos DNS |
+|---|---:|
+| `postgres.pft.test` | `192.168.50.16` |
+| `zabbix.pft.test` | `192.168.50.17` |
+| `pve-1.pft.test` | `192.168.50.10` |
+| `pve-2.pft.test` | `192.168.50.11` |
+| `pg-1.pft.test` | `192.168.50.14` |
+| `pg-2.pft.test` | `192.168.50.15` |
+| `web.pft.test` | `192.168.100.6` |
+
+`repadmin /replsummary` desde DC1 informó DC2 como origen `0/5` fallos y DC1 como destino `0/5`; desde DC2 informó DC1 como origen `0/5` y DC2 como destino `0/5`. En ambas lecturas queda el error operacional 110 al consultar la información del socio remoto desde WinRM; las consultas DNS directas a ambos servidores sí pasaron. El estado de `PFT-CLUSTER` y ambos DC `running` se conserva en [recuperación PVE/DC2](2026-09-16_P5.2_AD-DNS_recovery_prueba.txt).
+
+## Rollback
+
+No se aplicó rollback. Si se decide revertir exclusivamente estos dos A, comprobar primero que cada registro aún apunta al mismo IP agregado aquí y luego retirarlo por nombre y tipo:
+
+```powershell
+Remove-DnsServerResourceRecord -ZoneName 'pft.test' -Name 'postgres' -RRType A -RecordData '192.168.50.16' -Force
+Remove-DnsServerResourceRecord -ZoneName 'pft.test' -Name 'zabbix' -RRType A -RecordData '192.168.50.17' -Force
+```
+
+No borrar los PTR `.16`/`.17`, zonas, grupos ni GPO como parte de este rollback; todos existían en el preestado. No se modificaron GPO ni membresías.
+
+## Resultado y limitaciones
+
+Los objetivos DNS explícitos de P5.2 quedaron aplicados y replicados en ambos DNS. P5.2 no se cierra aún: los grupos globales de AGDLP continúan sin usuarios directos; las cinco GPO PFT son esqueletos (SYSVOL sólo contiene `GPT.INI`, y `Get-GPOReport` falla con `Error in the application`); faltan valores y población/scope exactos de GPO y confirmar si se incluye reversa para VLAN 100. La limitación de error operacional 110 y la diferencia de zona horaria observada quedan documentadas, no ocultas.

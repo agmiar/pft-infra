@@ -1,7 +1,18 @@
 PARA PASAR UN ARCHIVO ISO DESDE MI PC FISICO HACIA PROXMOX SOBRE QEMU EN GNS3
 ----
 
+ALCANCE Y DIRECCIONAMIENTO DEL ENLACE TEMPORAL
+
+`172.31.255.0/24` es un segmento privado temporal para conectar la LaptopUbuntu con las segundas interfaces de PVE a través de GNS3. No es VLAN 50, no es la red Wi-Fi y no es una salida a Internet/NAT. Las direcciones se asignan manualmente con `ip addr add`; no provienen de DHCP y no se configura gateway en este segmento:
+
+- `172.31.255.1/24`: puente `br-pft-transfer` en Ubuntu.
+- `172.31.255.2/24`: segunda interfaz de PVE-1 (normalmente `ens4` dentro de PVE).
+- `172.31.255.3/24`: segunda interfaz de PVE-2 (normalmente `ens4` dentro de PVE).
+
+El nombre de la interfaz puede variar; confirmar con `ip -br link`. Los comandos `ip link` e `ip addr` de este procedimiento sólo cambian el estado en ejecución. No escriben en la configuración persistente de Ubuntu ni en `/etc/network/interfaces` de PVE, así que hay que volver a aplicarlos después de reiniciar el equipo correspondiente.
+
 CREAR UN BRIDGE TEMPORAL EN MI PC FISICO:
+Antes de crearlo, comprobar si ya existe con `ip -4 addr show br-pft-transfer`. Si está `UP` con `172.31.255.1/24`, reutilizarlo y no repetir `ip link add`.
 sudo ip link add br-pft-transfer type bridge
 sudo ip addr add 172.31.255.1/24 dev br-pft-transfer
 sudo ip link set br-pft-transfer up
@@ -11,6 +22,8 @@ DEJAR HABILITADO UN SERVER HTTP TEMPORAL
 (EN MI PC FISICO)
 cd /home/agmiar/Desktop/PFT-S1/ISOs
 python3 -m http.server 9500 --bind 172.31.255.1
+
+El servidor HTTP temporal sólo hace falta para transferir el ISO desde Ubuntu a PVE. No se necesita para abrir la GUI web de Proxmox.
 
 -----
 
@@ -24,23 +37,40 @@ En GNS3:
    - Conectar el switch a la segunda NIC de PVE-2.
 No tocar los enlaces actuales de ens3, vmbr0, ADvIOS-9a ni ADvIOS-9b.
 
+En el proyecto activo observado el 2026-09-17, estos elementos ya estaban conectados y se reutilizaron, sin agregar otra nube ni cambiar cableado: Cloud1 puerto 1 mapeado a `br-pft-transfer` → `SwitchvIOSL3-1 Gi0/0`; `Gi0/1` → segunda NIC de PVE-1 (`eth1` en GNS3, `ens4` dentro de PVE); `Gi0/2` → segunda NIC de PVE-2 (`eth1` en GNS3, `ens4` dentro de PVE). Los tres puertos del switch estaban conectados en VLAN 1.
+
+Cloud1 aquí funciona como conector entre el puente de Ubuntu y el switch del proyecto. No es el nodo NAT de GNS3 ni representa Internet.
+
 En PVE-1, identificar la segunda NIC:
 	ip -br link
 	Será normalmente ens4 o similar. 
 
 Suponiendo ens4:
-	ip link set ens4 up
-	ip addr add 172.31.255.2/24 dev ens4
-	ip neigh flush dev ens4
-	ping -c 3 172.31.255.1
+Antes de asignar, revisar `ip -4 addr show dev ens4`; si la dirección correspondiente ya aparece, no volver a ejecutar `ip addr add`.
+ip link set ens4 up
+ip addr add 172.31.255.2/24 dev ens4
+ip neigh flush dev ens4
+ping -c 3 172.31.255.1
 
 En PVE-2, hacer lo mismo con otra IP:
 	ip -br link
+	Antes de asignar, revisar `ip -4 addr show dev ens4`; si ya aparece `172.31.255.3/24`, no volver a ejecutar `ip addr add`.
 	ip link set ens4 up
 	ip addr add 172.31.255.3/24 dev ens4
 	ip neigh flush dev ens4
 	ping -c 3 172.31.255.1
-	
+
+---
+
+PARA ABRIR LA GUI WEB DE PROXMOX DESDE UBUNTU
+
+El puente, Cloud1, el switch y la IP temporal en la segunda NIC deben estar activos. Desde un navegador en Ubuntu:
+
+- PVE-1: `https://172.31.255.2:8006`.
+- PVE-2: `https://172.31.255.3:8006`.
+
+Cerrar la pestaña del navegador sólo cierra la sesión web: no retira el puente ni la IP. Reiniciar PVE elimina la dirección temporal configurada en `ens4`; reiniciar Ubuntu elimina el puente temporal. Tras un reinicio, comprobar las direcciones y repetir sólo los pasos que falten. La reapertura de la GUI tampoco repara por sí misma el quorum ni la comunicación Corosync/QDevice del clúster.
+
 -----
 
 PARA OBTENER EL ARCHIVO:

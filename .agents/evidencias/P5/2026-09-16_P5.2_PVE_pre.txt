@@ -1,0 +1,18 @@
+P5.2 — Preestado de PVE antes de restituir DC1
+
+Fecha/hora local de la consola PVE-1: 2026-09-16 00:10:06 UYT (la consola mostró la misma fecha/hora en la salida de `pvecm status`).
+Tarea: P5.2
+Fuente: consola VNC local de PVE-1, alcanzada mediante un túnel SSH temporal a LaptopUbuntu. No se guardaron credenciales, tickets, certificados ni capturas de esta lectura.
+
+Acciones y resultados observados
+
+- `id` → `uid=0(root) gid=0(root) groups=0(root)`.
+- `hostname` → `pve-1`.
+- `qm status 101` → `status: stopped`.
+- `pvecm status` → clúster `PFT-CLUSTER`, versión de configuración 3, transporte `knet`, autenticación segura `on`, `Nodes: 2`, `Quorate: Yes`.
+- Votación: `Expected votes: 3`, `Highest expected: 3`, `Total votes: 3`, `Quorum: 2`, `Flags: Quorate Qdevice`.
+- Membresía: PVE-1 `192.168.50.10 (local)`, PVE-2 `192.168.50.11` y `Qdevice`, un voto cada uno.
+
+Límite y acción requerida
+
+DC1 estaba detenida, aunque el preestado histórico de P5.2 la registraba `running`. No se consultó AD DS/DNS ni se modificó su configuración. Se ejecutó `qm start 101` únicamente para restituir el estado de energía histórico antes de continuar la captura interna de Windows; el resultado está en el postestado del mismo día.

@@ -1,0 +1,76 @@
+P4.5 — PREESTADO REAL
+Fecha: 2026-09-15 (UYT)
+Proyecto GNS3: sprint1-preview1
+ID: 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+Origen: instancia GNS3 activa en Ubuntu; consulta por API local autenticada sin mostrar ni registrar credenciales.
+
+GNS3 API
+GET /v2/version -> 2.2.61
+GET /v2/projects -> fila para el ID indicado: status=opened, name=sprint1-preview1
+GET /v2/projects/{project_id}/nodes (extracto de los nodos objetivo):
+  Alpine-SSHClient-1: started
+  PVE-QDEVICE: started
+  PVE-1: started
+  PVE-2: started
+
+Captura desde PVE-1 (pve-1.pft.test), 2026-09-15T14:10:02-03:00
+Comandos: hostname -f; date -Is; pvecm status; systemctl is-active pve-cluster corosync corosync-qdevice; pvesr status; ha-manager status; ha-manager config; qm list; pct list.
+
+hostname -f:
+pve-1.pft.test
+
+pvecm status (campos relevantes del resultado real):
+Name: PFT-CLUSTER
+Nodes: 2
+Node ID: 0x00000001
+Quorate: Yes
+Expected votes: 3
+Highest expected: 3
+Total votes: 3
+Quorum: 2
+Flags: Quorate Qdevice
+Membresía: 192.168.50.10 local (1 voto), 192.168.50.11 (1 voto), Qdevice (1 voto).
+
+systemctl is-active pve-cluster corosync corosync-qdevice:
+active
+active
+active
+
+pvesr status: tabla sin filas de trabajos (código de salida 0).
+ha-manager status: quorum OK.
+ha-manager config: sin recursos configurados (salida vacía, código de salida 0).
+qm list: VMID 101, DC1, running, 2048 MB.
+pct list: salida vacía, código de salida 0.
+
+Captura desde PVE-2 (pve-2.pft.test), 2026-09-15T14:10:54-03:00
+Comandos: hostname -f; date -Is; pvecm status; systemctl is-active pve-cluster corosync corosync-qdevice; pvesr status; ha-manager status; ha-manager config; qm list; pct list.
+
+hostname -f:
+pve-2.pft.test
+
+pvecm status (campos relevantes del resultado real):
+Name: PFT-CLUSTER
+Nodes: 2
+Node ID: 0x00000002
+Quorate: Yes
+Expected votes: 3
+Highest expected: 3
+Total votes: 3
+Quorum: 2
+Flags: Quorate Qdevice
+Membresía: 192.168.50.10 (1 voto), 192.168.50.11 local (1 voto), Qdevice (1 voto).
+
+systemctl is-active pve-cluster corosync corosync-qdevice:
+active
+active
+active
+
+pvesr status: tabla sin filas de trabajos (código de salida 0).
+ha-manager status: quorum OK.
+ha-manager config: sin recursos configurados (salida vacía, código de salida 0).
+qm list: VMID 102, DC2, running, 2048 MB.
+pct list: salida vacía, código de salida 0.
+
+Resultado del preestado: condiciones aptas para una caída controlada solo de PVE-1; PVE-2 y QDevice están sanos, y no hay HA ni replicación de VMs.
+Verificación inmediata adicional desde PVE-1, 2026-09-15T14:14:33-03:00: `pvecm status` seguía en 3/3, `Quorate: Yes`; VMID 101 DC1 estaba `running`; `qm config 101` solo presentó `name: DC1` entre los campos `name`, `onboot` y `startup` consultados, sin `onboot`/`startup`. Por ello, después del reinicio se verificará DC1 y se iniciará manualmente solo si no volvió a `running`, para restaurar el preestado.
+Limitación: este preestado acredita la situación observada a las horas indicadas; no acredita aún el estado durante la caída ni la recuperación.

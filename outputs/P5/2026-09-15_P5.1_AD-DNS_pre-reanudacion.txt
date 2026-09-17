@@ -1,0 +1,37 @@
+P5.1 — PREESTADO DE REANUDACIÓN, ANTES DE INICIAR DC1
+Fecha de captura: 2026-09-15 09:14–09:17 UYT (America/Montevideo, UTC-03)
+Proyecto GNS3: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+Fuente: lecturas de Ubuntu, API local autenticada en memoria y ambos PVE. No se imprimieron ni guardaron credenciales de GNS3/SSH.
+
+Ubuntu anfitrión, lectura 09:14:17 UYT
+- RAM: 30 GiB total, 12 GiB usados, 1.6 GiB free, 17 GiB buff/cache y 17 GiB available.
+- Swap: 8 GiB total; 636 KiB usados.
+- Raíz: 83,954,655,232 bytes total; 67,210,653,696 usados; 12,432,310,272 disponibles (85%).
+- wlp0s20f3 UP en 192.168.1.190/24; virbr0 UP en 192.168.122.1/24; docker0 DOWN en 172.17.0.1/16. Servicio SSH del anfitrión activo.
+- No se liberó memoria vaciando cachés ni deteniendo procesos/VMs: las métricas muestran 17 GiB disponibles.
+
+GNS3
+- La API local autenticada desde la configuración protegida del usuario confirmó el proyecto abierto. El usuario/contraseña no se reprodujeron ni se escribieron en un archivo.
+- PVE-1, PVE-2, PVE-QDEVICE, Alpine-SSHClient-1 y NAT1 están started.
+- WebUbuntuServer-1, BorderRouter-1, ISPRouter-1, DummyInternet y Cloud1 están stopped.
+- No hay nodos temporales P5.1.
+- Las capturas remotas /tmp/p5.1-screen-network-menu.png y /tmp/p5.1-screen-network-adapter.png no existen en PVE-1.
+
+PVE-1, lectura 09:16:24 UYT
+- PFT-CLUSTER: Expected votes 3; Total votes 3; Quorum 2; Quorate Yes; flags Quorate Qdevice. corosync-qdevice active.
+- VMID 101, DC1: stopped antes de reanudar. Configuración: 2 vCPU, 2048 MiB, disco thin 60 GiB, NIC e1000/vmbr0, ISO Windows en ide2 y medio de drivers en ide0; disco actualmente SATA.
+- pvesr sin trabajos. ha-manager: quorum OK, sin recursos HA.
+- local-lvm: 41,865,216 KiB total, 6,053,710 KiB usados, 35,811,505 KiB disponibles.
+
+PVE-2, lectura 09:17:22 UYT
+- PFT-CLUSTER: Expected votes 3; Total votes 3; Quorum 2; Quorate Yes; flags Quorate Qdevice. corosync-qdevice active.
+- VMID 102, DC2: stopped; Windows todavía no instalado. Configuración: 2 vCPU, 2048 MiB, disco thin 60 GiB, NIC e1000/vmbr0, ISO Windows en ide2 y medio de drivers en ide0; disco SATA.
+- pvesr sin trabajos. ha-manager: quorum OK, sin recursos HA.
+- local-lvm: 41,865,216 KiB total, 0 usados, 41,865,216 KiB disponibles.
+
+Estado Windows conocido de la evidencia previa
+- Windows Server 2022 Standard Evaluation Server Core está instalado en DC1. La contraseña local inicial de Administrator fue aceptada y SConfig verificó el nombre DC1-PFT; DSRM está pendiente de la promoción.
+- El último estado de Windows registrado no tenía IP/DNS estáticos ni roles AD DS/DNS. No hay bosque, réplica o cambios al DNS del frontend.
+- La aceptación P5.1 sigue pendiente. Ninguna prueba dcdiag, repadmin, SRV o web.pft.test se declara ejecutada.
+
+Este es el preestado para iniciar solamente la VM DC1 y reanudar P5.1. P5.2 no se inicia.

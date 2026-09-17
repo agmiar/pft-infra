@@ -1,0 +1,32 @@
+# P5.1 — DC2 preestado (antes de iniciar Windows Setup)
+
+Fecha de captura: 2026-09-15 13:16–13:19 UTC (10:16–10:19 UYT).
+
+## Anfitrión Ubuntu/GNS3
+
+- `free -h`: 30 GiB RAM total, 13 GiB usada, 1.3 GiB libre, 16 GiB disponible; swap 8 GiB con 636 KiB usados.
+- `/`: 83,954,655,232 bytes totales; 67,303,182,336 usados; 12,339,781,632 disponibles (85%).
+- No se vaciaron cachés ni se detuvieron servicios para liberar memoria.
+
+## PVE-2 / DC2
+
+- Clúster `PFT-CLUSTER`: `Expected votes 3`, `Total votes 3`, `Quorum 2`, `Quorate Yes`, `Qdevice` presente.
+- VMID 102 `DC2`: detenida antes del inicio; 2 vCPU, 2048 MiB RAM, disco thin de 60 GiB en `local-lvm`, NIC e1000 en `vmbr0`, QEMU Guest Agent habilitado en la configuración PVE.
+- Medios ya adjuntos: `WIN_SERVER_EVAL_x64FRE_en-us.iso` (~4.93 GiB) y `p5.1-drivers.iso` (~16.3 MiB). No se descargó ni copió ningún ISO.
+- `local-lvm`: 41,865,216 KiB disponibles; storage `local`: 24,642,032 KiB disponibles.
+- `pvesr status`: sin trabajos; `ha-manager status`: `quorum OK`, sin recursos.
+
+## DC1 listo como primer DC
+
+- VMID 101 `DC1-PFT` ejecutándose en PVE-1 con `192.168.50.12/27`, gateway `192.168.50.1`, DNS `.12/.13`; el ping al gateway recibió 4/4 respuestas.
+- `Install-WindowsFeature AD-Domain-Services -IncludeManagementTools`: `Success`.
+- La promoción del bosque `pft.test` terminó `Status: Success`, con reinicio requerido; el reinicio ordenado concluyó y el inicio de sesión `PFT\Administrator` fue aceptado.
+- Servicios `DNS`, `Netlogon` y `NTDS`: `Running`.
+- `dcdiag /test:dns /v`: `pft.test passed test DNS` para `DC1-PFT`.
+- `Resolve-DnsName _ldap._tcp.dc._msdcs.pft.test -Type SRV`: respuesta a `dc1-pft.pft.test`, prioridad 0, peso 100, puerto 389; A asociado `192.168.50.12`.
+
+## Estado y alcance
+
+Este archivo es el preestado inmediato de DC2. Al capturarlo, VMID 102 estaba detenida y Windows Setup no se había iniciado en DC2. No se habían unido/promovido DC2, validado réplica AD/DNS ni cambiado el DNS del frontend. P5.2 no se inició. No contiene credenciales.
+
+Fuente: observación directa de consola de Ubuntu/PVE y consola QMP del Windows invitado. Zona horaria de host Ubuntu: UTC.

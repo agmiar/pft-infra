@@ -1,0 +1,20 @@
+P5.1 — PREESTADO REAL DEL FRONTEND ANTES DE CONFIGURAR DNS
+Fecha de captura: 2026-09-15 12:04–12:07 UYT (el invitado informa UTC; America/Montevideo = UTC-03)
+Proyecto: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+VM: WebUbuntuServer-1, hostname ubuntu-server, MAC ens3 0c:f8:f8:60:00:00; la MAC coincide con GNS3 y la evidencia P1.3.
+
+Identidad/red actual, observada por SSH en el propio invitado
+- `ip -brief address`: ens3 UP 192.168.100.6/29; ens4/ens5/ens6 DOWN.
+- `ip route`: default via 192.168.100.1 dev ens3 proto static; 192.168.100.0/29 directamente conectada.
+- `networkctl status ens3`: State routable/configured, Online state online, Hardware Address 0c:f8:f8:60:00:00, Address 192.168.100.6, Gateway 192.168.100.1.
+- `resolvectl status`: modo stub; ens3 sin DNS Servers, Current Scopes none y Default Route no. No hay DNS efectivo antes del cambio.
+- `sudo netplan get ethernets.ens3` (salida técnica saneada): match.macaddress 0c:f8:f8:60:00:00, addresses 192.168.100.6/29, accept-ra true, set-name ens3, route default vía 192.168.100.1; no existe bloque nameservers.
+
+Conectividad DNS desde el frontend, antes del cambio
+- `nslookup pft.test 192.168.50.12`: respuesta A 192.168.50.12 y 192.168.50.13.
+- `nslookup pft.test 192.168.50.13`: respuesta A 192.168.50.13 y 192.168.50.12.
+- `nc -zvw2` a TCP/53 en 192.168.50.12 y 192.168.50.13: conexión exitosa en ambos.
+- `nslookup web.pft.test 192.168.50.12` y `.13`: NXDOMAIN en ambos; no existe aún el registro requerido.
+- `ping -c 4 192.168.100.1`: cuatro respuestas “Packet filtered” desde 192.168.100.3. ICMP está filtrado; las consultas DNS UDP y la prueba TCP/53 anteriores sí respondieron.
+
+No se cambió la configuración del invitado ni se creó registro DNS antes de esta captura. La IP real del frontend queda confirmada como 192.168.100.6/29. Como `web.pft.test` falta en ambos DNS y P1.3 requiere su resolución, se autoriza dentro del alcance P5.1 sólo el A mínimo web → 192.168.100.6 en la zona integrada `pft.test`; no se creará PTR ni otra entrada.

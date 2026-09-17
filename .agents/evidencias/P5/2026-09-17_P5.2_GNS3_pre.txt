@@ -1,0 +1,22 @@
+# Preestado GNS3 antes de arrancar nodos P5.2
+
+- Fecha/hora: 2026-09-17 14:51 UYT (UTC-03:00).
+- Proyecto: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+- Objetivo: preparar GNS3 para retomar la validación de acceso y los controles P5.2.
+
+## Comandos/acciones y observaciones
+
+- Se inició `gns3server` con la configuración local existente. `ss -lntp` verificó el listener sólo en `127.0.0.1:3080`; no se expuso la API ni las consolas a la red.
+- Se abrió el proyecto mediante la API local autenticada; HTTP 201. El GET posterior informó `sprint1-preview1`, estado `opened`.
+- `GET /v2/projects/<id>/nodes`: 45 nodos; 44 `stopped` y `NAT1` `started`. Abrir el proyecto no arrancó los otros nodos.
+- Los siguientes nodos aparecieron `stopped` antes del arranque: `CorevIOS-1`, `CorevIOS-2`, `ADvIOS-1`, `ADvIOS-9a`, `ADvIOS-9b`, `ADvIOS-10`, `SwitchvIOSL3-1`, `PVE-QDEVICE`, `PVE-1`, `PVE-2`, `WebUbuntuServer-1` y `Alpine-SSHClient-1`.
+- El estado interior de PVE, DC1/DC2 y sus servicios aún no estaba disponible, ya que los dos nodos PVE estaban detenidos.
+- `df -B1 /`: 8,434,126,848 bytes disponibles (aprox. 7.86 GiB) después de limpiar cachés. El objetivo aproximado de 20 GiB libres no se alcanzó.
+
+## Cambios previos registrados
+
+Antes de este punto se eliminó únicamente `~/.cache/BraveSoftware` (663 MiB, caché regenerable; no había proceso Brave/Chromium activo) y se retiraron las revisiones Snap antiguas deshabilitadas Firefox 8819 y Snapd 27710. El detalle inicial está en [preestado del anfitrión](2026-09-17_P5.2_LaptopUbuntu_pre.txt). No se borraron imágenes, discos, configuraciones, respaldos ni archivos del proyecto GNS3.
+
+## Alcance del próximo cambio
+
+Se solicitó dejar disponible el entorno para P5.2. La selección responde al cableado del proyecto: cores, switches conectados a PVE/QDevice/Web, ambos PVE, QDevice, WebUbuntuServer-1 y Alpine-SSHClient-1. NAT1 ya estaba `started` y se conserva. No se arrancarán los routers de Internet ni las PCs de otras pruebas.

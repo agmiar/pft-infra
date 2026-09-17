@@ -1,0 +1,25 @@
+# Preestado PVE/DC antes de arrancar controladores para P5.2
+
+- Fecha/hora: 2026-09-17 14:56–14:57 UYT (UTC-03:00).
+- Acceso de lectura: SSH desde el contenedor `Alpine-SSHClient-1` hacia PVE-1 y PVE-2. No se conserva ninguna credencial.
+
+## PVE-1 — `192.168.50.10`
+
+Comandos: `date -Is`, `hostname`, `pvecm status`, `qm list`, `qm status 101`, `qm status 102`, `systemctl is-active pve-cluster corosync corosync-qdevice`.
+
+- Host `pve-1`; `PFT-CLUSTER`, 2 miembros; Expected votes 3, Total votes 3, Quorum 2, `Quorate: Yes`, bandera `Qdevice`.
+- VMID 101 `DC1`: `stopped`, 2048 MiB, disco de arranque 60 GiB, PID 0; `qm status 101` → `status: stopped`.
+- VMID 102 no existe en la configuración local de PVE-1.
+- `pve-cluster`, `corosync` y `corosync-qdevice`: `active`.
+
+## PVE-2 — `192.168.50.11`
+
+Mismos comandos y vía de acceso que PVE-1.
+
+- Host `pve-2`; `PFT-CLUSTER`, 2 miembros; Expected votes 3, Total votes 3, Quorum 2, `Quorate: Yes`, bandera `Qdevice`.
+- VMID 102 `DC2`: `stopped`, 2048 MiB, disco de arranque 60 GiB, PID 0; `qm status 102` → `status: stopped`.
+- `pve-cluster`, `corosync` y `corosync-qdevice`: `active`.
+
+## Decisión operativa y límite
+
+El operador pidió mantener listo el entorno para probar P5.2. DC1 y DC2 estaban detenidas; se prevé iniciar sólo esas dos VMs, conservando el quorum y verificando el resultado después. No se autenticó contra Windows, no se abrió WinRM y no se ejecutó ningún cambio AD/DNS/GPO. El estado `stopped` es el preestado real; la aceptación P5.2 no se deduce de este control.

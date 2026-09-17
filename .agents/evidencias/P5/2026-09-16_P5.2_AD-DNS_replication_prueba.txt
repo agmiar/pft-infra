@@ -1,0 +1,512 @@
+﻿# P5.2  solicitud de sincronización AD y verificación
+# Inicio: 2026-09-16 12:35:10 -03:00
+# Acción reversible de operación; no se modifican objetos de AD/DNS/GPO.
+## repadmin syncall /AdeP from DC1
+Syncing all NC's held on DC1-PFT.
+
+Syncing partition: DC=ForestDnsZones,DC=pft,DC=test
+
+CALLBACK MESSAGE: Error contacting server CN=NTDS Settings,CN=DC1-PFT,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=pft,DC=test (network error): 5 (0x5):
+
+    Access is denied.
+
+CALLBACK MESSAGE: Error contacting server CN=NTDS Settings,CN=DC2-PFT,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=pft,DC=test (network error): 5 (0x5):
+
+    Access is denied.
+
+
+
+SyncAll exited with fatal Win32 error: 8440 (0x20f8):
+
+    The naming context specified for this replication operation is invalid.
+
+## repadmin recheck DC1
+Replication Summary Start Time: 2026-09-16 12:35:18
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC2-PFT               17h:43m:07s    1 /   5   20  (1722) The RPC server is unavailable.
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC1-PFT               17h:43m:07s    1 /   5   20  (1722) The RPC server is unavailable.
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC2-PFT.pft.test
+
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC1-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+DSA invocationID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:26:36 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:26:39 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 11:46:56 failed, result 1722 (0x6ba):
+
+            The RPC server is unavailable.
+
+        17 consecutive failure(s).
+
+        Last success @ 2026-09-15 18:52:11.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:31:43 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:31:40 was successful.
+
+
+
+Source: Default-First-Site-Name\DC2-PFT
+
+******* 17 CONSECUTIVE FAILURES since 2026-09-15 18:52:11
+
+Last error: 1256 (0x4e8):
+
+            The remote system is not available. For information about network troubleshooting, see Windows Help.
+
+
+
+## dcdiag DNS quiet DC1
+         [DC2-PFT] DsBindWithSpnEx() failed with error 5,
+
+         Access is denied..
+         Got error while checking LDAP and RPC connectivity. Please check your
+
+         firewall settings.
+
+         ......................... DC2-PFT failed test Connectivity
+
+                  ......................... DC2-PFT failed test DNS
+
+         Test results for domain controllers:
+
+            
+            DC: DC2-PFT.pft.test
+
+            Domain: pft.test
+
+            
+
+                  
+               TEST: Basic (Basc)
+                  Error: No DS RPC connectivity
+                  Error: No WMI connectivity
+                  No host records (A or AAAA) were found for this DC
+
+         
+         Summary of DNS test results:
+
+         
+                                            Auth Basc Forw Del  Dyn  RReg Ext
+            _________________________________________________________________
+            Domain: pft.test
+
+               DC2-PFT                      PASS FAIL n/a  n/a  n/a  n/a  n/a  
+         
+         ......................... pft.test failed test DNS
+
+
+## Recheck after local SyncAll
+## Recheck after local SyncAll
+Replication Summary Start Time: 2026-09-16 12:44:32
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC2-PFT               17h:52m:21s    1 /   5   20  (1722) The RPC server is unavailable.
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC1-PFT               17h:52m:21s    1 /   5   20  (1722) The RPC server is unavailable.
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC2-PFT.pft.test
+
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC1-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+DSA invocationID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:26:36 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:26:39 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 11:46:56 failed, result 1722 (0x6ba):
+
+            The RPC server is unavailable.
+
+        17 consecutive failure(s).
+
+        Last success @ 2026-09-15 18:52:11.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:31:43 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:31:40 was successful.
+
+
+
+Source: Default-First-Site-Name\DC2-PFT
+
+******* 17 CONSECUTIVE FAILURES since 2026-09-15 18:52:11
+
+Last error: 1722 (0x6ba):
+
+            The RPC server is unavailable.
+
+
+
+
+## Recheck after explicit Schema sync
+## Recheck after explicit Schema sync
+Replication Summary Start Time: 2026-09-16 13:02:51
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC2-PFT                   17m:19s    0 /   5    0  
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC1-PFT                   17m:19s    0 /   5    0  
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC2-PFT.pft.test
+
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC1-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+DSA invocationID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:50:54 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 13:01:25 was successful.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+
+## DC2 recheck after explicit Schema sync
+## DC2 recheck after explicit Schema sync
+Replication Summary Start Time: 2026-09-16 13:03:24
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC1-PFT                   07m:34s    0 /   5    0  
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC2-PFT                   07m:34s    0 /   5    0  
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC1-PFT.pft.test
+
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC2-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+DSA invocationID: 9920bd4a-bb88-4243-a6a1-5699b4401c50
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 13:00:27 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:55:50 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:55:50 was successful.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:55:50 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:55:50 was successful.
+
+
+
+

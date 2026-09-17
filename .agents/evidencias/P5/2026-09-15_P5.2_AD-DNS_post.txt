@@ -1,0 +1,43 @@
+P5.2 — Postestado de acceso a DC1 y quorum
+
+Fecha: 2026-09-15
+Hora de la última comprobación: 2026-09-15T19:50:40-03:00 (UYT)
+Tarea: P5.2
+Fuente: consola local de PVE-1 por la sesión de gestión autorizada. No se conservaron credenciales ni capturas con texto sensible.
+Tipo de post: comprobación de acceso, estado de DC1 y quorum; no sustituye el inventario ni el post técnico de AD/DNS.
+
+Acciones y resultados observados
+
+1. Revisión previa al intento de autenticación
+
+- `qm status 101` informó `stopped` a las 19:37:24 UYT. El preestado P5.2 anterior registraba DC1/VMID 101 como `running`.
+- `pvecm status` confirmó `PFT-CLUSTER`, `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, `Quorate: Yes` y la bandera `Qdevice`.
+- El historial de tareas de PVE contenía una tarea `qmshutdown` con resultado OK para `root@pam`; la atribución de esa acción no quedó determinada.
+- Se ejecutó `qm start 101` para restaurar el estado `running` registrado en el preestado. `qm status 101` informó `running` aproximadamente a las 19:38:26 UYT.
+- Después del arranque, la comprobación TCP a `192.168.50.12:5985` desde PVE-1 tuvo éxito.
+
+2. Único intento de autenticación autorizado
+
+- Se envió una solicitud HTTP POST vacía a `http://192.168.50.12:5985/wsman`, sin cuerpo SOAP ni instrucción WMI. El resultado fue `HTTP/1.1 401 Unauthorized`, con desafío `Negotiate` y `Kerberos`.
+- No se solicitó ejecutar procesos ni crear archivos en DC1. No hubo reintentos ni pruebas de variantes.
+
+3. Comprobación posterior
+
+- `qm status 101` informó `running` en la verificación final.
+- `pvecm status` volvió a mostrar 3 votos de 3, quorum 2, `Quorate: Yes` y QDevice.
+
+Resultado y límites
+
+DC1 quedó nuevamente `running`, igual que en el preestado P5.2 documentado, y el quorum del clúster se mantuvo quorate. La autenticación administrativa no se estableció. No se modificaron AD DS, DNS, OUs, grupos, GPO, red ni configuración de PVE. No se ejecutaron `dcdiag` ni `repadmin`, no se obtuvo inventario interno de Windows y P5.2 continúa Bloqueado. La referencia proporcionada no autenticó en este canal; no se volverá a intentar sin una nueva indicación del operador.
+
+Rollback
+
+La única acción de estado fue arrancar DC1 después de encontrarla detenida, para restituir el estado `running` capturado previamente. No se requiere rollback de configuración P5.2; DC1 quedó encendida y no se cambiaron parámetros del invitado ni del clúster.
+
+## Revalidación posterior — 2026-09-15
+
+Tras una nueva comprobación que volvió a encontrar DC1/VMID 101 detenida, se capturó el preestado en `2026-09-15_P5.2_AD-DNS_pre.txt` y se ejecutó `qm start 101` una sola vez para restituir el estado `running` ya documentado para esta VM. La verificación separada `qm status 101` informó `status: running`.
+
+A las 22:17:12.7591460-03:00, el reloj local de Windows informó `2026-09-15T22:17:12.7591460-03:00`. En la consola de PVE-1, `date --iso-8601=seconds` informó `2026-09-15T22:17:12+00:00`, y `pvecm status` informó `Date: Tue Sep 15 22:17:13 2026`, `PFT-CLUSTER`, `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, `Quorate: Yes`, `Flags: Quorate Qdevice`; la membresía visible fue PVE-1 `192.168.50.10`, PVE-2 `192.168.50.11` y QDevice con un voto cada uno. Las lecturas de hora no concuerdan al convertirlas a UTC; no se ajustó el reloj, y P5.3 queda fuera de esta ejecución.
+
+La configuración del invitado, AD DS y DNS no se modificó. Esta verificación sólo restablece el estado de energía de DC1 y no equivale a aceptación de P5.2. El acceso a la consola de Windows sigue pendiente de validar.

@@ -1,0 +1,27 @@
+# Postestado GNS3 — preparación P5.2
+
+- Fecha/hora de medición: 2026-09-17 15:09 UYT (UTC-03:00).
+- Proyecto activo: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+
+## Acciones y verificación
+
+- Antes de arrancar, el proyecto estaba cerrado; la API local no respondía porque `gns3server` no estaba ejecutándose. Comando ejecutado: `gns3server --config /home/bruno/.config/GNS3/2.2/gns3_server.conf --daemon --log /home/bruno/.cache/gns3server-p5.2.log --pid /home/bruno/.cache/gns3server-p5.2.pid --logmaxsize 10485760 --logbackupcount 2 --quiet`. Quedó escuchando únicamente en `127.0.0.1:3080`. No se expuso TCP/3080 ni las consolas; los valores de autenticación no se imprimieron ni copiaron a evidencia.
+- La API local autenticada abrió el proyecto con `POST /v2/projects/<id>/open` (HTTP 201); el GET posterior informó `opened`. Cada uno de los doce nodos seleccionados se inició con `POST /v2/projects/<id>/nodes/<node-id>/start` (HTTP 200); los identificadores se obtuvieron en memoria del inventario API y no se guardaron con secretos.
+- Se consultó la API después de los arranques: 13 de 45 nodos `started`; 32 `stopped`.
+- Arrancados para esta preparación: `CorevIOS-1`, `CorevIOS-2`, `ADvIOS-1`, `ADvIOS-9a`, `ADvIOS-9b`, `ADvIOS-10`, `SwitchvIOSL3-1`, `PVE-QDEVICE`, `PVE-1`, `PVE-2`, `WebUbuntuServer-1`, `Alpine-SSHClient-1`.
+- `NAT1` ya figuraba `started` al abrir el proyecto; se conservó sin cambio.
+- No se iniciaron `BorderRouter-1/2`, `ISPRouter-1/2`, `DummyInternet` ni PCs de otras pruebas. El mapeo de enlaces se revisó en el archivo local de topología: los nodos iniciados conectan PVE, QDevice, Web y el camino de gestión.
+- Desde el contenedor `Alpine-SSHClient-1`, ping a PVE-1 respondió 1/1 y TCP/22 estaba abierto.
+- Recursos del anfitrión durante la operación: 16 GiB de RAM disponibles, swap sin uso; 9,379,741,696 bytes (8.74 GiB) disponibles en `/`.
+
+## Revalidación tras cerrar SSH — 2026-09-17, 15:18 UYT
+
+- Después de cerrar la sesión SSH, `ss -lntp` confirmó que `gns3server` continuaba escuchando sólo en `127.0.0.1:3080`.
+- `ps -eo comm=` contó 11 procesos QEMU; `docker ps` confirmó `Alpine-SSHClient-1` `Up`. La API había confirmado 13/45 nodos iniciados a las 15:17.
+- Mediciones: 16 GiB de RAM disponibles, swap 0, `/` con 8.8 GiB disponibles. La partición NTFS `nvme0n1p3` seguía sin montar.
+
+## Límites y rollback
+
+Este estado deja el laboratorio disponible para continuar P5.2; no es prueba de aceptación de P5.2. Si se requiere volver al preestado, parar de forma ordenada DC1/VMID 101 y DC2/VMID 102 en sus PVE y luego detener únicamente los 12 nodos iniciados en esta operación; conservar `NAT1`, que ya estaba activo. No se ejecutó rollback porque el operador pidió dejar el entorno encendido.
+
+No se autenticó contra Windows, no se modificaron AD/DNS/GPO ni configuración de red, y no se exportó el proyecto. Ver [preestado](2026-09-17_P5.2_GNS3_pre.txt), [preestado PVE](2026-09-17_P5.2_PVE_pre.txt) y [postestado PVE](2026-09-17_P5.2_PVE_post.txt).

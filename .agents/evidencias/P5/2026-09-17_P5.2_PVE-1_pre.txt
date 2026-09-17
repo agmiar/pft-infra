@@ -1,0 +1,21 @@
+# P5.2 — preestado PVE-1 antes del acceso temporal por segunda NIC
+
+- Fecha/hora: 2026-09-17 17:32 UYT (UTC-03:00).
+- Acceso: SSH desde `Alpine-SSHClient-1` a `root@192.168.50.10`; no se registra la credencial.
+- Propósito: capturar el estado previo antes de habilitar la NIC secundaria para gestión temporal desde LaptopUbuntu. No es aceptación P5.2.
+
+## Comandos y resultados observados
+
+- `hostname` → `pve-1`.
+- `ip -br link` → `ens3` y `vmbr0` UP; `ens4` DOWN, sin flags `UP`.
+- `ip -br addr` → `vmbr0` con `192.168.50.10/27`; `ens4` sin dirección IPv4.
+- `ip route` → predeterminada por `192.168.50.1 dev vmbr0`; conectada `192.168.50.0/27` por `vmbr0`.
+- `ss -lntp` → SSH escucha en `0.0.0.0:22` y `[::]:22`; `pveproxy` escucha en `*:8006`.
+- `systemctl is-active pveproxy` → `active`.
+- `pvecm status` → `PFT-CLUSTER`, `Nodes: 1`, `Quorate: Yes`, `Expected votes: 2`, `Total votes: 2`, `Quorum: 2`, bandera `Quorate Qdevice`; la membresía observada lista PVE-1 y QDevice. PVE-2 no estaba presente en esta membresía.
+- `qm status 101` → `status: stopped`.
+- Desde LaptopUbuntu, el acceso a `172.31.255.2/.3` aún no respondía. Desde Alpine, ping y TCP/22 y TCP/8006 a PVE-1 respondieron; PVE-2 no respondió a ping ni a esos puertos.
+
+## Límite
+
+PVE-2 no estuvo disponible desde Alpine y el clúster sólo mostraba PVE-1 más QDevice. No se inició una VM ni se modificó la configuración de red de PVE antes de esta captura. Confirmar el estado de PVE-2 antes de iniciar DC2 o evaluar el estado HA. La prueba solicitada aquí se limita a habilitar y comprobar acceso temporal a PVE-1.

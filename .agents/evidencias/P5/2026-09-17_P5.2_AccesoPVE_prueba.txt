@@ -1,0 +1,32 @@
+# P5.2 — prueba reproducible del acceso temporal PVE-1
+
+- Fecha: 2026-09-17, 17:24–17:58 UYT.
+- Host de ejecución: LaptopUbuntu (`bruno`, `192.168.1.190`).
+- Preestados: [Ubuntu y GNS3](2026-09-17_P5.2_AccesoPVE_pre.txt), [PVE-1](2026-09-17_P5.2_PVE-1_pre.txt).
+- Contraseñas, API keys y tickets: no incluidos.
+
+## Puente del anfitrión y GNS3
+
+- Se abrió el proyecto con la API local autenticada en memoria y se iniciaron los doce nodos permitidos por el runbook P5.2; `NAT1` se conservó y `Cloud1` quedó activo.
+- Cloud1 puerto 1 está mapeado a `br-pft-transfer`; el enlace `gns3tap0-1` quedó `UP/LOWER_UP`, `state forwarding`.
+- En LaptopUbuntu: `ip -br addr show br-pft-transfer` → `UP 172.31.255.1/24`.
+
+## PVE-1
+
+- Previo al cambio: `ens4` estaba `DOWN`, sin IP; `/etc/network/interfaces` declara `iface ens4 inet manual`.
+- Acciones documentadas: `ip link set ens4 up`; `ip addr add 172.31.255.2/24 dev ens4`; `ip neigh flush dev ens4`.
+- `ip -br addr show ens4` → `UP 172.31.255.2/24`.
+- `ip route` conservó la ruta predeterminada `192.168.50.1 dev vmbr0` y añadió sólo la conectada `172.31.255.0/24 dev ens4`.
+- `ping -c 3 172.31.255.1` desde PVE-1 → 3/3.
+- Desde LaptopUbuntu: `ping -c 2 172.31.255.2` → 2/2; `curl -k --connect-timeout 5 -sS -o /dev/null -w ... https://172.31.255.2:8006/` → HTTP 200; TCP/22 → abierto.
+- Verificación final a las 17:48: `ss -lntp | grep ':3080'` mostró `gns3server` escuchando sólo en `127.0.0.1:3080`; `ip route get 172.31.255.2` salió por `br-pft-transfer` con origen `.1`; `curl` a PVE-1 volvió a devolver HTTP 200.
+- `pvecm status` en PVE-1 → `Nodes: 1`, `Expected votes: 2`, `Total votes: 2`, `Quorum: 2`, `Quorate: Yes`, `Qdevice`.
+- DC1: `qm status 101` antes → `stopped`; `qm start 101`; lectura posterior → `status: running`.
+- `qm config 101` → VM `DC1`, disco `local-lvm:vm-101-disk-0` de 60 GiB, ISO `WIN_SERVER_EVAL_x64FRE_en-us.iso` montada en `ide2`, orden de arranque `ide2;sata0`.
+
+## Límites comprobados
+
+- Desde Alpine: ping a `192.168.50.12` respondió; TCP/53 abrió; TCP/5985 y TCP/3389 fallaron. Dos consultas `nslookup` UDP a `192.168.50.12` expiraron. No se probó autenticación Windows ni se confirma que el sistema operativo instalado haya terminado el arranque.
+- PVE-2 (`192.168.50.11`): ping y TCP/22 y TCP/8006 fallaron desde Alpine; la API GNS3 lo marcó `started`. A las 17:58 UYT, el VNC local `127.0.0.1:5900` respondió `RFB 003.008` y aceptó el handshake sin autenticación. Esto confirma que el endpoint de consola QEMU responde, pero no se capturó framebuffer ni se verificó el estado del sistema invitado; no se cambió su configuración.
+- El HTTP 200 valida el portal PVE-1 desde LaptopUbuntu, no una sesión autenticada ni una consola Windows.
+- P5.2 no está aprobado. PVE-2, la verificación de consola Windows, membresías GG, definición/alcance/filtros de GPO y decisión de zona inversa VLAN 100 siguen pendientes.

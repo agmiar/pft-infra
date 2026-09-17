@@ -1,0 +1,71 @@
+# 2. Instalación de Proxmox VE en GNS3 — complemento textual
+
+Fuente: referencia visual 2. Proxmox.pdf, 15 páginas. Este texto transcribe los valores visibles y agrega verificaciones para repetir la instalación. No contiene contraseñas. La evidencia P4.2 es la fuente para el cableado e inventario reales.
+
+## 1. Preparar el appliance QEMU
+
+1. Confirmar en la laptop y en GNS3 cuál es la ISO PVE autorizada que ya está disponible. La referencia visual muestra proxmox-ve_8.4-1.iso. Verificar el hash y la versión del medio antes de usarlo; no asumir que una ISO vieja sigue siendo la versión aprobada.
+2. En GNS3, crear el template QEMU llamado PVE usando el binario x86_64 disponible. La referencia visual muestra 8192 MB de RAM, 4 vCPU, consola VNC y arranque inicial CD/DVD-ROM.
+3. En la pestaña HDD, usar un disco principal. La captura no indica su capacidad, por eso no se fija un tamaño en esta guía: medir el almacenamiento libre y decidirlo antes de crear el appliance.
+4. En CD/DVD, seleccionar la ISO PVE local.
+5. En Network, configurar 2 adaptadores virtio-net-pci. Confirmar qué MAC queda conectada al puerto de acceso VLAN 50; no asumir que el orden o MAC se mantiene si se recrea el template.
+6. La captura deja marcado “Use as a linked base VM”. Usar esta opción sólo si el almacenamiento GNS3 y la plantilla de la instalación actual lo permiten; registrar el modo elegido.
+7. No agregar todavía opciones de CPU para virtualización anidada. Esa modificación pertenece al procedimiento 5 y debe probarse aparte.
+
+## 2. Instalar PVE-1
+
+1. Crear PVE-1 desde el template, adjuntar la ISO y arrancar por CD/DVD-ROM.
+2. Elegir la instalación gráfica de Proxmox VE. En las pantallas de ubicación, la referencia usa Uruguay, zona America/Montevideo y teclado en-us.
+3. Elegir el disco HDD del appliance como destino. La captura muestra ext4 y /dev/sda; confirmar cuidadosamente el disco seleccionado antes de instalar.
+4. Definir la contraseña administrativa y el correo de alertas directamente en la consola. No copiarlos a esta guía, a capturas ni a evidencias.
+5. Seleccionar como interfaz de gestión la NIC conectada al segmento PVE/VLAN 50. La referencia visual la identifica como ens3.
+6. Introducir los valores del diseño:
+
+       Hostname/FQDN: pve-1.pft.test
+       Dirección:     192.168.50.10/27
+       Gateway:       192.168.50.1
+       DNS instalado: 192.168.50.12
+
+   El DNS .12 corresponde al DNS de diseño del proyecto. Antes de P5.1 puede no estar disponible; si se necesita una resolución temporal para otra actividad, capturar el valor original y restaurarlo al terminar. No convertir un resolver temporal en configuración permanente.
+7. Revisar la pantalla de resumen y confirmar disco, interfaz, FQDN, IP, gateway y DNS antes de pulsar Install.
+8. Al terminar, retirar la ISO y dejar el HDD primero en el orden de arranque. La referencia visual retira el ISO desde las propiedades del appliance y aplica los cambios.
+9. Arrancar PVE-1 y contrastar su MAC/interfaz con el switch y mapa de cableado. Abrir la URL de gestión indicada por la consola del instalador en un navegador local.
+
+## 3. Preparar PVE-1 y repetir para PVE-2
+
+En la consola root de cada host, comprobar antes de seguir:
+
+    hostname --fqdn
+    ip -br address
+    ip route
+    cat /etc/hosts
+    cat /etc/resolv.conf
+    systemctl enable --now ssh
+
+La referencia usa este contenido común de /etc/hosts:
+
+    192.168.50.10 pve-1.pft.test pve-1
+    192.168.50.11 pve-2.pft.test pve-2
+    192.168.90.28 pve-qdevice.pft.test pve-qdevice
+
+Con el AlpineSSHClient-1, comprobar acceso administrativo por SSH a la IP que corresponda. Usar la contraseña de forma interactiva; no guardar el valor en el proyecto ni en el registro de evidencia.
+
+Repetir los pasos de instalación para PVE-2 con:
+
+    Hostname/FQDN: pve-2.pft.test
+    Dirección:     192.168.50.11/27
+    Gateway:       192.168.50.1
+    DNS instalado: 192.168.50.12
+
+La interfaz conectada a VLAN 50 debe identificarse por MAC y mapa de cableado, no por su nombre supuesto. El PDF dice “hacer las mismas verificaciones con PVE-2”.
+
+## 4. Criterio de parada y rollback
+
+- Si la IP está ocupada, la MAC llega a un puerto distinto del esperado, el gateway no responde o el FQDN/resolver no coincide con el diseño, detenerse y resolver la discrepancia antes de crear el clúster.
+- En una reconstrucción limpia, conservar las ISOs y discos hasta validar ambos PVE. Si un host existente ya contiene clúster, VMs o discos de trabajo, no reinstalarlo siguiendo esta guía.
+- Capturar preestado antes de instalar y postestado después, según la convención de .agents/AGENTS.md. Las capturas de contraseña y cualquier credencial deben quedar fuera de la evidencia.
+
+## 5. Fuentes
+
+- PDF visual: 2. Proxmox.pdf, páginas 1–5 (template), 6–10 (instalador), 11–15 (retirar ISO, SSH, /etc/hosts y segundo PVE).
+- Evidencia P4.2: ../../.agents/evidencias/P4/2026-08-31_P4.2_PVE_control.md, inventario y pve-1/pve-2 post.

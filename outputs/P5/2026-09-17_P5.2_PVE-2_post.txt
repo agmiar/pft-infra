@@ -1,0 +1,30 @@
+# P5.2 — postestado y rollback del acceso temporal a PVE-2
+
+- Fecha/hora: 2026-09-17 19:09 UYT.
+- Proyecto: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+- Resultado del subobjetivo: acceso temporal a la GUI directa de PVE-2 comprobado desde Ubuntu.
+- Estado general de P5.2: **Bloqueado**.
+
+## Postestado observado
+
+- Ubuntu conserva `br-pft-transfer UP 172.31.255.1/24`; el enlace GNS3 `gns3tap0-1` está UP/LOWER_UP y forwarding bajo el puente. Cloud1 continúa conectado al switch existente.
+- PVE-2 conserva `ens3 UP` y `vmbr0 UP 192.168.50.11/27`. `ens4` está UP con `172.31.255.3/24`. La ruta por defecto permanece `via 192.168.50.1 dev vmbr0`; no se cambió `/etc/network/interfaces`.
+- Desde Ubuntu: ping a `.3` 3/3 y 2/2, TCP/22 abierto, TCP/8006 abierto, HTTPS/8006 HTTP 200.
+- PVE-2 y su GUI están accesibles por la dirección temporal `https://172.31.255.3:8006` mientras sigan activos el puente, Cloud1 y la configuración en vivo de `ens4`.
+- La IP `.3` pertenece al segmento temporal definido en [Pasar ISOs a Proxmox](../../configs%20INFRA/7.%20Proxmox/4.%20Pasar%20ISOs%20a%20Proxmox.txt): puente Ubuntu `.1`, PVE-1 `.2`, PVE-2 `.3`; es una asignación manual, no DHCP ni parte de VLAN 50.
+- PVE-2 sigue sin quorum (`Expected votes: 2`, `Total votes: 1`, `Quorate: No`, QDevice con 0 votos) y DC2/102 sigue detenida. El acceso temporal no repara el enlace de Corosync ni garantiza que PVE-1 liste el nodo como en línea.
+- La dirección añadida a `ens4` es temporal y se pierde al reiniciar PVE-2; cerrar la pestaña web no cambia la red. No se modificó `/etc/network/interfaces`.
+
+## Rollback
+
+Para retirar sólo el acceso adicional de PVE-2:
+
+```sh
+# En PVE-2
+ip addr del 172.31.255.3/24 dev ens4
+ip link set ens4 down
+```
+
+No retirar `br-pft-transfer` mientras se necesite la GUI de PVE-1 por `172.31.255.2` o PVE-2 por `.3`. Para el rollback completo del acceso temporal, primero retirar en PVE-1 `172.31.255.2/24` y bajar su `ens4`, retirar en PVE-2 `.3/24` y bajar su `ens4`, y sólo entonces retirar en Ubuntu `172.31.255.1/24`, bajar y borrar `br-pft-transfer`, siguiendo [Pasar ISOs a Proxmox](../../configs%20INFRA/7.%20Proxmox/4.%20Pasar%20ISOs%20a%20Proxmox.txt). El enlace Cloud1–switch preexistente del proyecto no se eliminó.
+
+No hubo cambios persistentes en los PVE ni rollback aplicado; el acceso `.3` se deja disponible a pedido del operador.

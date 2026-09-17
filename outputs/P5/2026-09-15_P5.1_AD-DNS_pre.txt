@@ -1,0 +1,40 @@
+P5.1 — PREESTADO DE REANUDACIÓN
+Fecha: 2026-09-15 02:06–02:07 (America/Montevideo, UTC-03)
+Proyecto: sprint1-preview1 (47a3267f-9b02-4e97-a0e8-0aacb46d5ffd)
+Propósito: capturar estado inmediatamente antes de reanudar la configuración inicial de DC1.
+
+Anfitrión Ubuntu GNS3
+- hostname: bruno-ThinkPad-E15-Gen-2
+- free -h: 30 GiB total, 13 GiB usados, 298 MiB completamente libres, 18 GiB buff/cache y 17 GiB disponibles.
+- Swap: 8 GiB total, 640 KiB usados.
+- df -h /: 79 GiB total, 63 GiB usados, 12 GiB disponibles (85%).
+- QEMU de PVE-1: RSS 7,498,220 KiB, asignación 8,192 MiB.
+- QEMU de PVE-2: RSS 2,160,424 KiB, asignación 8,192 MiB.
+- No se limpiaron cachés ni se detuvieron procesos; el anfitrión muestra 17 GiB disponibles y casi nada de swap usado. Se preservan PVE-1/PVE-2 necesarios para P5.1.
+
+PVE-1 (192.168.50.10), 2026-09-15 02:06:36
+- PFT-CLUSTER: Expected votes 3, Total votes 3, Quorum 2, Quorate Yes, Flags Quorate Qdevice.
+- VMID 101 DC1: running, 2,048 MiB, disco de arranque 60 GiB.
+- PVE-1 no tiene VMID 102 localmente; DC2 está en PVE-2.
+- pvesr status: sin trabajos; ha-manager status: quorum OK, sin recursos.
+- pvesm status: local-lvm Used 6,028,591 KiB, Available 35,836,624 KiB.
+
+PVE-2 (192.168.50.11), 2026-09-15 02:06:58
+- PFT-CLUSTER: Expected votes 3, Total votes 3, Quorum 2, Quorate Yes, Flags Quorate Qdevice.
+- VMID 102 DC2: stopped, 2,048 MiB, disco de arranque 60 GiB.
+- pvesr status: sin trabajos; ha-manager status: quorum OK, sin recursos.
+- pvesm status: local-lvm Used 0 KiB, Available 41,865,216 KiB.
+
+Estado invitado conocido al reanudar
+- DC1 ya ejecuta Windows Server 2022 Standard Evaluation Server Core. En el intento anterior la contraseña inicial no fue aceptada; no se relajó la política. Desde entonces no se intentó otra contraseña ni se configuraron IP, dominio, AD DS, DNS, VirtIO o QGA dentro del huésped.
+- DC1 continúa running según Proxmox. DC2 continúa detenido y sin Windows instalado.
+- No se modificaron la red, ACL, DNS de PVE, switches, frontend, QDevice ni configuración del clúster durante esta captura.
+- P4.3 conserva sus limitaciones ya documentadas; esta reanudación no las repite ni las aprueba.
+
+Fuentes de captura
+- Ubuntu: date -Is, free -h, df -h /, swapon --show, ps -o pid,comm,rss,args.
+- PVE-1 y PVE-2: date -Is, pvecm status, qm list, qm status, pvesr status, ha-manager status, pvesm status.
+
+Límite de esta muestra
+- Es una lectura puntual, no una medición de 10–15 minutos ni la aceptación de capacidad integrada P7.4.
+- No se ejecutaron aún pruebas de aceptación P5.1 (dcdiag, repadmin, SRV, réplica AD/DNS o resolución web.pft.test).

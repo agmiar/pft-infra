@@ -1,0 +1,100 @@
+P5.1 — PREESTADO REAL (solo lectura)
+Fecha: 2026-09-14, America/Montevideo (UTC-03)
+Proyecto GNS3: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+No se descargó, clonó ni copió el proyecto. No se registraron credenciales.
+
+GNS3 API local, observado 2026-09-14T23:02:02-03:00:
+- Proyecto: opened.
+- PVE-1, PVE-2 y PVE-QDEVICE: started.
+- CorevIOS-1, CorevIOS-2, ADvIOS-9a y ADvIOS-9b: started.
+- WebUbuntuServer-1 y ADvIOS-10: stopped.
+- NAT1: started. BorderRouter-1/2, ISPRouter-1/2 y DummyInternet: stopped, igual que el estado informado tras P4.4/P4.5.
+- El inventario de nodos GNS3 no contiene DC1-PFT ni DC2-PFT.
+
+Host GNS3 Ubuntu, observado 2026-09-14T23:03:10-03:00:
+- RAM: 30 GiB total, 22 GiB disponibles; swap 8 GiB, 0 usados.
+- Volumen que contiene el proyecto, imágenes y configuraciones GNS3: 78.19 GiB total, 32.74 GiB libres (aprox. 35.15 GB decimales).
+- El plano exige conservar 30 GB libres; aún no se midió si se puede copiar el medio y crear dos discos de VM sin bajar de ese umbral. No se inició el despliegue.
+- La partición NTFS montada aparte tenía 9.8 GiB libres; no se usa como almacenamiento del proyecto GNS3.
+
+PVE-1, observación directa por SSH desde AlpineSSHClient-1, 2026-09-14T23:04:14-03:00:
+- FQDN pve-1.pft.test; PVE 8.4.0.
+- pvecm status: PFT-CLUSTER, Nodes 2, Quorate Yes, Expected votes 3, Total votes 3, Quorum 2, Flags Quorate Qdevice. Membresía PVE-1, PVE-2 y QDevice, un voto cada uno.
+- pvesh get /cluster/resources --type vm --output-format json devolvió [].
+- pvesr status mostró sólo encabezados; ha-manager status devolvió quorum OK sin recursos.
+- /etc/resolv.conf conserva search pft.test y nameserver 192.168.50.12; no se verificó resolución efectiva en este preestado.
+- RAM PVE-1: 7.8 GiB total, 6.1 GiB disponibles; swap 7.8 GiB, 0 usados.
+- pvesm status: storage local active con 29,449,608 kB disponibles; local-lvm active con 41,865,216 kB disponibles.
+
+Inventario de ISO por API PVE, observado en la misma sesión de solo lectura:
+- local ISO de PVE-1: sólo alpine-standard-3.24.1-x86_64.iso (369,098,752 bytes).
+- local ISO de PVE-2: sólo alpine-standard-3.24.1-x86_64.iso (369,098,752 bytes).
+- Ninguno de los dos nodos tiene la ISO de Windows Server en su storage local.
+- Una búsqueda por el nombre de la ISO Windows Server 2022 en /home/bruno del host Ubuntu no encontró resultados. Tampoco existe en C:\Users\admin\Downloads\pft-infra-main\ISOs ni apareció en la búsqueda del mismo nombre dentro de Downloads. Esto no descarta otra ubicación no consultada.
+
+Estado de red y frontend:
+- CorevIOS-1 reportó HSRP VLAN 50 Active y VLAN 100 Standby. CorevIOS-2 reportó VLAN 50 Standby y VLAN 100 Active.
+- La entrada en Vlan100 de ambos Core apunta a FILTRO_DMZ. Se observó `permit ip any any` en esa ACL; no es prueba ni aprobación de P3/ACL.
+- ADvIOS-10 y WebUbuntuServer-1 están detenidos; no se consultó el estado actual desde el sistema operativo del frontend.
+- Como referencia histórica, el control P1.3 del 2026-08-30 registró en el frontend entonces llamado WebUbuntuServer-2 la IP 192.168.100.6/29, gateway 192.168.100.1 y ausencia de DNS configurado. Se debe volver a confirmar la configuración actual al iniciar el frontend antes de editarla.
+- El plano registra 192.168.122.1 como DNS relay de la ruta NAT en P0.5; la ruta Border/ISP/DummyInternet está detenida ahora, así que no se afirma que ese upstream sea actualmente alcanzable.
+
+Alcance de esta captura:
+- No se crearon VMs, volúmenes, discos, bosque, zona DNS ni cuentas.
+- No se instalaron ni cambiaron servicios, red, DNS o ACL. En las consolas Cisco sólo se usó `terminal length 0` para lectura; no se persistió configuración.
+- La aprobación manual de P4.3 conserva sus límites: no se ejecutaron P4T-PVE2, VM-a-VM ni aprendizaje MAC.
+Actualización del preestado antes de cualquier cambio (2026-09-14 23:20:47 -03:00):
+- Se encontró en `/home/bruno/Downloads/WIN_SERVER_EVAL_x64FRE_en-us.iso` el medio Windows Server Evaluation, 5,044,094,976 bytes. SHA-256 calculado sobre el archivo completo: `3e4fa6d8507b554856fc9ca6079ccc402df11a8b79344871669f0251535255325`.
+- No se descargó ni copió el ISO durante esta sesión; aún no se adjuntó a ninguna VM.
+- El volumen que contiene Downloads, proyectos e imágenes GNS3 tiene 30,010,060,800 bytes disponibles (27.95 GiB, aproximadamente 30.01 GB decimales). El usuario autorizó expresamente omitir para P5.1 el mínimo de 30 GB libres del plano. Esta excepción no demuestra que la capacidad de almacenamiento para completar las dos instalaciones sea suficiente; se debe volver a medir antes de crear discos y detenerse si aparece una condición real de agotamiento.
+- La API local de GNS3 confirmó en lectura el mismo proyecto abierto y los nodos PVE activos. No hubo cambios de configuración o estado de infraestructura.
+Revalidación pre-cambio P5.1 (Ubuntu 2026-09-14 23:33:22 -03:00; PVE-1 23:29:58; PVE-2 23:30:22):
+- Host Ubuntu, volumen que contiene GNS3 y Downloads: 30,004,867,072 bytes libres (27.94 GiB); RAM disponible 23,129,308 kB, 8 CPU lógicas. La ISO mantiene el mismo tamaño (5,044,094,976 bytes) y nombre; el hash registrado en la actualización anterior corresponde al mismo archivo y no se volvió a calcular.
+- El usuario autorizó omitir el mínimo documentado de 30 GB libres para P5.1 y autorizó la misma credencial PVE para Administrator/DSRM de Windows. No se registra el valor de ninguna contraseña.
+- PVE-1: PVE 8.4.0; PFT-CLUSTER `Quorate Yes`, Expected/Total votes 3/3, Quorum 2, Qdevice; recursos VM `[]`. `pvesm status`: `local` disponible 29,449,528 KiB, `local-lvm` disponible 41,865,216 KiB. Thin-pool `pve/data` 39.93 GiB, Data 0.00%, Metadata 1.59%. `/` 29 GiB disponibles; RAM 6.1 GiB disponible.
+- PVE-2: `qm list` vacío. `pvesm status`: `local` disponible 29,594,216 KiB, `local-lvm` 41,865,216 KiB. Thin-pool de 39.93 GiB, Data 0.00%, Metadata 1.59%. `/` 29 GiB disponibles; RAM 6.2 GiB disponible. En `local` sólo consta Alpine ISO (369,098,752 bytes); no está Windows Server.
+- Discos exteriores actuales de los nodos PVE dentro del proyecto GNS3: PVE-1 asignado físicamente 7,585,738,752 bytes; PVE-2 7,155,490,816 bytes. Estas mediciones no son espacio libre y se registran para comparar el crecimiento al aprovisionar.
+- Se verificaron PVE y el host en lectura. No se crearon VMs, discos ni archivos ISO en PVE; no se cambiaron servicios, DNS, red ni estado de nodos. El preestado queda actualizado antes del primer cambio de P5.1.
+
+
+Revalidación de conectividad para el transporte de ISO (Ubuntu 2026-09-15 00:01 -03:00; sólo lectura y limpieza de temporales):
+- La ruta Alpine 192.168.90.10 → PVE-1 por SSH fue demasiado lenta: el ensayo SSH de 8 MiB tardó 38.09 s. El intento de ISO se canceló; parcial en PVE y temporal en Alpine eliminados. No se descargó ni se copió el ISO a la infraestructura.
+- Desde PVE-1, el tráfico hacia 192.168.122.1 y 192.168.1.190 fue filtrado por 192.168.50.2. Desde Alpine no respondieron pings a esas dos IP. No se cambió ACL, ruta ni regla.
+- TCP/8006 de PVE-1 es alcanzable desde Alpine; la API devolvió 401 No ticket ante GET no autenticado. No se usaron ni registraron credenciales/tickets de la API.
+- Host virbr0: 192.168.122.1/24, UP; virsh no muestra leases DHCP activos. Cloud1 de GNS3 está detenido y tiene mapeos preexistentes wlp0s20f3 y br-pft-transfer; br-pft-transfer no existe en el host. No se tocó Cloud1.
+- PVE-1 mantiene ens4 DOWN. Inventario PVE aún sin VMs. No cambió ningún servicio, nodo, red, DNS, ACL, VM o disco. La siguiente vía en evaluación es una conexión temporal aislada a virbr0, sin gateway por defecto, con rollback de enlace y servidor.
+
+
+
+Actualización de pre/postestado durante P5.1 (2026-09-15 00:13 -03:00):
+- Cloud temporal GNS3 ID f1beff24-d439-44f9-8bdb-d2179aef748b, mapeado únicamente a virbr0; enlace temporal ID 82fb92a9-fdc7-4a70-a976-d82c2b86c8d2 a PVE-1 adaptador 1.
+- Para crear el enlace se detuvo PVE-1 aproximadamente 30 s. PVE-2 más QDevice conservó quorum 2/3 (quorum 2). PVE-1 reinició; luego pvecm status mostró 3/3 y Quorate Yes.
+- PVE-1 ens4 está UP temporalmente con DHCP 192.168.122.26/24. No cambió la ruta por defecto (sigue 192.168.50.1). 192.168.122.1 respondió 2/2 pings y TCP/53 estaba abierto.
+- HTTP temporal está activo sólo en 192.168.122.1:18080 y expone la ISO desde un symlink bajo /tmp. PVE-1 copió la ISO completa (5,044,094,976 bytes); SHA-256 en destino coincide con origen: 3e4fa6d8507b554856fc9ca6079ccc402df11a8b79344871669f0251535255325.
+- Capacidad post copia: Ubuntu libre 24,924,594,176 bytes; PVE-1 local libre 24,514,668 KiB; local-lvm libre 41,865,216 KiB, Data 0.00%. ISO original intacta.
+- No se han creado VMs ni discos guest, no se instalaron roles ni se cambiaron DNS/ACL. La interfaz ens4, el lease DHCP, el nodo/enlace Cloud y HTTP son temporales; aún no se revirtieron porque falta transferir el medio a PVE-2.
+
+
+
+Corrección del pre/postestado de red (2026-09-15 00:29 -03:00):
+- La topología ya contenía PVE-1 adaptador 1 ↔ SwitchvIOSL3-1 Gi0/1 y PVE-2 adaptador 1 ↔ Gi0/2. La lectura anterior los había omitido; no eran adaptadores libres.
+- Los Cloud temporales se conectaron durante la copia a esos adaptadores ya cableados, por lo que el aislamiento a virbr0 no estaba garantizado. DHCP entregó a ens4 192.168.122.26 en PVE-1 y .112 en PVE-2; ambos leases fueron liberados.
+- SwitchvIOSL3-1 se inspeccionó sólo en lectura: Gi0/1/Gi0/2 no tienen IP/configuración específica más allá de media-type rj45 y negotiation auto; counters de entrada estaban en cero, tabla MAC dinámica vacía, bindings DHCP vacíos. No se cambió configuración del switch. No hay captura histórica que descarte todo tránsito L2 transitorio.
+- Se eliminaron los Cloud temporales y sus links; los únicos links en PVE adaptador 1 son los originales al switch. PVE-1 y PVE-2 arrancados, ens4 DOWN sin IP, default por 192.168.50.1, quorum 3/3/QDevice/Quorate Yes, qm list vacío en ambos.
+- Host virbr0 está UP como .122.1/24, sin leases DHCP, sin listener 18080; temporales HTTP/PID/log/symlink borrados. No se hicieron cambios persistentes a red, ACL, DNS o switch.
+- Quedaron copias ISO verificadas en local de PVE-1 y PVE-2; el host conserva la fuente. Libre host observado: 19,860,328,448 bytes.
+
+
+## Revalidación pre-cambio P5.1 — 2026-09-15 00:52:54 -03:00
+
+- Proyecto GNS3 activo: sprint1-preview1 (47a3267f-9b02-4e97-a0e8-0aacb46d5ffd).
+- PVE-1 (pve-1, 192.168.50.10/27) y PVE-2 (pve-2, 192.168.50.11/27) iniciados; ambos usan mbr0 sobre ns3, puerta de enlace 192.168.50.1; ns4 permanece DOWN. No se modificó la red de los hipervisores.
+- qm list vacío en ambos PVE. Ninguna VM invitada de P5.1 existe aún.
+- PVE-2 informa clúster PFT-CLUSTER, Expected votes 3, Total votes 3, Quorum 2, Quorate Yes, bandera Qdevice; pve-cluster, corosync y corosync-qdevice activos.
+- Almacenes por nodo: local-lvm activo, 41,865,216 KiB disponibles (~39.9 GiB); local activo, ~23.4 GiB disponibles en PVE-1 y ~23.5 GiB en PVE-2. Sistema de archivos raíz de cada PVE: ~24 GiB libres.
+- ISO Windows Server Evaluation en ambos local:iso, SHA-256 previamente cotejado con el original: 3e4fa6d8507b554856fc9ca6079ccc402df11a8b79344871669f0251535255325.
+- La laptop Ubuntu tiene ~18.5 GiB libres en / (76% usado) y ~21 GiB de RAM disponibles. Se acepta trabajar por debajo del umbral documental de 30 GB a pedido del operador; se vigilará el espacio real y se evitará agotar el sistema de archivos.
+- Comprobación de conflicto antes de asignar: desde PVE-1, ARP para 192.168.50.12 y 192.168.50.13 quedó INCOMPLETE; no hubo respuesta ICMP. Esto no sustituye la comprobación posterior de dirección duplicada.
+- Estado GNS3 antes de preparar la salida temporal: PVE-1, PVE-2, PVE-QDEVICE, CorevIOS-1/2, Alpine-SSHClient-1 y NAT1 iniciados; BorderRouter-1/2, ISPRouter-1/2 y DummyInternet detenidos; Cloud1 detenido. El cliente Alpine conserva 192.168.90.10/27, ruta predeterminada vía 192.168.90.1 y resolver 192.168.122.1.
+- Enlaces existentes relevantes: Alpine-SSHClient-1 → ADvIOS-1; BorderRouter-1 → ISPRouter-1 → DummyInternet → NAT1. No hay enlace temporal Cloud añadido.
+- Precondición de P5.1: el puente de las futuras VMs será mbr0 de cada PVE, conectado por ns3; las dos IP de DC están libres al nivel L2 observado. No se ha iniciado instalación, AD DS, DNS ni replicación.

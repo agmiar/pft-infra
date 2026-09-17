@@ -1,0 +1,20 @@
+# P5.2 — preestado para acceso temporal a la GUI de PVE-2
+
+- Fecha: 2026-09-17.
+- Proyecto GNS3: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+- Propósito: registrar el estado anterior a asignar a PVE-2 la IP temporal documentada `172.31.255.3/24` en `ens4`.
+- Estado previo del acceso: la laptop Ubuntu llegaba a PVE-1 por `172.31.255.2`, pero `.3` no respondía.
+
+## Preestado observado
+
+La lectura de Ubuntu mostró `br-pft-transfer` UP con `172.31.255.1/24`, ruta directa `172.31.255.0/24` por ese puente y ruta por defecto de la laptop por `192.168.1.1` en `wlp0s20f3`. `enp4s0` estaba DOWN. `gns3tap0-1` estaba UP/LOWER_UP, conectado a `br-pft-transfer` y en estado forwarding. Cloud1 estaba iniciado; su puerto 1 estaba mapeado a `br-pft-transfer` y conectado a `SwitchvIOSL3-1 Gi0/0`.
+
+La topología GNS3 tenía los enlaces existentes PVE-1 `eth1` → `SwitchvIOSL3-1 Gi0/1` y PVE-2 `eth1` → `Gi0/2`; no estaban suspendidos. En el switch, Gi0/0, Gi0/1 y Gi0/2 figuraban conectados en VLAN 1. Antes de asignar la IP a PVE-2, la tabla MAC dinámica de VLAN 1 mostraba PVE-1 en Gi0/1 y el puente de Ubuntu en Gi0/0, sin la MAC de PVE-2 en Gi0/2.
+
+En la consola local de PVE-2, la lectura anterior a las 19:00 UYT mostró `ens3` UP (MAC `0c:6a:8f:9b:00:00`), `ens4` DOWN (MAC `0c:6a:8f:9b:00:01`) y `vmbr0` UP con `192.168.50.11/27`. La ruta por defecto seguía por `192.168.50.1 dev vmbr0`; `ens4` no tenía IPv4. `/etc/network/interfaces` declara `iface ens4 inet manual`. `pveproxy`, `ssh`, `corosync` y `pve-cluster` estaban activos. Desde la consola, el ping al gateway `192.168.50.1` respondió `Destination Host Unreachable`.
+
+A las 19:00:42 UYT, PVE-1 informó un miembro local más QDevice, `Expected votes: 2`, `Total votes: 2`, `Quorate: Yes`, y DC1/VMID 101 `running`. Desde Ubuntu, ping a `172.31.255.2` respondió; ping a `172.31.255.3` falló y la vecindad para `.3` quedó `INCOMPLETE`.
+
+## Límite de la captura
+
+La consola local se inspeccionó antes del cambio, pero la transcripción cruda de esa lectura no quedó guardada. Una captura scratch posterior por consola no creó archivos temporales; `ls` confirmó que no existían. Este preestado resume únicamente los valores observados en consola, GNS3, Ubuntu y el switch antes de la asignación de `.3`; no afirma un `pvecm status` de PVE-2 anterior al cambio.

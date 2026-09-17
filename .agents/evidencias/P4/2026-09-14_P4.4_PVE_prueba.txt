@@ -1,0 +1,53 @@
+RESULTADO P4.4 — CLÚSTER PROXMOX Y QDEVICE
+Fecha: 2026-09-14, America/Montevideo (UTC-03)
+Estado: Aprobado
+Proyecto GNS3 activo: sprint1-preview1. No se creó ni descargó una copia del proyecto.
+Las credenciales no se guardan en esta evidencia.
+
+1. Preparación de paquetes y salida a repositorios
+
+- Previo: PVE-1 y PVE-2 no tenían corosync-qdevice ni índices APT; ambos usaban DNS 192.168.50.12, sin resolución externa. QNetd estaba activo en QDevice y TCP/5403 ya era alcanzable desde PVE-1.
+- Se levantaron temporalmente BorderRouter-1, ISPRouter-1 y DummyInternet por el trayecto NAT ya documentado. DummyInternet no tenía iptables; se instaló iptables 1.8.13-r0 y se aplicaron las reglas FORWARD/MASQUERADE del archivo configs INFRA/Dummy Internet. BorderRouter-1 alcanzó 1.1.1.1 con 3/3 respuestas.
+- En PVE-1 se usó temporalmente nameserver 1.1.1.1 para consultar los repositorios; el archivo original se restauró y se comprobó después. PVE-2 no tuvo cambios de DNS.
+- Se instalaron corosync-qdevice 3.0.3-1, libnss3-tools 2:3.87.1-1+deb12u4 y su dependencia actualizada libnss3 en ambos PVE. El total de paquetes .deb descargados fue 2.469 kB en PVE-1; los archivos se transfirieron internamente a PVE-2, el hash del paquete corosync-qdevice coincidió con el índice APT y se eliminaron los archivos temporales/cacheados. No se descargó ni guardó una copia del proyecto.
+- Los routers Border/ISP y DummyInternet fueron detenidos al finalizar; NAT1 conservó su estado started. La persistencia del paquete iptables de DummyInternet tras recrear el contenedor no fue probada.
+
+2. Acceso temporal de configuración a QDevice
+
+- Estado previo de sshd en QDevice: PermitRootLogin without-password; PasswordAuthentication yes. Root no podía autenticarse por contraseña desde PVE.
+- Para el setup se habilitó PermitRootLogin yes sólo para user root con origen 192.168.50.10, validando sshd -t y sshd -T. El fingerprint ED25519 de QDevice se contrastó con la clave del host obtenida directamente en el sistema antes de aceptarlo.
+- `pvecm qdevice setup` utilizó el acceso interno de Proxmox e instaló el material de autenticación del clúster en QDevice. No se creó una clave SSH en la laptop Windows; las conexiones de Codex al Ubuntu y a los equipos se hicieron por contraseña.
+- Finalizado el setup, se eliminó el override temporal, se recargó sshd y se verificó PermitRootLogin without-password. La autenticación interna por clave de Proxmox desde PVE-1 funcionó; la ACL vuelve a bloquear SSH/22 desde ambos PVE.
+
+3. ACL temporal
+
+- En ambos Core se añadió temporalmente la secuencia 100: `permit tcp host 192.168.50.10 host 192.168.90.28 eq 22` en VLAN_50_IN, antes de la denegación entre VLANs.
+- La secuencia 100 se eliminó en ambos Core y no se guardó en startup-config. Las entradas permanentes TCP/5403 hacia QDevice siguen en las secuencias 80 y 90 de la ACL vigente.
+- Prueba final desde PVE-1 y PVE-2: TCP/22 a 192.168.90.28 bloqueado (`No route to host`); TCP/5403 abierto.
+
+4. Creación de clúster y QDevice
+
+Comandos ejecutados según el plan:
+
+    pvecm create PFT-CLUSTER --link0 address=192.168.50.10
+    pvecm add 192.168.50.10 --link0 192.168.50.11
+    pvecm qdevice setup 192.168.90.28
+
+Verificación final desde ambos PVE, también después de restaurar la ACL y detener los routers temporales:
+
+    Name:             PFT-CLUSTER
+    Nodes:            2
+    Expected votes:   3
+    Highest expected: 3
+    Total votes:      3
+    Quorum:           2
+    Flags:            Quorate Qdevice
+
+`pvecm nodes` lista pve-1, pve-2 y Qdevice; corosync y corosync-qdevice están activos. QNetd permanece activo en QDevice.
+
+5. Recursos y limitaciones
+
+- `pvesh get /cluster/resources --type vm --output-format json` devolvió `[]`.
+- `pvesr status` no muestra trabajos; `ha-manager status` informa `quorum OK`.
+- La aprobación manual de P4.3 se conserva con sus limitaciones: no se ejecutaron P4T-PVE2, VM-a-VM ni el aprendizaje de MAC de ambas VMs. Esas pruebas no se consideran aprobadas ni ejecutadas por este resultado.
+- La configuración final conserva DNS `search pft.test` / `nameserver 192.168.50.12` en PVE-1 y PVE-2. No se inició P4.5.

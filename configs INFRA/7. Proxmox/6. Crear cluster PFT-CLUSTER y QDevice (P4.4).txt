@@ -1,0 +1,110 @@
+# 6. Crear el clúster PFT-CLUSTER y añadir QDevice — P4.4
+
+**Objetivo:** formar el clúster de dos nodos desde PVE-1, unir PVE-2 y configurar el voto externo QDevice. Este procedimiento no crea HA de VMs ni trabajos pvesr.
+
+**Resultado histórico:** P4.4 se aprobó el 2026-09-14. La evidencia está enlazada al final. Esta guía documenta cómo repetirlo; no sustituye las capturas reales de una ejecución futura.
+
+## Diseño y precondiciones
+
+| Elemento | Nombre | Dirección |
+|---|---|---|
+| PVE-1, líder inicial | pve-1.pft.test | 192.168.50.10/27 |
+| PVE-2 | pve-2.pft.test | 192.168.50.11/27 |
+| QDevice/QNetd | pve-qdevice.pft.test | 192.168.90.28 |
+
+Antes de modificar nada:
+
+1. Confirmar que el proyecto GNS3 correcto está abierto y que PVE-1, PVE-2 y QDevice están iniciados.
+2. Capturar hostname, fecha, direcciones, rutas, resolver, servicios, inventario de VMs, pvesr y estado HA en ambos PVE.
+3. Confirmar que los dos PVE aún están independientes y que /etc/pve/corosync.conf no existe. Si ya pertenecen a un clúster, detenerse.
+4. En QDevice, comprobar que corosync-qnetd está activo y escucha TCP/5403:
+
+       systemctl is-active corosync-qnetd
+       ss -lntp | grep ':5403'
+
+   Desde ambos PVE, verificar que 192.168.90.28 responde en TCP/5403.
+5. Confirmar las reglas permanentes TCP/5403 de VLAN 50 a QDevice en ambos Core. No quitar ni modificar el acceso permanente de QNetd.
+6. Confirmar que corosync-qdevice se puede instalar desde los repositorios autorizados. En P4.4 la versión observada fue 3.0.3-1. PVE-1 no tenía índices APT ni resolvía el repositorio con su DNS .12; se utilizó salida temporal y se restauró el resolver. PVE-2 recibió los paquetes desde el caché temporal de PVE-1 y se verificó el hash de corosync-qdevice. Si la salida no está disponible, detenerse: no cambiar DNS permanentemente ni descargar desde una fuente no verificada.
+7. Mantener presentes las limitaciones aceptadas de P4.3: no se ejecutaron P4T-PVE2, la prueba VM-a-VM ni el aprendizaje MAC de ambas VMs. No describirlas como aprobadas.
+
+## Procedimiento
+
+1. En ambos PVE, instalar corosync-qdevice con paquetes del repositorio Debian/Proxmox aprobado y verificar el paquete instalado. Registrar versión y origen. En el resultado histórico, corosync-qdevice quedó en 3.0.3-1 en ambos.
+
+       apt update
+       apt install corosync-qdevice
+       dpkg-query -W corosync-qdevice
+
+2. Antes de formar el clúster, en QDevice volver a comprobar:
+
+       systemctl is-active corosync-qnetd
+       ss -lntp | grep ':5403'
+
+   En cada PVE comprobar:
+
+       systemctl is-active pve-cluster
+       nc -zvw3 192.168.90.28 5403
+       qm list
+       pvesr status
+       ha-manager config
+
+   La última salida de inventario debe concordar con el preestado. No continuar si hay VMs, trabajos o configuraciones inesperadas.
+
+3. Preparar únicamente el acceso temporal requerido para el comando de setup:
+   - En QDevice, registrar la política SSH original. P4.4 permitió temporalmente autenticación root por contraseña desde PVE-1 y verificó la sintaxis/efectividad antes de recargar sshd.
+   - En ambos Core, la ACL VLAN_50_IN recibió temporalmente la secuencia 100: permit tcp host 192.168.50.10 host 192.168.90.28 eq 22. La regla se retiró al finalizar. No convertir TCP/22 en una excepción permanente.
+   - El método exacto usado para el archivo temporal de sshd no quedó copiado como comandos en la evidencia. Al repetir, comprobar la configuración real, aplicar una excepción temporal limitada a PVE-1 usando el procedimiento de hardening SSH del entorno, ejecutar sshd -t y revisar sshd -T. No inventar ni reutilizar una excepción abierta a toda la red.
+   - No crear claves en la laptop ni eliminar la autenticación interna que Proxmox instala en QDevice. No escribir contraseñas en comandos, capturas o evidencias.
+
+4. En PVE-1, crear el clúster:
+
+       pvecm create PFT-CLUSTER --link0 address=192.168.50.10
+
+   Revisar pvecm status y el archivo distribuido antes de seguir. Si el resultado no identifica PFT-CLUSTER y PVE-1 como esperado, detenerse.
+
+5. En PVE-2, unir el nodo a PVE-1:
+
+       pvecm add 192.168.50.10 --link0 192.168.50.11
+
+   Esperar a que el nodo aparezca en la membresía. No ejecutar el comando de unión dos veces para “reparar” un estado ambiguo.
+
+6. Desde PVE-1, configurar el voto QDevice:
+
+       pvecm qdevice setup 192.168.90.28
+
+   Introducir la credencial de QDevice sólo en el prompt interactivo. Proxmox configura el mecanismo interno de autenticación; conservarlo.
+
+7. Retirar enseguida las excepciones temporales: restaurar la política sshd original de QDevice, validar con sshd -t y recargar el servicio; retirar la secuencia 100 en ambos Core. Restaurar cualquier resolver temporal y el estado GNS3 anterior. No eliminar las reglas permanentes TCP/5403.
+8. Desde ambos PVE, confirmar la restauración de puertos:
+
+       nc -zvw3 192.168.90.28 22
+       nc -zvw3 192.168.90.28 5403
+
+   TCP/22 debe estar bloqueado y TCP/5403 abierto. En el resultado histórico, ambos PVE cumplieron estas dos comprobaciones.
+
+## Aceptación
+
+Desde PVE-1 y PVE-2, capturar:
+
+    pvecm status
+    pvecm nodes
+    systemctl is-active corosync corosync-qdevice
+    pvesr status
+    ha-manager status
+    ha-manager config
+    qm list
+
+La aceptación exige tres votos esperados, tres votos recibidos, quorum 2, Quorate: Yes y bandera Qdevice. La membresía debe incluir los dos PVE y QDevice; ambos servicios corosync y corosync-qdevice deben estar activos. pvesr no debe listar trabajos y ha-manager no debe contener recursos de VM. En la ejecución histórica, ambos PVE cumplieron estas condiciones.
+
+## Parada y rollback
+
+- Antes de crear el clúster, cualquier discrepancia de dirección, conectividad, votos o inventario detiene la tarea.
+- Si falla después de crear el clúster o al unir un nodo, preservar los discos y el estado de ambos PVE; no ejecutar pvecm delnode, purgar /etc/pve ni improvisar una “desunión”. Consultar el procedimiento oficial de Proxmox para el estado exacto observado.
+- El P4.4 histórico se dejó formado porque la aceptación pasó; se revirtieron las excepciones temporales SSH/ACL y el resolver temporal. La configuración interna de autenticación QDevice se conservó.
+
+## Evidencia real
+
+- Control: ../../.agents/evidencias/P4/2026-09-14_P4.4_PVE_control.md
+- Preestado: ../../.agents/evidencias/P4/2026-09-14_P4.4_PVE_pre.txt
+- Resultado y comprobaciones: ../../.agents/evidencias/P4/2026-09-14_P4.4_PVE_prueba.txt
+- Matriz y runbook ACL: ../../.agents/ACL_MATRIZ_Y_RUNBOOK.md

@@ -1,0 +1,49 @@
+P5.1 — POSTESTADO AD DS/DNS Y FRONTEND
+Fecha de cierre de captura: 2026-09-15 12:48 UYT (America/Montevideo, UTC-03).
+Las comprobaciones PVE/GNS3 se observaron a las 12:24 UYT; DCDIAG/repadmin/SRV a las 12:31–12:33 UYT; memoria y disco del anfitrión se revisaron nuevamente a las 12:48 UYT.
+Proyecto GNS3: sprint1-preview1 — 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd.
+No se descargó, copió ni clonó el proyecto. Ninguna credencial, ticket, clave o token se incluye aquí.
+
+PVE / HA
+- PVE-1 y PVE-2 pertenecen a PFT-CLUSTER; ambos mostraron Expected votes 3, Total votes 3, Quorum 2, Quorate Yes y bandera Qdevice.
+- VMID 101/DC1 está en PVE-1; VMID 102/DC2 está en PVE-2; ambos invitados estaban running en la última verificación.
+- pvesr no mostró trabajos. ha-manager indicó quorum OK y no hay recursos HA.
+- En ambos PVE se conserva sin cambios la configuración original: search pft.test, nameserver 192.168.50.12.
+
+GNS3
+- El proyecto estaba abierto.
+- WebUbuntuServer-1 (node ID b0b01630-5e7e-4d75-9e09-cbfdb65f0462) y el switch de acceso ADvIOS-10 (node ID 90ba46e8-4606-4287-8c25-ef52d1e4a0c8) se iniciaron para validar la ruta DNS del frontend; ambos quedaron started como estado operativo final.
+- CorevIOS-1, CorevIOS-2, PVE-1, PVE-2, PVE-QDEVICE y Alpine-SSHClient-1 estaban started en la lectura de API.
+- No se creó ningún nodo temporal nuevo para P5.1. Los nodos de salida BorderRouter-1, ISPRouter-1 y DummyInternet quedaron detenidos; NAT1 permaneció iniciado, según el estado posterior ya verificado. No se modificaron ACL ni rutas.
+
+AD DS / DNS
+- DC1-PFT: 192.168.50.12/27, gateway 192.168.50.1, DNS preferido/alternativo 192.168.50.12 y 192.168.50.13.
+- DC2-PFT: 192.168.50.13/27, gateway 192.168.50.1, DNS preferido/alternativo 192.168.50.13 y 192.168.50.12.
+- AD DS y DNS están instalados en ambos DC; las zonas pft.test y _msdcs.pft.test son AD-integrated.
+- dcdiag /test:dns /v: el primer intento de DC2 mostró una falla transitoria RReg durante la convergencia; al reintentar, todos los tests pasaron. La ejecución fresca en DC1 también terminó con todos los DNS tests en PASS.
+- repadmin /replsummary: en ambas direcciones, 0/5 fallas y error 0. En la lectura fresca, los mayores deltas informados fueron 44m45s y 36m05s.
+- Consulta SRV _ldap._tcp.dc._msdcs.pft.test dirigida directamente a cada DNS (192.168.50.12 y .13) devolvió DC1-PFT y DC2-PFT, ambos en puerto 389. Una consulta PowerShell local mostró sólo DC1 por el camino/caché local; la consulta directa por servidor a ambos DNS confirmó los dos objetivos.
+- Único registro de zona creado para habilitar el requisito P1.3: web A 192.168.100.6, TTL 01:00:00, en la zona integrada pft.test. Inmediatamente tras crearlo DC2 respondía .6 y DC1 aún devolvía NXDOMAIN; después de la convergencia, la lectura remota del registro y las consultas DNS directas a ambos servidores devolvieron .6. No se creó PTR ni ningún registro PVE/PG/VIP/Zabbix.
+
+Frontend
+- WebUbuntuServer-1/ubuntu-server conserva ens3 192.168.100.6/29, gateway estático 192.168.100.1, MAC 0c:f8:f8:60:00:00; la IP/MAC coinciden con la evidencia P1.3 histórica.
+- Netplan de ens3 ahora incluye nameservers 192.168.50.12 y 192.168.50.13; el resto de dirección/ruta se conservó. systemd-resolved está active; resolvectl status muestra esos dos DNS en ens3.
+- resolvectl query web.pft.test resolvió 192.168.100.6 por ens3 vía DNS de red en 32.1 ms.
+- Preestado sin DNS, NXDOMAIN en ambos DNS y preestado inmediatamente anterior al cambio del resolver están guardados en 2026-09-15_P5.1_frontend_pre_dns.txt y 2026-09-15_P5.1_frontend_pre_resolver.txt.
+
+Anfitrión Ubuntu
+- free -h a las 12:48: 30 GiB RAM total, 20 GiB usados, 498 MiB libres, 11 GiB en buff/cache y 10 GiB disponibles; swap 8 GiB, 648 KiB usados.
+- df -h /: raíz 79 GiB, 71 GiB usados, 3.7 GiB disponibles, 96%.
+- No se purgaron cachés ni se detuvieron procesos/VMs: la memoria disponible sigue en 10 GiB y el swap usado es mínimo. No se descargó nada.
+
+Limpieza / rollback
+- Las capturas temporales p5.1-*.ppm y p5.1-*.png en /tmp de PVE-2 fueron eliminadas y se verificó que el patrón no devolviera archivos; PVE-1 ya se había limpiado con el mismo alcance acotado.
+- Se emitieron desde la consola QEMU comandos idempotentes para retirar/verificar el archivo temporal de diagnóstico C:\dc2-dcdiag.txt, pero no se obtuvo una lectura visible fiable del resultado Test-Path; su eliminación no se afirma como verificada.
+- No se ejecutó rollback de cambios funcionales porque las pruebas requeridas pasaron. Para volver al preestado del frontend: quitar sólo nameservers de ens3 en Netplan, aplicar y comprobar que IP/ruta sigan iguales. El A web se puede retirar individualmente de pft.test. Para volver a los estados GNS3 anteriores habría que detener sólo WebUbuntuServer-1 y ADvIOS-10, sabiendo que se perdería la resolución desde el frontend.
+- No hay procedimiento documentado para demover/eliminar el bosque; se preservan VMs y discos. No se borrarán discos ni se improvisará una reversión AD.
+
+Limitaciones de alcance
+- No se configuró ni validó un forwarder corporativo/de laboratorio; la sección 8.2 del plano ejecutivo lo menciona, pero en esta ejecución no se estableció una ruta upstream verificable y la prueba de salida P0.5 ya registrada falló y fue revertida. No se afirma resolución externa/forwarding funcional.
+- No se crearon zonas reversas, PTR, registros PVE/PG/VIP/Zabbix, OUs, AGDLP ni GPO; corresponden a P5.2. No se configuró NTP; corresponde a P5.3.
+- Las limitaciones de P4.3 siguen intactas: P4T-PVE2, la prueba VM-a-VM y aprendizaje de MAC de ambas VMs no se ejecutaron y no se presentan como aprobados.
+

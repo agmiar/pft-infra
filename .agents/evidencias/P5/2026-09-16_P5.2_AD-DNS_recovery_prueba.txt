@@ -1,0 +1,34 @@
+# P5.2 — Recuperación de DC2 y estado del clúster
+
+Fecha: 2026-09-16
+Tarea: P5.2
+Fuente: consola PVE-1 por SSH temporal a LaptopUbuntu y consultas WinRM posteriores.
+No se guardaron credenciales, tickets ni claves.
+
+## Preestado observado
+
+- La consulta `qm status 102` en el nodo que aloja PVE-2 informó `status: stopped` para DC2 antes de la intervención.
+- `pvecm status` mantuvo `PFT-CLUSTER` con `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, `Quorate: Yes` y bandera `Qdevice`.
+- No se modificó la configuración de la VM ni AD/DNS antes de iniciar la recuperación.
+
+## Acción autorizada y resultado
+
+- Se ejecutó una única orden de arranque de la VM 102 mediante la API local de PVE: `pvesh create /nodes/pve-2/qemu/102/status/start --output-format json`.
+- PVE devolvió un UPID de tarea y la lectura posterior confirmó la VM en ejecución.
+
+## Postestado real
+
+Consulta posterior `pvesh get /cluster/resources --type vm --output-format json`:
+
+- `qemu/101`, `DC1`, nodo `pve-1`: `status=running`.
+- `qemu/102`, `DC2`, nodo `pve-2`: `status=running`.
+
+Consulta posterior `pvecm status` (2026-09-16 13:11:56–13:11:57 -03:00):
+
+- Clúster `PFT-CLUSTER`, 3 votos esperados y recibidos, quorum 2, `Quorate: Yes`, `Qdevice`.
+
+La verificación DNS/servicios de ambos DC en [prueba DNS](2026-09-16_P5.2_AD-DNS_prueba.txt) confirmó `DNS`, `Kdc`, `Netlogon` y `NTDS` en `Running`/`Automatic` para DC1-PFT y DC2-PFT.
+
+## Rollback y límite
+
+No se aplicó rollback: el arranque restauró el estado operativo esperado de DC2 y fue seguido por verificación de servicios y replicación. Un apagado posterior de VM 102 no se ejecutó porque volvería a introducir la condición que afectaba la replicación. La acción no creó ni modificó objetos de AD/DNS.

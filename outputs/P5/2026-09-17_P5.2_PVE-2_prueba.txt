@@ -1,0 +1,32 @@
+# P5.2 — prueba de acceso temporal a la GUI de PVE-2
+
+- Fecha: 2026-09-17, 19:00–19:09 UYT.
+- Proyecto: `sprint1-preview1` (`47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`).
+- Alcance: habilitar acceso de gestión desde la laptop Ubuntu por el puente temporal ya activo. No se intentó reparar la red productiva del clúster.
+- No se guardaron contraseñas ni secretos.
+
+## Acciones ejecutadas
+
+1. Se reutilizaron el puente Ubuntu `br-pft-transfer`, Cloud1 y los enlaces existentes al switch; no se creó otra nube ni se cambió el cableado.
+2. En la consola local de PVE-2 se ejecutaron, por separado, los comandos temporales documentados:
+
+   ```sh
+   ip link set ens4 up
+   ip addr add 172.31.255.3/24 dev ens4
+   ```
+
+   Una secuencia inicial compuesta enviada por VNC no llegó correctamente y no produjo conectividad; se comprobó el fallo antes de continuar. Los dos comandos anteriores se enviaron por separado y el estado posterior confirmó que se aplicaron. No se confirmó la ejecución de `ip neigh flush dev ens4`; no fue necesaria para que la prueba ARP funcionara.
+
+## Resultados observados
+
+- Desde Ubuntu, `ip route get 172.31.255.3` eligió `br-pft-transfer`, origen `172.31.255.1`.
+- Ping de Ubuntu a `172.31.255.3`: 3/3 y, en una comprobación posterior, 2/2. La tabla vecina mostró `172.31.255.3` como REACHABLE, MAC `0c:6a:8f:9b:00:01`.
+- TCP/22 y TCP/8006 a `172.31.255.3` conectaron correctamente. `curl -k` a `https://172.31.255.3:8006/` devolvió HTTP 200.
+- La tabla MAC dinámica de VLAN 1 aprendió `0c6a.8f9b.0001` por Gi0/2, `0cb2.fdf2.0001` por Gi0/1 y la MAC del puente por Gi0/0.
+- Una sesión SSH interactiva autenticó contra PVE-2. A las 19:09:23 UYT, `ip -br addr` mostró `ens4 UP 172.31.255.3/24`, `ens3 UP` y `vmbr0 UP 192.168.50.11/27`. `ip route` conservó `default via 192.168.50.1 dev vmbr0`; sólo se añadió la ruta conectada `172.31.255.0/24 dev ens4`.
+- `grep` de `/etc/network/interfaces` mostró `iface ens4 inet manual`; no se editó ese archivo. Los cuatro servicios `pveproxy`, `ssh`, `corosync` y `pve-cluster` respondieron `active`.
+- `pvecm status` en PVE-2 mostró `Nodes: 1`, `Expected votes: 2`, `Total votes: 1`, `Quorate: No`; QDevice aportaba 0 votos a PVE-2. `qm list` mostró DC2/VMID 102 `stopped`.
+
+## Resultado y límites
+
+Quedó comprobado el acceso HTTP/HTTPS de Ubuntu a la GUI directa de PVE-2 en `https://172.31.255.3:8006`. Es un acceso temporal por `ens4`; no mueve `vmbr0`, no cambia la ruta por defecto y no restaura la comunicación Corosync/QDevice por la red productiva. El estado no quorate de PVE-2 y DC2 detenida siguen siendo bloqueos. No se abrió DC2, no se cambió la configuración del switch, el clúster, AD, DNS ni GPO. No se probó el acceso con navegador gráfico.

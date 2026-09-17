@@ -1,0 +1,16 @@
+P5.2 — Postestado de PVE después de restituir DC1
+
+Fecha/hora local de la consola PVE-1: 2026-09-16 00:10:50 UYT (la consola mostró la misma fecha/hora en la salida de `pvecm status`).
+Tarea: P5.2
+Fuente: consola VNC local de PVE-1. No se guardaron credenciales, tickets, certificados ni capturas de esta lectura.
+
+Acciones y resultados observados
+
+- Se ejecutó `qm start 101` una sola vez, porque el preestado inmediato informó `status: stopped` y el estado histórico de P5.2 era `running`.
+- `qm status 101` → `status: running`.
+- `pvecm status` → clúster `PFT-CLUSTER`, `Quorate: Yes`, `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, `Flags: Quorate Qdevice`.
+- La membresía visible se mantuvo: PVE-1 `192.168.50.10 (local)`, PVE-2 `192.168.50.11` y `Qdevice`, un voto cada uno.
+
+Resultado y límite
+
+DC1 quedó `running` y el quorum permaneció 3/3. Esta acción sólo restituyó el estado de energía de la VM; no modificó AD DS, DNS, red, ACL, configuración de PVE ni servicios. Todavía falta el preestado interno de Windows para P5.2.

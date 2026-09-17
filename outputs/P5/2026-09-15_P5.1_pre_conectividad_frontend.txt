@@ -1,0 +1,12 @@
+P5.1 — PREESTADO DE LA CONECTIVIDAD DEL FRONTEND
+Fecha de captura: 2026-09-15 11:56–11:59 UYT (America/Montevideo, UTC-03)
+Proyecto: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+
+Antes del siguiente cambio:
+- WebUbuntuServer-1 (node b0b01630-5e7e-4d75-9e09-cbfdb65f0462) ya se había iniciado como dependencia de P5.1; la API GNS3 devolvió HTTP 200 y estado started. No se ha cambiado la configuración de red del invitado.
+- La consola VNC local de WebUbuntuServer-1 muestra el arranque Ubuntu y `systemd-networkd-wait-online.service/start running`; aún no había prompt de login ni se habían leído/modificado IP, ruta o DNS actuales.
+- ADvIOS-10 (node 90ba46e8-4606-4287-8c25-ef52d1e4a0c8) está stopped. La API confirma enlaces directos entre ADvIOS-10 y WebUbuntuServer-1 (puertos 5/0 y 0/0), CorevIOS-1 (10/0 y 1/0) y CorevIOS-2 (10/0 y 2/0). CorevIOS-1/2 están started.
+- En la captura anterior, WebUbuntuServer-1 y ADvIOS-10 estaban ambos stopped; DC1/DC2 siguen running en sus respectivos PVE.
+- Anfitrión Ubuntu a las 11:59:21: 11 GiB RAM disponibles, swap 648 KiB usado; raíz 3.8 GiB libre (96%). No hubo liberación artificial ni descargas.
+
+La tarea P5.1 necesita probar resolución desde el frontend hacia DC1/DC2. Este preestado se captura antes de iniciar ADvIOS-10 para restablecer el enlace L2 del frontend. Se conservará constancia del resultado y de la opción de rollback a stopped si el cambio temporal de estado debe revertirse.

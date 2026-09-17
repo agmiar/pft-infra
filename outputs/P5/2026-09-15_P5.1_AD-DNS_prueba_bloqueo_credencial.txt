@@ -1,0 +1,9 @@
+Fecha/hora local: 2026-09-15 01:51 UYT
+Tarea: P5.1 — prueba de precondición de contraseña inicial
+
+Prueba ejecutada: cambio obligatorio de contraseña inicial de Administrator en DC1, mediante la consola VGA de VMID 101 en PVE-1.
+Resultado observado: RECHAZADO por Windows. Mensaje: “The value provided for the new password does not meet the length, complexity, or history requirements of the domain.”
+
+No se relajó la política ni se sustituyó el valor indicado por el usuario. El valor no se incluye aquí ni en otra evidencia. La última pantalla observada pide Ctrl+Alt+Del; no se pudo iniciar sesión.
+
+Esta es una observación real del bloqueo de precondición, no una prueba de aceptación de AD/DNS. No se ejecutaron dcdiag, repadmin, consulta de SRV, prueba de replicación, DNS de web.pft.test ni validación de P1.3.

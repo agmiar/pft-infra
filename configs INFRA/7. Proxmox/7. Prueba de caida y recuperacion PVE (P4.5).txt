@@ -1,0 +1,65 @@
+# 7. Prueba de caída y recuperación de PVE — P4.5
+
+**Objetivo:** comprobar el quorum con un solo PVE apagado y al regresar, además de demostrar que no existen trabajos pvesr ni recursos HA de VM. La prueba no promete ni configura reinicio automático de VMs.
+
+## Orden y alcance histórico
+
+El orden del plan es P4.4 → P4.5 → P5.1. En la ejecución histórica, P5.1 cerró a las 12:48 UYT del 2026-09-15 y P4.5 comenzó a las 14:10 UYT; por eso la secuencia temporal original se apartó del orden previsto. Después de P4.5 se revalidaron quorum, estado de DC1/DC2 y consultas SRV, pero no se volvieron a ejecutar dcdiag ni repadmin. Al repetir desde cero, ejecutar P4.5 inmediatamente después de aprobar P4.4 y antes de instalar P5.1.
+
+La prueba histórica apagó PVE-1 con DC1/VMID 101 ejecutándose en él y DC2/VMID 102 en PVE-2. Como DC1 no tenía onboot/startup, se inició manualmente después de recuperar PVE-1. Si se sigue el orden desde cero antes de P5.1, todavía no habrá VMs: omitir el apartado de estado de DC1/DC2 y no inventar un resultado de alta disponibilidad de invitados.
+
+## Precondiciones
+
+1. P4.4 aprobado: PVE-1, PVE-2 y QDevice forman PFT-CLUSTER y muestran quorum 3/3.
+2. PVE-2 y QDevice pueden permanecer encendidos mientras PVE-1 está fuera.
+3. Capturar antes, desde ambos PVE: fecha, pvecm status, servicios pve-cluster/corosync/corosync-qdevice, pvesr status, ha-manager status/config, qm list y pct list.
+4. Confirmar que no hay tareas pvesr ni recursos HA de VMs. Si aparecen, detenerse: la prueba de P4.5 no autoriza cambiar ni apagar esos recursos.
+5. Registrar qué nodos y VMs están iniciados para restituir el mismo estado. No detener Border/ISP u otros nodos que no sean parte de esta prueba.
+
+## Procedimiento
+
+1. Mantener PVE-2 y PVE-QDEVICE en started. Confirmar desde PVE-2 que PVE-1 aún participa y el clúster está quorate 3/3.
+2. En la consola de PVE-1 ejecutar el apagado ordenado:
+
+       systemctl poweroff
+
+   No apagar la VM de PVE-1 desde el host Ubuntu a la fuerza mientras el sistema invitado todavía está apagándose.
+3. Esperar a que GNS3 muestre PVE-1 como stopped. Desde PVE-2, capturar el estado durante la caída y comprobar que sea estable. El resultado histórico fue: Expected votes 3, Total votes 2, Quorum 2, Quorate: Yes, PVE-2 y QDevice presentes; PVE-1 ausente de la membresía.
+4. Durante la ausencia, capturar también:
+
+       pvesr status
+       ha-manager status
+       ha-manager config
+       qm list
+       pct list
+
+   En el resultado histórico no había replicación ni recursos HA de VM. DC2 permaneció running. No atribuir failover de DC1 a Proxmox.
+5. Arrancar PVE-1 desde GNS3 y esperar a que termine el boot y se recupere SSH/consola. No tocar los archivos del clúster para acelerar el retorno.
+6. Desde ambos PVE volver a capturar pvecm status, servicios, pvesr, ha-manager, qm list y pct list. La aceptación requiere que ambos nodos regresen a 3/3, Quorate: Yes, con QDevice y servicios activos.
+7. Si una VM existía y formaba parte del preestado, consultar su estado. En la ejecución histórica, DC1/101 quedó stopped por no tener onboot/startup; se ejecutó en PVE-1 sólo para restaurar el preestado:
+
+       qm status 101
+       qm start 101
+       qm status 101
+
+   Ejecutar qm start sólo si ese VMID existe, estaba running antes y sigue stopped después de recuperar el host. No crear HA, replicación ni autostart como parte de P4.5.
+
+## Aceptación
+
+- Durante la caída: desde PVE-2, PVE-2 + QDevice conservan quorum con 2 votos de 3 y el total igual al quorum.
+- Después: ambos PVE vuelven a mostrar 3 votos, QDevice y Quorate: Yes.
+- pvesr sigue sin trabajos y ha-manager no contiene recursos HA de VM antes, durante ni después.
+- Las VMs presentes en el preestado se devuelven manualmente a ese estado, si corresponde. La prueba no demuestra HA, replicación ni failover de invitados.
+- Guardar pre, durante, post, tiempos, comandos/acciones y limitaciones en la carpeta de evidencia P4 con la convención del proyecto.
+
+## Recuperación / rollback
+
+La recuperación es volver a iniciar PVE-1, esperar su reingreso y restaurar solamente las VMs que estaban encendidas antes y no tienen autostart. No se revierte ni modifica la membresía, QDevice, votos, ACL, HA o replicación. Si el clúster no recupera quorum 3/3, no iniciar cambios de configuración: preservar salidas y abrir incidente.
+
+## Evidencia real
+
+- Control: ../../.agents/evidencias/P4/2026-09-15_P4.5_PVE_control.md
+- Preestado: ../../.agents/evidencias/P4/2026-09-15_P4.5_PVE_pre.txt
+- Durante: ../../.agents/evidencias/P4/2026-09-15_P4.5_PVE_failover.txt
+- Postestado: ../../.agents/evidencias/P4/2026-09-15_P4.5_PVE_post.txt
+- Aceptación y límites: ../../.agents/evidencias/P4/2026-09-15_P4.5_PVE_prueba.md

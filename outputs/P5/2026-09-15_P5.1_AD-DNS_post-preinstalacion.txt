@@ -1,0 +1,32 @@
+Fecha/hora local: 2026-09-15 01:08 UYT
+Tarea: P5.1 — AD DS/DNS (checkpoint posterior a provisión, antes de iniciar Windows Setup)
+Estado: En curso; pruebas de aceptación pendientes.
+
+GNS3:
+- Proyecto activo: sprint1-preview1; ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd.
+- PVE-1, PVE-2, PVE-QDEVICE, Alpine-SSHClient-1 y NAT1 iniciados.
+- BorderRouter-1/2, ISPRouter-1/2, DummyInternet y Cloud1 detenidos. Se restauró el preestado de los nodos que se arrancaron temporalmente para intentar la descarga controlada.
+- La salida P0.5 por Border NAT falló: ping a 1.1.1.1 sin respuesta y DNS de fedorapeople.org sin resolución desde Alpine. No se modificaron rutas, DNS, NAT, ACL ni enlaces.
+- Alpine-SSHClient-1 conserva 192.168.90.10/27, default vía 192.168.90.1 y nameserver 192.168.122.1.
+- Archivos MSI temporales se limpiaron de Ubuntu /tmp, Alpine-SSHClient-1 /tmp y PVE-1 /tmp. Los medios ISO p5.1-drivers.iso quedan en los almacenes locales de ambos PVE.
+
+Clúster/almacenamiento:
+- PVE-1 y PVE-2 informan PFT-CLUSTER, expected/total votes 3/3, quorum 2, Quorate Yes, QDevice presente.
+- PVE-1: pve-cluster, corosync y corosync-qdevice activos.
+- PVE-2: pve-cluster, corosync y corosync-qdevice activos.
+- local-lvm: 41,865,216 KiB disponibles por nodo; uso del pool thin 0 antes del primer arranque invitado.
+- Ubuntu: raíz 79 GiB, 56 GiB usada, 19 GiB disponibles (76%); RAM disponible observada ~21 GiB.
+
+VMs creadas, ambas detenidas:
+- PVE-1 / VMID 101 / DC1: 2 vCPU, 2048 MiB RAM, CPU host, e1000 a vmbr0, disco thin local-lvm de 60 GiB con discard=on temporalmente en SATA, controlador virtio-scsi-single, agente QEMU habilitado. ISO Windows Server en ide2; p5.1-drivers.iso en ide0.
+- PVE-2 / VMID 102 / DC2: mismos parámetros, VMID 102 y disco local-lvm propio.
+- Proxmox asignó pc-i440fx-9.2+pve1. Cada PVE emitió aviso de sobreaprovisionamiento: disco lógico de 60 GiB frente a pool pve/data de ~39.9 GiB físicos y menos de 11.88 GiB libres fuera del pool. pvesm status muestra 0 KiB usados por local-lvm; los discos invitados siguen vacíos. Vigilar el pool thin y el espacio real durante la instalación.
+- Las VMs se mantienen apagadas mientras se espera la confirmación puntual exigida por la política de control de Windows antes de instalar software.
+
+Medios:
+- virtio-win-gt-x64.msi: 4,409,856 bytes; SHA-256 fafd93cb12b8a5df2668d3459d8b5589e7195a28424f9a40e16b50f462cf8fab.
+- qemu-ga-x86_64.msi: 11,909,632 bytes; SHA-256 19dcf8abc30f70c2eb6e87282601fd0476e4e0b19936f63d9c80be30db0796ed.
+- Descargados por HTTPS oficial desde la conexión directa del Ubuntu host porque Border NAT no resolvía el sitio; no se atribuyen a P0.5 ni a salida por Border NAT. No se descargó el ISO VirtIO completo.
+- ISO replicado a los dos PVE: tamaño 16,693,248 bytes, SHA-256 79c93205c4848350b9884d338aa507b21c2a47308ec9ae2627bdd80d4a118a59.
+
+Sin evidencia aún de Windows instalado, IP estáticas, dominio pft.test, roles AD DS/DNS, replicación, SRV, resolución de web.pft.test o cierre de P1.3. No aprobar ni cerrar P5.1 con este checkpoint.

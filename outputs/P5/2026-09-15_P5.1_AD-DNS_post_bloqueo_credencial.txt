@@ -1,0 +1,36 @@
+Fecha/hora local: 2026-09-15 01:51 UYT
+Tarea: P5.1 — AD DS/DNS
+Estado: parcial; bloqueada por política de contraseña inicial de Windows. No cerrar P5.1.
+
+GNS3:
+- Proyecto activo: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd.
+- PVE-1, PVE-2, PVE-QDEVICE, Alpine-SSHClient-1 y NAT1 iniciados.
+- BorderRouter-1/2, ISPRouter-1/2, DummyInternet y Cloud1 detenidos.
+- API local de GNS3 consultada; no se modificaron nodos ni enlaces durante este checkpoint.
+
+Clúster y almacenamiento:
+- Ambos PVE observan PFT-CLUSTER con Expected/Total votes 3/3, quorum 2, Quorate Yes y QDevice presente.
+- PVE-1: local-lvm Used 5,873,689 KiB; Available 35,991,526 KiB. VMID 101 activa.
+- PVE-2: local-lvm Used 0 KiB; Available 41,865,216 KiB. VMID 102 detenida.
+- Ubuntu anfitrión, raíz: 79 GiB total, 63 GiB usados, 13 GiB disponibles (84%) en la última medición. El usuario eximió el umbral documental de 30 GB; no se agotará el espacio real.
+
+DC1 — PVE-1 / VMID 101:
+- Estado Proxmox: running. Configuración: 2 vCPU, 2048 MiB RAM, CPU host, e1000 en vmbr0, disco thin local-lvm de 60 GiB en SATA con discard=on, controladora virtio-scsi-single, QEMU Guest Agent habilitado en Proxmox.
+- Se instaló Windows Server 2022 Standard Evaluation Server Core desde la ISO existente, usando el disco vacío de 60 GiB. El medio Windows sigue en ide2 y el ISO local p5.1-drivers.iso en ide0.
+- Windows solicitó crear la contraseña inicial de Administrator. La contraseña indicada por el usuario para Administrator/DSRM fue rechazada. El mensaje observado en la consola fue: “The value provided for the new password does not meet the length, complexity, or history requirements of the domain.” No se registra el valor de la contraseña.
+- El intento quedó cancelado; la última pantalla observada pide Ctrl+Alt+Del. No se pudo iniciar sesión. No se configuró IP estática, DNS invitado, nombre de dominio, AD DS, DNS, QGA ni VirtIO dentro de Windows.
+
+DC2 — PVE-2 / VMID 102:
+- Estado: stopped; Windows no instalado. Disco thin de 60 GiB sigue sin uso.
+
+Cambios y aceptación:
+- No se modificaron interfaces, ACL, rutas, DNS de PVE, frontend ni configuración de switches.
+- No se creó el bosque pft.test ni se instalaron roles AD DS/DNS. No se ejecutaron dcdiag, repadmin, consulta SRV, resolución de web.pft.test ni pruebas de replicación.
+- P1.3 sigue abierto. P5.2 no se inició.
+
+Rollback y siguiente paso:
+- Se conservaron VMID 101/102 y sus discos. No existe bosque AD que demover ni se borraron discos.
+- La configuración de contraseña no se relajó y no se asignó una contraseña alternativa.
+- Para reanudar se necesita una contraseña que Windows acepte para Administrator y DSRM, o una indicación explícita del usuario sobre cómo resolver la política. Hasta entonces, no iniciar DC2 ni avanzar a P5.2.
+
+Seguimiento de capacidad — 2026-09-15 01:54 UYT: `df -h /` en Ubuntu muestra raíz de 79 GiB, 63 GiB usados y 12 GiB disponibles (85%). No hubo cambios en las VMs desde el postestado; se limpiaron las capturas temporales de `/tmp` en PVE-1.

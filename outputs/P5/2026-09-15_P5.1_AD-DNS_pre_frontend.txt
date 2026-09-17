@@ -1,0 +1,29 @@
+P5.1 — PREESTADO DEL FRONTEND ANTES DE ARRANCAR
+Fecha de captura: 2026-09-15 11:43–11:54 UYT (America/Montevideo, UTC-03)
+Proyecto GNS3: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd
+Captura por lecturas del anfitrión Ubuntu, API local GNS3 autenticada en memoria y CLI de ambos PVE. No se descargó ni copió el proyecto. Ninguna credencial fue registrada.
+
+Anfitrión Ubuntu, lectura 11:54:07 UYT
+- Ubuntu 26.04.1 LTS; hostname bruno-ThinkPad-E15-Gen-2; interfaz Wi-Fi UP en 192.168.1.190/24.
+- RAM: 30 GiB total; 18 GiB usados; 11 GiB disponibles. Swap: 8 GiB, 648 KiB usados. No se detuvieron procesos/VMs ni se vaciaron cachés; no había presión de memoria que justificara liberación artificial.
+- Raíz: 79 GiB total, 71 GiB usados, 3.8 GiB disponibles (95%). No se harán descargas. Los archivos Ubuntu Server-hda.qcow2 del catálogo y del proyecto sprint1-preview1 ocupan 3,609,067,520 bytes cada uno según stat/du; sólo se inspeccionó su tamaño, no se copiaron ni modificaron.
+- Servicio SSH activo; API local GNS3 escucha en 127.0.0.1:3080.
+
+GNS3, lectura de API local posterior al restablecimiento
+- Proyecto sprint1-preview1 confirmado como abierto.
+- WebUbuntuServer-1, node ID b0b01630-5e7e-4d75-9e09-cbfdb65f0462: tipo QEMU, estado stopped, compute local, consola VNC 5902.
+- Propiedades de hardware leídas: disco Ubuntu Server-hda.qcow2, 1560 MiB RAM, x86_64, 4 adaptadores e1000.
+- Conexión: adaptador 0/puerto 0 de WebUbuntuServer-1 hacia adaptador 5/puerto 0 de ADvIOS-10.
+- En esta lectura no se inició el frontend ni se cambió su red.
+
+PVE y VMs, lecturas 11:45 UYT
+- PVE-1 y PVE-2: PFT-CLUSTER; Expected votes 3, Total votes 3, Quorum 2, Quorate Yes, bandera Qdevice.
+- PVE-1: VMID 101 DC1 running, 2048 MiB; PVE-2: VMID 102 DC2 running, 2048 MiB. En ambos pvesr no mostró trabajos y ha-manager indicó quorum OK, sin recursos HA.
+- local-lvm activo en ambos; disponibles aprox. 35.6 GiB en PVE-1 y 35.5 GiB en PVE-2. Raíz PVE con 24 GiB libres en cada nodo.
+- QEMU Guest Agent no está en ejecución en DC2; se usó consola QEMU para observar salida del invitado sin apagar la VM.
+
+Referencia histórica P1.3 (no sustituye verificación actual)
+- La evidencia de 2026-08-30 identifica al frontend histórico WebUbuntuServer-2/ubuntu-server en VLAN 100, 192.168.100.6/29, gateway 192.168.100.1 y sin DNS efectivo.
+- El nodo actual se llama WebUbuntuServer-1 y enlaza al mismo switch ADvIOS-10; se verificarán su IP, ruta, DNS y segmento desde el invitado una vez iniciado. No se da por confirmada la IP histórica hasta esa comprobación.
+
+Este documento es el preestado inmediatamente anterior a iniciar el frontend para la validación P5.1. El estado previo del resolutor actual del invitado se capturará después del arranque y antes de cualquier cambio DNS.

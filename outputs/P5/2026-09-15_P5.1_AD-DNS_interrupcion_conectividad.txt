@@ -1,0 +1,32 @@
+P5.1 — INTENTO DE REANUDACIÓN; ACCESO A GNS3 NO DISPONIBLE
+Fecha de registro: 2026-09-15 09:06:55 UYT (12:06:55 UTC)
+Proyecto: sprint1-preview1 (47a3267f-9b02-4e97-a0e8-0aacb46d5ffd)
+Alcance: estado parcial; no es aceptación ni cierre de P5.1.
+
+Memoria del anfitrión Ubuntu
+- La lectura previa más reciente informó 30 GiB de RAM, 18 GiB disponibles, 636 KiB de swap usados y 12 GiB libres en la raíz.
+- No se detuvieron procesos ni VMs y no se vaciaron cachés. Las métricas no mostraban presión que justificara liberar memoria de forma artificial.
+- Este estado no se pudo refrescar durante el intento actual porque el anfitrión dejó de ser accesible.
+
+DC1, VMID 101 en PVE-1
+- Windows Server 2022 Standard Evaluation Server Core está instalado.
+- La pantalla inicial de contraseña confirmó el cambio de contraseña local de Administrator; existe captura sin contraseña en 2026-09-15_P5.1_AD-DNS_password-change-capture.png. DSRM sigue pendiente hasta la promoción del bosque.
+- SConfig verificó el nombre DC1-PFT tras el reinicio.
+- La pantalla de red observada antes de este intento muestra el adaptador índice 1, Intel(R) PRO/1000 MT Network Connection, con dirección DHCP APIPA 169.254.231.210.
+- En el intento actual sólo se enviaron las teclas 1 y Enter para seleccionar el adaptador en SConfig. No se tecleó dirección, prefijo, gateway o DNS ni se confirmó ningún cambio de configuración. No se pudo verificar visualmente el submenú.
+- No están configurados la IP 192.168.50.12/27, gateway 192.168.50.1, DNS .12/.13, roles AD DS/DNS, bosque, DNS integrado, réplica ni DNS del frontend.
+
+Estado de clúster conocido antes de perder la sesión
+- La lectura exitosa más reciente de PVE-1 mostró Expected votes 3, Total votes 3, Quorum 2, Quorate Yes y bandera Qdevice; VMID 101 estaba running, pvesr no tenía trabajos y HA no tenía recursos.
+- PVE-2 se había observado con quorum 3/3 y QDevice; VMID 102/DC2 seguía detenido. No se obtuvo una nueva lectura después del corte, por lo que estos estados se declaran como último estado conocido, no como verificación actual.
+
+Pérdida de acceso
+- La sesión SSH de administración terminó con “client_loop: send disconnect: Connection reset”.
+- Las pruebas TCP desde este entorno no alcanzaron el anfitrión Ubuntu 192.168.1.190 por los puertos 22 y 3080. También fallaron 22 y 3080 para las otras interfaces comunicadas del anfitrión: 172.17.0.1 y 192.168.122.1.
+- Las comprobaciones fueron sólo de conectividad; no enviaron credenciales. No se pudo volver a consultar la API GNS3 ni PVE.
+- Las capturas QMP temporales /tmp/p5.1-screen-network-menu.png y /tmp/p5.1-screen-network-adapter.png de PVE-1 no pudieron retirarse ni verificarse por la pérdida de acceso. No se guardaron contraseñas en ellas.
+
+Aceptación y rollback
+- P5.1 sigue incompleta. No se ejecutaron dcdiag /test:dns /v, repadmin /replsummary, consulta SRV ni resolución web.pft.test. P1.3 permanece abierta y P5.2 no se inició.
+- No hay cambio de red de Windows que revertir; no se promovió el bosque. Conservar DC1, sus discos y la evidencia. No improvisar una democión/eliminación AD ni borrar discos.
+- Para reanudar de forma verificable hace falta recuperar una ruta de administración al Ubuntu/GNS3 activo; después se volverán a comprobar clúster, VMs y temporales antes de continuar P5.1.
