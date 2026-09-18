@@ -12,7 +12,8 @@ Antes de actuar, lee completos y en este orden:
 4. `.agents/ACL_MATRIZ_Y_RUNBOOK.md`
 5. `.agents/INSIGHTS_CONVERSACION_REESTRUCTURACION_HA.md`
 6. `.agents/EVIDENCIAS_DE_IMPLEMENTACION.md`
-7. `orden de creacion.txt`
+7. `.agents/ALINEACION_REQ_INFRA_S4_2026.md`
+8. `orden de creacion.txt`
 
 Antes de reanudar P5.2, lee su criterio de aceptación/runbook disponible, `configs INFRA/README - guias de reconstruccion.md`, `configs INFRA/8. Active Directory/1. AD DS y DNS redundante (P5.1).md`, `configs INFRA/8. Active Directory/2. DNS, OUs, grupos AGDLP y GPO base (P5.2).md` y las evidencias canónicas de P4.4, P4.5, P5.1 y P5.2. Si no existe un runbook específico de P5.2 o P5.3, dilo; no inventes uno.
 
@@ -36,9 +37,9 @@ Se apagó PVE-1 de forma controlada; PVE-2 y QDevice conservaron quorum 2/2. PVE
 
 DC1-PFT está en `192.168.50.12/27` sobre PVE-1 y DC2-PFT en `192.168.50.13/27` sobre PVE-2, con AD DS/DNS, DNS cruzado, zonas integradas y réplica inicial comprobada en las evidencias históricas. El frontend `192.168.100.6/29` usa DNS `.12/.13` y `web.pft.test` resolvió a esa IP. El forwarder externo no fue configurado ni probado. La evidencia de VLAN 100 es histórica y el puerto no se recapturó en el cierre.
 
-### P5.2 — Bloqueado; cambios DNS parciales verificados, acceso a consola Windows informado por el operador
+### P5.2 — Bloqueado; no hay estado vivo posterior al último corte documentado
 
-Evidencias actuales:
+Referencias de sesiones anteriores, ordenadas por fecha en el registro central:
 
 - `.agents/evidencias/P5/2026-09-15_P5.2_AD-DNS_control.md`
 - `.agents/evidencias/P5/2026-09-16_P5.2_AD-DNS_pre.txt` y `2026-09-16_P5.2_AD-DNS_DC2_pre.txt`
@@ -51,17 +52,23 @@ Evidencias actuales:
 - `.agents/evidencias/P5/2026-09-16_P5.2_PVE_pre.txt` y `2026-09-16_P5.2_PVE_post.txt`
 - `outputs/P5/2026-09-17_P5.2_PVE-2_pre.txt`, `2026-09-17_P5.2_PVE-2_prueba.txt`, `2026-09-17_P5.2_PVE-2_post.txt` y `2026-09-17_P5.2_PVE-2_control.md`
 
-El acceso WinRM a DC1/DC2 por túneles SSH temporales funcionó. DC2/VMID 102 estaba `stopped`; se inició una vez y luego se verificaron DC1/DC2 `running`, quorum PVE 3/3, servicios AD/DNS y replicación `0/5` en ambos sentidos. Se añadieron en DC1 sólo los A definidos en el diseño: `postgres.pft.test` → `192.168.50.16` y `zabbix.pft.test` → `192.168.50.17`. Ambos DNS respondieron con esos valores y con los A PVE/PG/Web. El preestado confirmó que las cinco relaciones GG→DL ya existían; no se modificaron grupos. El error operativo 110 de consulta del socio remoto queda documentado.
+En la sesión del 2026-09-16, el acceso WinRM a DC1/DC2 por túneles SSH temporales funcionó. DC2/VMID 102 estaba `stopped`; se inició una vez y luego se verificaron DC1/DC2 `running`, quorum PVE 3/3, servicios AD/DNS y replicación `0/5` en ambos sentidos. Se añadieron en DC1 sólo los A definidos en el diseño: `postgres.pft.test` → `192.168.50.16` y `zabbix.pft.test` → `192.168.50.17`. Ambos DNS respondieron con esos valores y con los A PVE/PG/Web. El preestado confirmó que las cinco relaciones GG→DL ya existían; no se modificaron grupos. El error operativo 110 de consulta del socio remoto queda documentado. Esa captura es histórica, no describe el último estado conocido.
 
 P5.2 no está terminada: los grupos globales consultados no tienen usuarios; las cinco GPO PFT son esqueletos sin payload de configuración (SYSVOL sólo contiene `GPT.INI` y `Get-GPOReport` falla); faltan los valores y la población/filtros de GPO, y confirmar si se requiere zona inversa/PTR para VLAN 100. `PFT-MGMT-Workstations` está enlazada en la OU raíz `PFT` y en `MGMT-VLAN90`; resolver su alcance antes de configurar la política. Se observó una diferencia de zona horaria entre LaptopUbuntu y DCs; se reserva a P5.3. No avanzar a P5.3 automáticamente.
 
 El operador informó el 2026-09-17 que pudo iniciar sesión en la consola de DC1 y vio Windows Server 2022 Standard Evaluation con SConfig. Es un resultado reportado por el operador, no una captura o lectura verificada por esta sesión. Confirma acceso interactivo al sistema operativo según ese reporte; no prueba por sí mismo el estado de AD DS/DNS, replicación, membresías ni GPO. El canal PowerShell administrativo desde esta sesión no se ha verificado.
 
+La actualización más reciente registrada, 2026-09-17 19:00–19:09 UYT, informó PVE-2 `Quorate: No`, QDevice con 0 votos y DC2/VMID 102 detenida, pese a que el endpoint web de PVE-2 respondía. Consultar `outputs/P5/2026-09-17_P5.2_PVE-2_prueba.txt` y el cierre en `.agents/EVIDENCIAS_DE_IMPLEMENTACION.md`. No afirmar que ambos DC estén operativos ni que el clúster tenga quorum sin una revalidación nueva.
+
 El operador autorizó expresamente aplicar lo que esté descrito por el Plan/diseño. Esa autorización cubrió los dos A explícitos, ya aplicados; las relaciones GG→DL ya estaban hechas. El 2026-09-16 también autorizó crear cuentas de laboratorio si no estaban documentadas. No se encontraron identidades asignadas a los cuatro GG y se propusieron `lab-pve-admin`, `lab-app-user`, `lab-db-admin` y `lab-zabbix-admin`; no se crearon porque la única apertura de PowerShell `New-PSSession` falló con 1312 antes de cualquier comando AD. No pedir nuevamente los nombres: al recuperar el canal, capturar preestado nuevo, verificar duplicados y OUs, y continuar con esa autorización. Aún faltan los valores/alcance/filtros de GPO y confirmar la zona inversa VLAN 100. No avanzar a P5.3 antes de cerrar P5.2.
 
 ## Acceso GNS3 autorizado
 
-El proyecto activo es `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`, en el anfitrión Ubuntu. El usuario es `bruno`; determina la IP vigente al iniciar una sesión remota y no dependas de direcciones antiguas. Usa la instancia activa y la API local; no descargues, clones ni guardes una copia del proyecto. Si necesitas SSH, fuerza autenticación por contraseña (`PubkeyAuthentication=no`) y deja que el operador ingrese el valor interactivamente. No crees claves ni guardes credenciales. Mantén API GNS3 y VNC en loopback; usa túnel SSH si corresponde y no expongas TCP/3080 o VNC directamente.
+El proyecto activo es `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`, en el anfitrión Ubuntu. El usuario es `bruno`; determina la IP vigente al iniciar una sesión remota y no dependas de direcciones antiguas. Usa la instancia activa y la API local. Si necesitas SSH, fuerza autenticación por contraseña (`PubkeyAuthentication=no`) y deja que el operador ingrese el valor interactivamente. No crees claves ni guardes credenciales. Mantén API GNS3 y VNC en loopback; usa túnel SSH si corresponde y no expongas TCP/3080 o VNC directamente.
+
+## Requisito docente S4 recibido el 2026-09-18
+
+Leer `.agents/ALINEACION_REQ_INFRA_S4_2026.md` antes de informar cobertura del proyecto. El plan operativo PFT-S1 no cubre por sí solo todos los requisitos del PDF: las diferencias de alcance, estado y evidencia se describen en esa matriz. No trasladar una brecha docente a una configuración o tarea PX.Y sin actualizar primero el alcance y el plan con el operador.
 
 ## Credenciales
 

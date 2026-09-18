@@ -4,6 +4,8 @@
 
 **Estado inicial (2026-08-29).** El material disponible describe un diseño; no una implementación comprobada. No declarar alta disponibilidad física ni cumplimiento de RTO/RPO hasta completar y registrar las pruebas de aceptación.
 
+**Alineación curricular revisada el 2026-09-18.** Se recibió `Req_Infra_Proyecto_S4_2026_V2.pdf`. Este plan conserva el alcance operativo PFT-S1 para el que fue elaborado y no cubre por completo el nuevo requisito del semestre: en particular, dos sedes conectadas, servicios por sede, respaldo/restauración, GPO efectivas, registros centralizados y autenticación de la aplicación contra AD. Consultar la [matriz de alineación](.agents/ALINEACION_REQ_INFRA_S4_2026.md) antes de afirmar cumplimiento o rebaselinar el trabajo. La matriz distingue obligaciones docentes, cobertura documental y evidencia existente; no registra cambios de infraestructura.
+
 ## Cómo se opera este plan
 
 Cada cambio se ejecuta mediante un ciclo **PIV**: **Planificar → Implementar → Verificar → decisión humana**. Si algo falla o es ambiguo, se conserva evidencia, se aplica el rollback previsto cuando corresponda y se abre un PIV correctivo; no se avanza por apreciación visual de la topología.
@@ -21,11 +23,11 @@ Toda aprobación debe registrar fecha, responsable, comandos/acciones, resultado
 
 Leer antes de actuar, en este orden:
 
-1. [Plano ejecutivo](/home/agmiar/Desktop/PFT-S1/.agents/PLANO_EJECUTIVO_REESTRUCTURACION_HA.md): arquitectura, direccionamiento, migración, pruebas y rollback.
-2. [Matriz ACL y runbook](/home/agmiar/Desktop/PFT-S1/.agents/ACL_MATRIZ_Y_RUNBOOK.md): única norma para ACL.
-3. [Decisiones de alcance](/home/agmiar/Desktop/PFT-S1/.agents/INSIGHTS_CONVERSACION_REESTRUCTURACION_HA.md).
+1. [Plano ejecutivo](.agents/PLANO_EJECUTIVO_REESTRUCTURACION_HA.md): arquitectura, direccionamiento, migración, pruebas y rollback.
+2. [Matriz ACL y runbook](.agents/ACL_MATRIZ_Y_RUNBOOK.md): única norma para ACL.
+3. [Decisiones de alcance](.agents/INSIGHTS_CONVERSACION_REESTRUCTURACION_HA.md).
 4. Este documento.
-5. [Registro de evidencias](/home/agmiar/Desktop/PFT-S1/.agents/EVIDENCIAS_DE_IMPLEMENTACION.md).
+5. [Registro de evidencias](.agents/EVIDENCIAS_DE_IMPLEMENTACION.md).
 
 ### Reglas y límites permanentes
 

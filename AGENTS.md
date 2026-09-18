@@ -14,6 +14,8 @@ Antes de actuar, lee completos y en este orden:
 3. /home/agmiar/Desktop/PFT-S1/.agents/ACL_MATRIZ_Y_RUNBOOK.md
 4. /home/agmiar/Desktop/PFT-S1/.agents/INSIGHTS_CONVERSACION_REESTRUCTURACION_HA.md
 5. /home/agmiar/Desktop/PFT-S1/.agents/EVIDENCIAS_DE_IMPLEMENTACION.md
+6. /home/agmiar/Desktop/PFT-S1/.agents/ALINEACION_REQ_INFRA_S4_2026.md — requisito docente recibido el 2026-09-18; usarlo para distinguir alcance exigido, cobertura del plan y evidencia real.
+6. /home/agmiar/Desktop/PFT-S1/.agents/ALINEACION_REQ_INFRA_S4_2026.md — requisito docente recibido el 2026-09-18; usarlo para distinguir alcance exigido, cobertura del plan y evidencia real.
 
 Estructura de evidencias aprobada
 

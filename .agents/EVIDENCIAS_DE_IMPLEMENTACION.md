@@ -1,6 +1,6 @@
 # Registro de evidencias de implementación
 
-**Estado:** registro parcial actualizado al 2026-09-17. P4.4, P4.5 y P5.1 tienen evidencias enlazadas; P5.2 permanece Bloqueado y P5.3 aún no fue iniciado. Este índice refleja sólo resultados respaldados por los artefactos referenciados.
+**Estado:** registro parcial actualizado al 2026-09-17; la revisión documental del requerimiento docente S4 se añadió el 2026-09-18 en [ALINEACION_REQ_INFRA_S4_2026.md](ALINEACION_REQ_INFRA_S4_2026.md), sin alterar estados de ejecución. P4.4, P4.5 y P5.1 tienen evidencias enlazadas; P5.2 permanece Bloqueado y P5.3 aún no fue iniciado. Este índice refleja sólo resultados respaldados por los artefactos referenciados.
 
 ## Revalidación de conectividad P5.2 y evaluación de P5.3 — 2026-09-17
 
