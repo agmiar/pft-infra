@@ -1,0 +1,19 @@
+Fecha: 2026-09-22
+Tarea: P5.2 — prueba de canal administrativo desde PVE-1
+Estado: Bloqueado
+
+Objetivo
+Verificar un cliente que permita administrar los controladores de dominio desde PVE-1 y capturar el preestado AD/DNS de forma reproducible.
+
+Resultados reales
+- La prueba manual del operador desde Windows confirmó Test-WSMan con Kerberos hacia DC2-PFT.pft.test. Es un canal Kerberos comprobado dentro de Windows; no demuestra un cliente utilizable desde PVE-1.
+- En PVE-1 no se hallaron pwsh, evil-winrm, python3-winrm ni python3-requests-kerberos.
+- PVE-1 usa como resolvedor 192.168.122.1. Sus entradas locales sólo contienen pve-1, pve-2 y pve-qdevice; no incluyen los DC.
+- Bajo autorización del operador se intentó actualizar el índice e instalar krb5-user, python3-winrm y python3-requests-kerberos. apt-get update no descargó ni instaló paquetes: falló al resolver security.debian.org y ftp.debian.org. El intento fue cancelado antes de aplicar paquetes.
+- Como comprobación adicional de sólo lectura, consultas DNS directas desde PVE-1 a 192.168.50.12 y 192.168.50.13 para deb.debian.org agotaron el tiempo de espera por UDP/53. No se cambió DNS, firewall, rutas ni configuración de los DC.
+
+Impacto y rollback
+No se instalaron paquetes y no se modificaron Active Directory, DNS, OUs, grupos, GPO, rutas, firewall, VMs ni servicios. No hay rollback que aplicar.
+
+Condición de reanudación
+Restablecer y comprobar resolución DNS/salida autorizada desde PVE-1, o capturar el preestado mediante la consola administrativa Windows ya validada por Kerberos. Antes de cualquier escritura P5.2 se debe capturar nuevamente el inventario AD/DNS y comprobar duplicados de las cuentas propuestas.

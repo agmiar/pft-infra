@@ -1,0 +1,22 @@
+Fecha: 2026-09-23
+Tarea: P5.4
+Tipo: post
+
+- ADvIOS-1 y ADvIOS-2 iniciados bajo autorización del operador.
+- Se verificó en cada switch que Gi1/1 opera como puerto access VLAN 90 (MGMT).
+- WIN-MGMT-01 quedó enlazado a ADvIOS-1 Gi1/1; WIN-MGMT-02 quedó enlazado a ADvIOS-2 Gi1/1.
+- WIN-MGMT-01: iniciado; VNC local 5901.
+- WIN-MGMT-02: iniciado; VNC local 5905.
+- Los nodos Alpine mgmtPC-1/2 se preservan detenidos y sin enlace como rollback.
+- Acción correctiva de almacenamiento: se retuvo el overlay heredado de 200 MiB
+  de cada nodo con sufijo `.pre-50G-20260923` y se creó un qcow2 independiente
+  de 50 GiB en la ruta del proyecto respaldada por Redalco. La verificación
+  `qemu-img info --output=json` confirmó formato qcow2, tamaño virtual
+  53,687,091,200 bytes y ausencia de backing file.
+- Windows Setup detectó visiblemente `Drive 0 Unallocated Space 50.0 GB` en
+  ambas estaciones. Inició la fase de instalación en WIN-MGMT-01 (preparación
+  de archivos, 48% observado) y WIN-MGMT-02 (copia de archivos, 0% observado).
+- La consola web se sirve sólo por túneles SSH locales hacia noVNC; no se
+  publicó acceso de consola fuera de la estación del operador.
+
+Pendiente: instalación Windows, DHCP, DNS, unión a pft.test, GPO, acceso PVE y pruebas P3.4/P5.4. Sin credenciales ni secretos.

@@ -1,9 +1,35 @@
-Crear un Dockerfile en el Escritorio con lo siguiente:
-FROM gns3/ipterm:latest
-RUN apt-get update && apt-get install -y iptables && rm -rf /var/lib/apt/lists/*
+# Persistencia verificada — 2026-09-23
 
-Abrir una terminal desde el Escritorio y correr:
+La instancia de DummyInternet aplica sus seis reglas de reenvío/NAT desde los
+`post-up` de `/etc/network/interfaces`. Para que sobrevivan al reinicio o a la
+recreación del contenedor, la imagen usada por el nodo **debe incluir**
+`iptables`; no hay que ejecutar `apk add` ni pegar reglas manualmente en cada
+arranque.
+
+En el host actual, `pft/dummy-internet:1.0` fue actualizado a una imagen local
+con `iptables` y la imagen anterior se conserva como
+`pft/dummy-internet:1.0-base-20260923`. El nodo mantiene `Start command:
+/bin/bash`; las reglas pertenecen a la configuración de interfaces, no al
+comando de consola.
+
+Para reconstruir de forma manual en este host, crear un Dockerfile con:
+
+```dockerfile
+FROM pft/dummy-internet:1.0-base-20260923
+RUN apk add --no-cache iptables
+```
+
+Y construirlo como el tag que usa el proyecto:
+
+```sh
 docker build -t pft/dummy-internet:1.0 .
+```
+
+Rollback de imagen, sólo si fuera necesario:
+
+```sh
+docker tag pft/dummy-internet:1.0-base-20260923 pft/dummy-internet:1.0
+```
 
 # PARA CREAR EL CONTENEDOR
 Edit --> Preferences
@@ -45,9 +71,14 @@ post-up iptables -t nat -A POSTROUTING -s 200.0.0.12/30 -o eth2 -j MASQUERADE
  
 ----------
 
-Una vez conectado el Dummy Internet a la nube NAT de GNS3,
-	apk update
-	apk add iptables
+No ejecutar `apk update` ni `apk add iptables` manualmente si se construyó la
+imagen anterior. Tras iniciar el nodo, verificar únicamente:
+
+```sh
+command -v iptables
+iptables -S
+iptables -t nat -S
+```
 
 ----------
 

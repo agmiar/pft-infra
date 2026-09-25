@@ -1,0 +1,109 @@
+Fecha: 2026-09-24
+Tarea: P5.4
+Tipo: post
+Estado: Bloqueado
+
+Comprobaciones vivas del host Ubuntu/GNS3:
+- Hora de captura del host: 2026-09-24T13:18:24-03:00.
+- Proyecto `sprint1-preview1` abierto; API local autenticada sólo desde el host.
+- `WIN-MGMT-01`: nodo QEMU `started`, consola VNC 5901 al cierre. Durante la inspección se encontró `stopped`; se ejecutó el arranque del nodo y la API devolvió HTTP 200. La consola alcanzó la pantalla de bloqueo de Windows después del arranque.
+- `WIN-MGMT-02`: nodo QEMU `started`, consola VNC 5905 al cierre. La sesión quedó autenticada como `PFT\\Administrator`; `System Information` mostró `WIN-MGMT-02` y `rsop.msc` generó `Administrator on WIN-MGMT-02 - RSoP`.
+- Desde `WIN-MGMT-02`, Internet Explorer intentó `https://192.168.50.10:8006/` y `https://192.168.50.11:8006/`; ambos mostraron `Can't reach this page`. La prueba gráfica contra `192.168.50.10:22` tampoco produjo evidencia positiva de TCP/22.
+- `WIN-MGMT-01`: arrancó hasta el inicio de sesión; un único intento con `PFT\\Administrator` devolvió `The user name or password is incorrect. Try again.`. No se hicieron reintentos ni variantes y la VM quedó en la pantalla de inicio.
+- No se modificaron ACL, SVI, enlaces, VLAN, DHCP, DNS ni configuración persistente de los switches.
+
+Pendiente: OU exacta y GPO nominales en ambas estaciones, autenticación/verificación equivalente de `WIN-MGMT-01` y TCP/22 + HTTPS/8006 positivos desde cada estación hacia PVE-1 `.10` y PVE-2 `.11`.
+
+Revalidación visual adicional — 2026-09-24:
+- WIN-MGMT-01 quedó autenticado como `PFT\\Administrator`. `System Information` mostró `System Name: WIN-MGMT-01`.
+- RSoP mostró `User name: PFT\\Administrator`, `Computer name: PFT\\WIN-MGMT-01`, políticas de usuario y equipo habilitadas para visualización, y cargó `Windows Settings > Security Settings`.
+- Detalles Ethernet: DNS suffix `pft.test`; DHCP `Yes`; IPv4 `192.168.90.11/27`; gateway `192.168.90.1`; DHCP `192.168.90.2`; DNS `192.168.50.12` y `192.168.50.13`.
+- Desde WIN-MGMT-01, IE mostró `Can't reach this page` para HTTPS/8006 de PVE-1 y PVE-2. Las comprobaciones gráficas contra HTTP/22 de ambos destinos también mostraron `Can't reach this page`; no se registra esto como prueba concluyente de estado de TCP/22.
+- Al reconectar la consola de WIN-MGMT-02, la estación estaba en la pantalla de inicio con `Administrator@pft.test` seleccionado y contraseña vacía. No se introdujeron credenciales.
+- No se alteraron ACL, SVI, enlaces, VLAN, DHCP, DNS, GPO ni cableado.
+
+Revalidación final de WIN-MGMT-02 — 2026-09-24:
+- La consola quedó en el escritorio. `System Information` mostró `System Name: WIN-MGMT-02`; `rsop.msc` generó `Administrator on WIN-MGMT-02 - RSoP` y procesó configuración de equipo y usuario, con `Windows Settings > Security Settings` cargado. La OU exacta y los nombres nominales de GPO no quedaron identificados por esta vista.
+- Ethernet: DNS suffix `pft.test`; DHCP `Yes`; IPv4 `192.168.90.12/27`; gateway `192.168.90.1`; DHCP `192.168.90.2`; DNS `192.168.50.12` y `192.168.50.13`.
+- Desde WIN-MGMT-02, IE mostró `Can't reach this page` para HTTPS/8006 de PVE-1 y PVE-2. Las comprobaciones gráficas HTTP/22 contra ambos destinos también mostraron `Can't reach this page`; no se registra esto como prueba concluyente de TCP/22.
+- No se modificaron ACL, SVI, enlaces, VLAN, DHCP, DNS, GPO ni cableado.
+
+Estado P5.4 tras la revalidación: **Bloqueado** por OU/GPO nominales no demostradas y ausencia de acceso PVE positivo o de una prueba de socket TCP/22 desde las estaciones.
+
+Diagnóstico adicional de WIN-MGMT-02 — 2026-09-24:
+- Internet Explorer mostró `Error Code: INET_E_CANNOT_CONNECT` al expandir la información de error para HTTPS/8006 de PVE-1/PVE-2 y para las dos comprobaciones gráficas HTTP/22.
+- Se conserva como evidencia de fallo de conexión de navegador; no se interpreta como prueba concluyente del estado de TCP/22.
+- La OU y GPO indicadas en el diseño se registran sólo como referencia: no quedaron demostradas en vivo por RSoP.
+
+Corrección del estado de las VMs — 2026-09-24:
+- SSH al host Ubuntu/GNS3 se realizó con la cuenta local del operador. El preestado de API confirmó ambas VMs `stopped` en el proyecto abierto.
+- Se inició sólo `WIN-MGMT-01` y `WIN-MGMT-02`; la API devolvió HTTP `200` en ambos arranques y el postestado confirmó `started`.
+- Las dos consolas VNC reconectadas muestran la pantalla de bloqueo de Windows. No se introdujeron credenciales ni se tocaron ACL o red.
+
+Respuesta HTTPS real desde las estaciones — 2026-09-24:
+- El operador ejecutó en `WIN-MGMT-01` y `WIN-MGMT-02` `curl.exe -k -I https://192.168.50.10:8006` y `curl.exe -k -I https://192.168.50.11:8006`.
+- Los cuatro destinos respondieron `HTTP/1.1 501 method 'HEAD' not available` y `Server: pve-api-daemon/3.0`. Esto confirma respuesta TLS/HTTP del servicio PVE desde las estaciones; el código 501 corresponde al método HEAD no soportado, no a una denegación de conectividad.
+- En `WIN-MGMT-02`, la consola mostró además `TcpTestSucceeded: True` para `.50.11:8006` y `.50.10:22`; las cuatro pruebas TCP de ambas estaciones ya están conservadas en el control P5.4.
+- Limitación: `-k` omite validación de confianza del certificado y no se registró la pantalla gráfica de login. No se modificaron ACL, VLAN, enlaces, DHCP, DNS, GPO ni cableado.
+
+Revalidación posterior al desbloqueo — 2026-09-24:
+- Ambas estaciones quedaron en el escritorio con sesión `PFT\\Administrator` y se repitieron las cuatro comprobaciones PVE desde cada una.
+- En MGMT-01 y MGMT-02, HTTPS/8006 a PVE-1 `.10` y PVE-2 `.11` terminó en `Can't reach this page`, sin login ni certificado. Las cuatro comprobaciones gráficas HTTP/22 por estación terminaron igual; MGMT-02 mostró `INET_E_CANNOT_CONNECT` en las cuatro.
+- RSoP real quedó generado en ambas estaciones, pero la vista no demostró la OU exacta ni los nombres nominales de GPO. DHCP quedó en `.90.11`/`.90.12`, gateway `.90.1`, DHCP `.90.2`, DNS `.50.12/.13` y sufijo `pft.test`.
+- El diagnóstico de infraestructura sólo lectura se conserva en `2026-09-24_P5.4_PVE_diagnostico_control.md`. PVE escucha 22/8006 y responde por el enlace temporal, mientras los contadores de las reglas PVE en `PFT_V90_FUNC_IN` no registraron coincidencias durante las pruebas Windows.
+- No se modificaron ACL, SVI, enlaces, VLAN, DHCP, DNS, GPO ni cableado. Estado P5.4: **Bloqueado**.
+
+Corrección del estado de las VMs — 2026-09-24:
+- SSH al host Ubuntu/GNS3 se realizó con la cuenta local del operador. El preestado de API confirmó ambas VMs `stopped` en el proyecto abierto.
+- Se inició sólo `WIN-MGMT-01` y `WIN-MGMT-02`; la API devolvió HTTP `200` en ambos arranques y el postestado confirmó `started`.
+- Las dos consolas VNC reconectadas muestran la pantalla de bloqueo de Windows. No se introdujeron credenciales ni se tocaron ACL o red.
+
+Verificación real de OU/GPO — 2026-09-24:
+- `gpresult /r /scope computer` en `WIN-MGMT-01` mostró `CN=WIN-MGMT-01,CN=Computers,DC=pft,DC=test` y sólo `Default Domain Policy` en objetos aplicados.
+- `gpresult /r /scope computer` en `WIN-MGMT-02` mostró `CN=WIN-MGMT-02,CN=Computers,DC=pft,DC=test` y sólo `Default Domain Policy` en objetos aplicados.
+- Ambas salidas identificaron `DC1.pft.test` como origen de la política. Las cinco GPO PFT previstas no aparecieron aplicadas.
+- Resultado: OU/GPO de gestión no demostradas y no conformes con el diseño previsto. No se cambiaron AD, OU, vínculos, filtros, ACL, red, DHCP, DNS ni cableado.
+
+Corrección autorizada de OU — 2026-09-24:
+- Se capturó el preestado de ambos objetos bajo `CN=Computers,DC=pft,DC=test`; la OU destino existía y heredaba las cinco GPO PFT esperadas.
+- Desde DC1 se ejecutó `Move-ADObject` sólo para `WIN-MGMT-01` y `WIN-MGMT-02` hacia `OU=Computers,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- El postestado confirmó ambos DN bajo la OU destino y la herencia efectiva de `PFT-MGMT-Workstations`, `PFT-Domain-Audit`, `PFT-LAPS`, `PFT-Baseline-Users`, `PFT-Baseline-Computers` y `Default Domain Policy`.
+- `Invoke-GPUpdate` remoto desde DC1 falló para ambas estaciones porque no respondieron o tienen deshabilitadas las reglas de administración remota de tareas. No se modificó firewall ni otra configuración.
+- Pendiente: `gpupdate /force` local en cada estación y nuevo `gpresult`.
+
+Verificación posterior de GPO de equipo — 2026-09-24:
+- Después de `gpupdate /force` local, `gpresult /r` en ambas estaciones mostró el DN bajo `OU=Computers,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- En ambas apareció como aplicadas la lista de equipo `PFT-MGMT-Workstations`, `PFT-Domain-Audit`, `PFT-LAPS`, `PFT-Baseline-Computers` y `Default Domain Policy`.
+- La sección `USER SETTINGS` se capturó explícitamente en ambas estaciones y no mostró `PFT-Baseline-Users`, porque la cuenta sigue en el contenedor `CN=Users`.
+
+Verificación real de GPO de usuario — 2026-09-24:
+- `gpresult /r /scope user` en ambas estaciones mostró `CN=Administrator,CN=Users,DC=pft,DC=test` y `Applied Group Policy Objects: N/A`.
+- `PFT-Baseline-Users` no aparece aplicada. La OU prevista existente para usuarios de MGMT es `OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- No se movió la cuenta `Administrator`; falta autorización específica para ese cambio.
+
+Corrección autorizada de OU de usuario — 2026-09-24:
+- Preestado final: `Administrator` habilitado en `CN=Administrator,CN=Users,DC=pft,DC=test`; OU destino existente.
+- Desde PVE-1, mediante WinRM/Kerberos contra DC1, se ejecutó `Move-ADObject` sólo para `Administrator` hacia `OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- Postestado: `CN=Administrator,OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`; cuenta habilitada.
+- Pendiente de validación en vivo: cerrar sesión y volver a iniciar sesión, o ejecutar `gpupdate /force`, en ambas estaciones y repetir `gpresult /r /scope user`. No se modificaron ACL, VLAN, DHCP, DNS, GPO ni firewall.
+
+Diagnóstico de MGMT-01 — 2026-09-24:
+- `gpupdate /force` falló en MGMT-01 por falta de conectividad con el controlador de dominio; MGMT-02 sí aplicó `PFT-Baseline-Users`.
+- Sólo lectura en `ADvIOS-1 Gi1/1`: port-security `Restrict`, `Security Violation Count: 97`, última fuente `0c80.6b32.1001` en VLAN 90 y sticky `0c45.ee75.0000`/`0c80.6b32.0000`.
+- No se aplicó corrección de red; queda pendiente autorización específica para ajustar la asociación sticky y repetir la validación.
+
+Postestado de port-security en MGMT-01 — 2026-09-24:
+- Con autorización se retiraron las sticky antiguas de `ADvIOS-1 Gi1/1` y se configuró `0c80.6b32.1001` como sticky, conservando VLAN 90, máximo 2 y modo `Restrict`.
+- El puerto quedó `Secure-up`, con `Security Violation Count: 0`; la configuración se guardó en startup-config.
+- Pendiente: repetir `gpupdate /force` y `gpresult /r /scope user` en MGMT-01.
+
+## Cierre final P5.4 — 2026-09-24
+
+- `ADvIOS-1 Gi1/1` fue corregido bajo autorización: `switchport access vlan 90` quedó aplicado en ejecución y persistido con `write memory`.
+- Postestado del puerto: `Access Mode VLAN: 90 (MGMT)`, `Secure-up`, MAC sticky `0c80.6b32.1001` en VLAN 90 y cero violaciones.
+- DHCP/ARP confirmados después del cambio: `WIN-MGMT-01=192.168.90.11` y `WIN-MGMT-02=192.168.90.12`, ambos en VLAN 90.
+- El operador ejecutó `gpupdate /force` en `WIN-MGMT-01` y confirmó finalización correcta.
+- La salida visible de `gpresult /r /scope user` en ambas estaciones mostró `PFT-Baseline-Users` como GPO aplicada para `PFT\\Administrator`.
+- La OU de usuario (`OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT`) y las OU de las estaciones ya estaban confirmadas por el postestado AD; las GPO de equipo, acceso PVE y mapa de cableado constan en la evidencia enlazada.
+
+Resultado final P5.4: **Aprobado**. No se registran credenciales ni secretos.

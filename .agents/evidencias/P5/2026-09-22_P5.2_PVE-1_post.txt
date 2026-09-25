@@ -1,0 +1,47 @@
+Fecha: 2026-09-22
+Tarea: P5.2 — recuperación del canal administrativo remoto
+Estado: Bloqueado
+
+Cambios autorizados y resultado
+- Se iniciaron BorderRouter-1, BorderRouter-2, ISPRouter-1, ISPRouter-2 y DummyInternet, que estaban detenidos.
+- ISPRouter-1 inició sin configuración. Se restauraron exclusivamente las interfaces y rutas estáticas de `configs INFRA/5. Routers/ISPRouter-1.txt`, y se guardó la configuración. Después, BorderRouter-1 alcanzó 200.0.0.1 y 200.0.0.9.
+- DummyInternet tenía interfaz WAN por DHCP y salida IP, pero su arranque fallaba porque `iptables` no estaba instalado. Se instaló el paquete desde los repositorios Alpine y se aplicaron las cuatro reglas FORWARD y las dos reglas MASQUERADE ya declaradas en `configs INFRA/Dummy Internet`.
+- Desde PVE-1, la prueba posterior alcanzó 1.1.1.1 sin pérdidas y la consulta DNS pública respondió. El resolvedor previo se preservó en `/etc/resolv.conf.pre-p5.2-20260922`; se configuró temporalmente 1.1.1.1 para instalar dependencias.
+- Se instalaron en PVE-1 `krb5-user`, `python3-winrm` y `python3-requests-kerberos` junto con sus dependencias. Los errores 401 de los repositorios Enterprise de Proxmox no impidieron usar los repositorios Debian públicos.
+- Se preservaron `/etc/hosts` y `/etc/krb5.conf` previos. Se añadieron las resoluciones locales de DC1-PFT/DC2-PFT y el realm Kerberos `PFT.TEST`; ambos KDC respondieron por TCP/88.
+
+Prueba de autenticación
+Se solicitó un ticket para `Administrator@PFT.TEST` de forma interactiva, sin guardar la contraseña. El KDC devolvió `Password incorrect while getting initial credentials`. No se probaron variaciones de credenciales ni se ejecutaron cmdlets contra AD.
+
+Revalidación posterior: el operador informó haber establecido una contraseña en DC2. Se forzó una única solicitud de ticket directamente al KDC de DC2, sin usar DC1 ni modificar la configuración permanente. El resultado volvió a ser `Password incorrect while getting initial credentials`. Por tanto, no hay evidencia de que la credencial de dominio esté aplicada o sea la esperada; no se realizaron intentos adicionales.
+
+Impacto y condición de reanudación
+No se modificaron AD, DNS Windows, OUs, grupos ni GPO. Para reanudar, el operador debe verificar o restablecer manualmente la contraseña de `PFT\Administrator` en la consola de un DC; luego se repetirá una sola solicitud de ticket y se capturará el preestado AD/DNS antes de cualquier escritura P5.2.
+
+Actualización de reinicio y recuperación de plataforma — 2026-09-22
+- Tras el reinicio de Ubuntu se recreó el puente temporal `br-pft-transfer` con `172.31.255.1/24` y se inició Cloud1. Es un enlace de operación temporal, sin cambio de ruta por defecto.
+- Se identificó que Gi0/3 de ADvIOS-9a (PVE-1) y ADvIOS-9b (PVE-2) estaban en VLAN 1. Bajo autorización se pasaron a VLAN 50 y se guardaron. PVE-1 alcanzó PVE-2 en `192.168.50.11` 3/3; PFT-CLUSTER recuperó `Quorate: Yes` con dos nodos y QDevice.
+- Se iniciaron DC1/VMID 101 y DC2/VMID 102. Ambos quedaron `running`; después del arranque, TCP/5985 estuvo abierto en `192.168.50.12` y `192.168.50.13`.
+- Una solicitud interactiva posterior de ticket Kerberos para `Administrator@PFT.TEST` volvió a devolver `Password incorrect while getting initial credentials`. No se almacenó ni se documenta la contraseña, no se hicieron nuevos intentos y no se modificaron objetos AD/DNS/GPO.
+
+Estado al cierre de esta actualización: Bloqueado exclusivamente por la verificación de la credencial de dominio para el cliente remoto PVE-1. La conectividad de plataforma y el transporte WinRM están disponibles.
+
+## Revalidación de arranque tras reinicio del host — 2026-09-23
+
+- PVE-1 y PVE-2 recuperaron quórum de dos nodos más QDevice tras restaurar
+  Gi0/3 de ADvIOS-9b a acceso VLAN 50; el detalle de red y rollback figura en
+  `../P4/2026-09-22_P4.2_PVE_red_incidente.md`.
+- DC2/VMID 102 se inició manualmente desde PVE-2 y quedó `running`. Tras
+  finalizar el arranque, TCP/5985 respondió abierto en DC2 (`192.168.50.13`).
+  La misma sonda TCP respondió abierta en DC1 (`192.168.50.12`).
+- Esto valida disponibilidad de transporte WinRM, no autenticación remota ni
+  el contenido de AD/DNS/GPO. P5.2 sigue **Bloqueado** por el diagnóstico de
+  credenciales/canal Kerberos que debe aportar la consola Windows.
+
+Actualización de reinicio y recuperación de plataforma — 2026-09-22
+- Tras el reinicio de Ubuntu se recreó el puente temporal `br-pft-transfer` con `172.31.255.1/24` y se inició Cloud1. Es un enlace de operación temporal, sin cambio de ruta por defecto.
+- Se identificó que Gi0/3 de ADvIOS-9a (PVE-1) y ADvIOS-9b (PVE-2) estaban en VLAN 1. Bajo autorización se pasaron a VLAN 50 y se guardaron. PVE-1 alcanzó PVE-2 en `192.168.50.11` 3/3; PFT-CLUSTER recuperó `Quorate: Yes` con dos nodos y QDevice.
+- Se iniciaron DC1/VMID 101 y DC2/VMID 102. Ambos quedaron `running`; después del arranque, TCP/5985 estuvo abierto en `192.168.50.12` y `192.168.50.13`.
+- Una solicitud interactiva posterior de ticket Kerberos para `Administrator@PFT.TEST` volvió a devolver `Password incorrect while getting initial credentials`. No se almacenó ni se documenta la contraseña, no se hicieron nuevos intentos y no se modificaron objetos AD/DNS/GPO.
+
+Estado al cierre de esta actualización: Bloqueado exclusivamente por la verificación de la credencial de dominio para el cliente remoto PVE-1. La conectividad de plataforma y el transporte WinRM están disponibles.

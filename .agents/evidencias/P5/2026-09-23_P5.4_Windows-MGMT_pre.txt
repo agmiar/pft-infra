@@ -1,0 +1,47 @@
+Fecha: 2026-09-23
+Tarea: P5.4 — estaciones Windows de gestión
+Tipo: pre
+Estado: Bloqueado
+
+Acciones de solo lectura ejecutadas
+- Se confirmó acceso SSH al host GNS3 como usuario local del operador.
+- Se localizó la ISO de Windows 10 Enterprise Evaluation en el disco Redalco:
+  /run/media/bruno/600A538F0A5360D8/19045.2006.220908-0225.22h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
+  Tamaño: 5550497792 bytes
+  SHA-256: ef7312733a9f5d7d51cfa04ac497671995674ca5e1058d5164d6028f0938d668
+- Se verificó también la disponibilidad de virtio-win-0.1.302.iso en el mismo volumen.
+- El enlace /home/bruno/GNS3/projects/sprint1-preview1-hdd-validation resuelve a:
+  /run/media/bruno/600A538F0A5360D8/PFT-S1_respaldo_2026-09-21/sprint1-preview1
+- En el archivo de proyecto, mgmtPC-1 y mgmtPC-2 son nodos QEMU. Sus enlaces van, respectivamente, al adaptador 5/puerto 0 de ADvIOS-1 y ADvIOS-2.
+
+Resultado
+- La API autenticada confirmó que el proyecto `sprint1-preview1` (ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`) está abierto.
+- `mgmtPC-1` y `mgmtPC-2` están detenidos, son nodos QEMU y usan consola Telnet. Sus enlaces continúan hacia `ADvIOS-1` adaptador 5/puerto 0 y `ADvIOS-2` adaptador 5/puerto 0, respectivamente.
+- Ambos usan la imagen Alpine actual, 256 MiB de RAM y 1 vCPU. Se preservarán como rollback; no se sobrescribirán.
+- Capacidad observada del host: 30 GiB RAM total, 26 GiB disponibles, swap de 8 GiB sin uso, y 857 GiB libres en el HDD Redalco.
+- GNS3 Server informó versión 2.2.61.
+- No se creó, inició, editó, desconectó ni eliminó ninguna VM, nodo, cable o configuración.
+
+Limitación y condición de reanudación
+- La autenticación API se resolvió con la configuración existente del host. Antes de cada cambio se conservarán los nodos Alpine y sus enlaces como rollback; no se modificarán ACL ni puertos de switch sin preestado adicional.
+- Esta evidencia no contiene credenciales, tokens ni secretos.
+
+Preestado AD previo al movimiento — 2026-09-24:
+- Canal: WinRM/Kerberos autenticado desde PVE-1 hacia `DC1-PFT`; se consultó sólo lectura.
+- `WIN-MGMT-01`: `CN=WIN-MGMT-01,CN=Computers,DC=pft,DC=test`; habilitado; canónico `pft.test/Computers/WIN-MGMT-01`.
+- `WIN-MGMT-02`: `CN=WIN-MGMT-02,CN=Computers,DC=pft,DC=test`; habilitado; canónico `pft.test/Computers/WIN-MGMT-02`.
+- OU destino existente: `OU=Computers,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- Herencia observada para la OU destino: `PFT-MGMT-Workstations`, `PFT-Domain-Audit`, `PFT-LAPS`, `PFT-Baseline-Users`, `PFT-Baseline-Computers` y `Default Domain Policy`, todos habilitados y no forzados.
+- Estado de las cinco GPO esperadas: `AllSettingsEnabled`.
+- No se modificó AD, OU, GPO, vínculos, filtros, ACL, red, DHCP, DNS ni cableado durante esta captura.
+
+Preestado de usuario antes de cualquier movimiento — 2026-09-24:
+- `Administrator` está habilitado y su DN actual es `CN=Administrator,CN=Users,DC=pft,DC=test`.
+- La OU de usuarios de MGMT existe: `OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test`.
+- `PFT-Baseline-Users` está habilitada y vinculada en la jerarquía `OU=PFT`; no se movió la cuenta durante esta captura.
+
+Preestado operativo por reinicio de GNS3 — 2026-09-24:
+- Tras el cambio de red del operador, SSH al host Ubuntu/GNS3 se realizó por `192.168.1.51` con la cuenta operativa; el servidor GNS3 escuchaba en `127.0.0.1:3080`.
+- El proyecto `sprint1-preview1` estaba `closed`; los nodos Core, acceso, PVE, QDevice y WIN-MGMT consultados estaban `stopped`.
+- Las VM anidadas `DC1`/`DC2` (VMID 101/102) estaban detenidas en PVE-1/PVE-2.
+- Este preestado no contiene credenciales ni secretos.

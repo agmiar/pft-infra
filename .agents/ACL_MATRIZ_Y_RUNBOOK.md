@@ -11,7 +11,7 @@
 | Elemento | Hallazgo |
 |---|---|
 | CorevIOS-1 | Tiene `VLAN_10_IN`, `VLAN_20_IN`, `VLAN_30_IN`, `VLAN_40_IN`, `VLAN_50_IN`, `VLAN_60_IN`, `VLAN_90_IN`, `VLAN_100_IN` y `FILTRO_DMZ`; las ocho primeras están aplicadas **in** sobre sus SVI. `FILTRO_DMZ` vuelve a estar aplicado **in** en `Vlan100`, por lo que es una segunda ACL de entrada sobre la misma SVI y debe retirarse al sustituir la referencia. |
-| CorevIOS-2 | Contiene definiciones de las ACL anteriores, pero en el archivo disponible sólo `FILTRO_DMZ` está aplicado, en `Vlan100 in`. Antes de intervenir se debe confirmar la configuración en ejecución: esta asimetría invalida cualquier presunción de filtrado homogéneo durante un failover HSRP. |
+| CorevIOS-2 | La captura real del 2026-09-23 confirma `VLAN_10_IN`, `VLAN_20_IN`, `VLAN_30_IN`, `VLAN_40_IN`, `VLAN_50_IN`, `VLAN_60_IN`, `VLAN_90_IN` y `FILTRO_DMZ` adjuntas de entrada sobre sus SVI. El archivo histórico que sólo mostraba `FILTRO_DMZ` estaba desactualizado; la sustitución y rollback se harán homogéneamente en ambos Core. |
 | Direccionamiento vigente en los `.txt` | VLAN 50 aún figura como `192.168.50.0/29` y las ACL usan wildcard `0.0.0.7`. El plano aprobado cambia VLAN 50 a `192.168.50.0/27` (`0.0.0.31`); esta matriz usa el estado objetivo, no el libro/archivo antiguo. |
 | Objetivo de hosts actualizado | `WebUbuntuServer-1` es el único Web Server en VLAN 100 (IP pendiente de confirmar); PVE-1 `.10`, PVE-2 `.11`, DC1 `.12`, DC2 `.13`, PG-1 `.14`, PG-2 `.15`, VIP PostgreSQL `.16`, Zabbix `.17`, QDevice `.90.28`. VLAN 90 es `192.168.90.0/27`; VLAN 60, `192.168.60.0/26`; VLAN 100, `192.168.100.0/29`. |
 | NAT | Ambos Border Router usan la ACL estándar `NAT_INSIDE` para `ip nat inside source list NAT_INSIDE ... overload`. Es una ACL de selección de NAT, no de seguridad; debe conservarse separada. Sólo requiere sustituir su línea `/29` por `/27`, como ya prevé el plano. |
@@ -309,8 +309,24 @@ ip access-list extended PFT_V90_FUNC_IN
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 389
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 445
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 445
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 464
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 464
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 636
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 636
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 3268
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 3268
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 3269
+ permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 3269
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.12 range 49152 65535
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.13 range 49152 65535
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 88
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 88
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 123
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 123
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 389
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 389
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.12 eq 464
+ permit udp 192.168.90.0 0.0.0.31 host 192.168.50.13 eq 464
  permit tcp 192.168.90.0 0.0.0.31 host <IP_WEB_DMZ> eq 80
  permit tcp 192.168.90.0 0.0.0.31 host <IP_WEB_DMZ> eq 443
  permit tcp 192.168.90.0 0.0.0.31 host 192.168.50.10 eq 22

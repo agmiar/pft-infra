@@ -1,0 +1,23 @@
+Fecha: 2026-09-23
+Tarea: P3.1–P3.3, preestado CorevIOS-1
+Estado: Pendiente
+
+Acceso real: consola GNS3 autenticada, privilegio 15.
+
+Comandos ejecutados (solo lectura):
+- show ip interface brief
+- show ip interface vlan 10|50|60|90|100
+- show access-lists
+- show standby brief
+- show ip route 192.168.50.0
+- show running-config | include ^interface Vlan|ip access-group|^ip nat
+
+Resultado relevante:
+- Vlan10=.2/27, Vlan50=.2/27, Vlan60=.2/26, Vlan90=.2/27 y Vlan100=.2/29; todas up/up.
+- Adjuntos de entrada reales: VLAN_10_IN, VLAN_20_IN, VLAN_30_IN, VLAN_40_IN, VLAN_50_IN, VLAN_60_IN y VLAN_90_IN; Vlan100 tiene FILTRO_DMZ.
+- Las ACL antiguas existen y tienen contadores. No existe ningún PFT_* cargado aún.
+- HSRP activo local en VLAN 10, 30, 50 y 90; CorevIOS-2 activo en VLAN 20, 40, 60 y 100.
+- Ruta conectada 192.168.50.0/27 por Vlan50.
+- No se mostró ni alteró NAT en este Core; NAT_INSIDE no fue modificado.
+
+Limitación: el respaldo completo de configuración queda en startup-config del propio Core antes de adjuntar ACL nuevas. No se exportan secretos ni hashes a la evidencia.
