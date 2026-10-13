@@ -1,0 +1,41 @@
+# S3.1 — Postestado final PVE y VMs AD/DNS
+
+Fecha: 2026-09-22 (UYT, UTC-03:00)
+Tarea: S3.1
+Tipo: post
+Estado: Aprobado
+Canal: Alpine-SSHClient-1 y SSH a ambos PVE.
+
+## PVE-1
+
+```text
+2026-09-22T05:13:36-03:00
+hostname: pve-1
+vmbr1 UP 192.168.90.20/27
+default via 192.168.90.1 dev vmbr1
+qm status 101: status: running
+qm status 103: status: stopped
+ssh: 0.0.0.0:22 y [::]:22 en LISTEN
+pveproxy: *:8006 en LISTEN
+proxmox-ve: 8.4.0
+pve-manager: 8.4.0
+```
+
+## PVE-2
+
+```text
+2026-09-22T05:14:00-03:00
+hostname: pve-2
+vmbr1 UP 192.168.110.10/27
+default via 192.168.110.1 dev vmbr1
+192.168.110.0/27 dev vmbr1 proto kernel scope link src 192.168.110.10
+qm status 102: status: running
+qm status 301: status: stopped
+ssh: 0.0.0.0:22 y [::]:22 en LISTEN
+pveproxy: *:8006 en LISTEN
+proxmox-ve: 8.4.0
+pve-manager: 8.4.0
+```
+
+La ruta temporal de diagnóstico hacia `192.168.115.0/27` no está presente en
+PVE-2. Las VMs DC1/101 y DC2/102 permanecen encendidas para la verificación.

@@ -1,0 +1,22 @@
+Fecha: 2026-09-24
+Tarea: S4.3
+Estado: Bloqueado en verificación final del proceso de DC1; artifacts del destino visibles
+
+BKP-1:
+  IP 192.168.160.10/27
+  TCP/445: servicio Samba operativo
+  Volumen persistente GNS3: /srv/bkp
+
+DC1 System State:
+  Destino: WindowsImageBackup/DC1-PFT/Backup 2026-09-24 181305/
+  Se observaron Catalog, metadatos XML y VHDX de System State.
+  Tamaño observado al detenerse el crecimiento: 775946240 bytes de VHDX; estructura reconocida como Microsoft Disk Image Extended.
+  La salida final de wbadmin no fue recuperable porque la limpieza remota quedó esperando confirmación interactiva; no se declara éxito final sólo por la existencia del archivo.
+
+FS-HQ por hitos:
+  FS-HQ/2026-09-24/point-01: cinco tar, incluye el archivo de prueba controlado.
+  FS-HQ/2026-09-24/point-02: cinco tar, archivo eliminado y ausencia verificada.
+  FS-HQ/2026-09-24/point-03: cinco tar, archivo restaurado en Administracion.
+  SHA256 del archivo controlado original y recuperado: 4b020231792f26b8ac25f66c1c492aafd0ee0fa063ec63a809d0d32d3f7d2eb4.
+
+La salida final de wbadmin se añadirá al cierre si difiere del estado observado durante la ejecución.

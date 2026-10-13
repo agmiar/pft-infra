@@ -1,0 +1,98 @@
+# S2.3 — Preestado parcial de VMs y capacidad
+
+- Fecha de captura: 2026-09-20 (UYT, UTC-03:00).
+- Tarea: S2.3.
+- Proyecto GNS3: `PFT-sprint2-preview1`.
+- Fuentes: API GNS3 de sólo lectura, consola VNC local de PVE-1 y PVE-2, y SSH desde Alpine.
+- Credenciales, contraseñas, claves privadas y tokens: no incluidos.
+
+## GNS3 observado
+
+- API local GNS3: versión `2.2.61`.
+- PVE-1: `started`, consola VNC local `5904`.
+- PVE-2: `started`, consola VNC local `5900`.
+- La API mostró los PVE con dos adaptadores y CPU `host`; sus discos base son `PVE-hda.qcow2` y `PVE-2-hda.qcow2`, respectivamente.
+
+## PVE-1 — salida observada
+
+Captura de consola: `2026-09-20T03:28:23-03:00`.
+
+```text
+hostname: pve-1
+qm list:
+ VMID NAME STATUS  MEM(MB) BOOTDISK(GB) PID
+ 101  DC1  stopped 2048     60.00        0
+
+pvesm status:
+ local     dir    active  34712224  8535568  24381176  24.59%
+ local-lvm lvmthin active 41865216  6392818  35472397  15.27%
+
+free -h:
+ Mem: 7.8Gi total, 1.5Gi used, 6.1Gi free, 6.3Gi available
+ Swap: 7.8Gi total, 0B used, 7.8Gi free
+
+df -h / /var/lib/vz:
+ /dev/mapper/pve-root 34G size, 8.2G used, 24G available, 26% /
+```
+
+Configuración no secreta de VM 101:
+
+```text
+agent: enabled=1
+boot: order=ide2;sata0
+cores: 2
+cpu: host
+ide0: local:iso/p5.1-drivers.iso,media=cdrom,size=16302K
+ide2: local:iso/WIN_SERVER_EVAL_x64FRE_en-us.iso,media=cdrom,size=4925874K
+memory: 2048
+name: DC1
+net0: e1000,bridge=vmbr0
+ostype: win10
+sata0: local-lvm:vm-101-disk-0,discard=on,size=60G
+scsihw: virtio-scsi-single
+```
+
+## PVE-2 — salida observada
+
+Tras la autenticación directa del operador en la consola VNC se obtuvo:
+
+```text
+date -Is: 2026-09-20T03:44:03-03:00
+hostname: pve-2
+qm list:
+ 102 DC2 stopped 2048 MB 60.00 GB
+
+pvesm status:
+ local     dir     active  34712224  8308136  24608404  23.93%
+ local-lvm lvmthin active  41865216  6434683  35430532  15.37%
+
+free -h:
+ Mem: 7.8Gi total, 1.5Gi used, 6.2Gi free, 6.2Gi available
+ Swap: 7.8Gi total, 0B used
+
+df -h / /var/lib/vz:
+ /dev/mapper/pve-root 34G size, 8.0G used, 24G available, 26% /
+```
+
+Configuración no secreta de VM 102:
+
+```text
+agent: enabled=1
+boot: order=ide2;sata0
+cores: 2
+cpu: host
+memory: 2048
+name: DC2
+net0: e1000,bridge=vmbr0
+ostype: win10
+sata0: local-lvm:vm-102-disk-0,discard=on,size=60G
+scsihw: virtio-scsi-single
+```
+
+La salida histórica de rechazo SSH queda sólo como incidente de acceso previo; no se usó para acreditar el estado final.
+
+## Acciones no ejecutadas antes del cambio
+
+- No se iniciaron VMs invitadas.
+- No se borró ni movió ninguna VM existente.
+- No se apagó, borró ni movió ninguna VM existente.

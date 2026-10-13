@@ -1,0 +1,50 @@
+# S3.1 — Postestado PVE y VMs AD/DNS
+
+**Fecha:** 2026-09-20 (UYT, UTC-03:00)  
+**Tarea:** S3.1  
+**Tipo:** post  
+**Canal:** Alpine-SSHClient-1 y SSH a ambos PVE.  
+**Credenciales:** no incluidas.
+
+## PVE-1 / DC1
+
+Resultado a las `2026-09-20T05:20:02-03:00`:
+
+```text
+hostname: pve-1
+vmbr1: UP, 192.168.90.20/27
+default via 192.168.90.1 dev vmbr1
+ssh: active
+pveproxy: active
+qm list:
+101 DC1 running 2048 60.00 25780
+103 FS-HQ stopped 2048 32.00 0
+qm status 101:
+status: running
+```
+
+## PVE-2 / DC2
+
+Resultado por SSH desde Alpine a las `2026-09-20T05:19:42-03:00`:
+
+```text
+hostname: pve-2
+vmbr1: UP, 192.168.110.10/27
+default via 192.168.110.1 dev vmbr1
+ssh: active
+pveproxy: active
+qm list:
+102 DC2 running 2048 60.00 26688
+301 ZBX-1 stopped 1024 32.00 0
+qm status 102:
+status: running
+```
+
+El arranque de DC2/102 se ejecutó después del preestado mediante `qm start 102`. El arranque de DC1/101 se ejecutó después del preestado mediante `qm start 101`.
+
+## Limitaciones
+
+- `qm agent 102 ping` y `qm agent 102 network-get-interfaces` devolvieron `QEMU guest agent is not running`.
+- El estado `running` es estado de energía de QEMU; no acredita que Windows haya terminado de iniciar ni que tenga la IP de diseño.
+- Rollback operativo preparado: `qm shutdown 101` y `qm shutdown 102` sólo si el operador solicita restituir el estado detenido. No se aplicó rollback.
+

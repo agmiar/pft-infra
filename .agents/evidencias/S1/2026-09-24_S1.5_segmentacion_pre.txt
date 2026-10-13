@@ -1,0 +1,17 @@
+Fecha: 2026-09-24
+Tarea: S1.5
+Estado: Bloqueado (preestado registrado antes de la aplicación)
+
+Preestado técnico:
+- La VLAN 160/SVI de backup no existía en los Core.
+- El puerto ADvIOS-1 Gi2/1 no estaba dedicado a BKP-1.
+- BKP-1 no tenía nodo activo en el proyecto.
+- Las ACL de invitados VLAN 60 y de usuarios VLAN 50 existían y no se reemplazaron sin lectura previa.
+- PVE-1 estaba operativo en 192.168.90.20; PVE-2 tenía el problema conocido de acceso de gestión.
+
+Acciones de captura:
+- Consulta HTTP del proyecto y nodos GNS3.
+- Captura de show vlan, show run interface Vlan160, show run interface Gi2/1 y show access-lists en los Core.
+- Verificación de servicios objetivo antes de crear el flujo de backup.
+
+No se registran contraseñas ni secretos.

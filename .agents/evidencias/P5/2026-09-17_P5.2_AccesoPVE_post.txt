@@ -1,0 +1,40 @@
+# P5.2 — postestado del acceso temporal a PVE-1 desde LaptopUbuntu
+
+- Fecha/hora de cierre: 2026-09-17 17:58 UYT (UTC-03:00).
+- Proyecto: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+- Preestados: [LaptopUbuntu](2026-09-17_P5.2_AccesoPVE_pre.txt) y [PVE-1](2026-09-17_P5.2_PVE-1_pre.txt).
+- Alcance: habilitar un camino temporal a la GUI PVE-1 y dejar DC1 accesible para inspección. No es aceptación de P5.2.
+
+## Resultado observado
+
+- La API local de GNS3 confirmó el proyecto abierto y 14/45 nodos `started`: los doce nodos de preparación P5.2, `NAT1` y `Cloud1`. `NAT1` ya estaba iniciado. La verificación final `ss -lntp` confirmó GNS3 sólo en `127.0.0.1:3080`.
+- Se recreó en Ubuntu el puente temporal documentado `br-pft-transfer` con `172.31.255.1/24`. Cloud1, puerto 1, está enlazado al puente; `gns3tap0-1` quedó `UP/LOWER_UP`, en forwarding bajo el puente.
+- En PVE-1, `ens4` estaba sin dirección, administrativamente `DOWN` y configurada como `manual`. Se ejecutaron en vivo `ip link set ens4 up`, `ip addr add 172.31.255.2/24 dev ens4` e `ip neigh flush dev ens4`. La ruta predeterminada siguió por `192.168.50.1 dev vmbr0`; no se editó `/etc/network/interfaces`.
+- Desde PVE-1, el ping a `172.31.255.1` respondió 3/3. Desde LaptopUbuntu, el ping a `172.31.255.2` respondió 2/2, TCP/22 abrió y `curl -k` a `https://172.31.255.2:8006/` devolvió HTTP 200. La GUI PVE-1 queda disponible desde un navegador en la propia Ubuntu en `https://172.31.255.2:8006` mientras permanezcan activos el puente, Cloud y la IP temporal.
+- `pvecm status` en PVE-1 informó `Nodes: 1`, `Expected votes: 2`, `Total votes: 2`, `Quorum: 2`, `Quorate: Yes`, bandera `Qdevice`; PVE-2 no figuró en la membresía.
+- DC1/VMID 101 estaba `stopped`; se ejecutó `qm start 101` una vez y `qm status 101` confirmó `running`. `qm config 101` muestra un disco de 60 GiB, ISO de Windows Server Evaluation montada y orden de arranque `ide2;sata0`.
+- Verificación final en Ubuntu a las 17:48: `ip route get 172.31.255.2` eligió `br-pft-transfer`, origen `172.31.255.1`; `curl -k` a HTTPS/8006 volvió a devolver HTTP 200.
+- Desde Alpine, `192.168.50.12` respondió ping y TCP/53; TCP/5985 y TCP/3389 no respondieron. Las consultas DNS UDP `nslookup` desde Alpine expiraron. Por ello no se confirma inicio de sesión Windows, instalación completa, WinRM ni acceso RDP. Se debe inspeccionar la consola noVNC de DC1 desde la GUI antes de afirmar que Windows está instalado.
+- PVE-2/`192.168.50.11` no respondió a ping, TCP/22 ni TCP/8006 desde Alpine, aunque GNS3 informa su nodo como `started`. A las 17:58, la consola VNC local de QEMU respondió `RFB 003.008` y aceptó la negociación `None`; no se obtuvo imagen de la pantalla, así que el estado de arranque de Proxmox y la causa de la falta de red siguen sin determinarse. DC2/VMID 102 no se arrancó.
+- Recursos Ubuntu: 18 GiB disponibles, swap con ~940 KiB usados y `/` con 8.8 GiB libres.
+
+## Rollback
+
+No se aplicó rollback porque el operador pidió dejar el entorno listo. Para retirar sólo el acceso temporal:
+
+```sh
+# En PVE-1
+ip addr del 172.31.255.2/24 dev ens4
+ip link set ens4 down
+
+# En LaptopUbuntu
+sudo ip addr del 172.31.255.1/24 dev br-pft-transfer
+sudo ip link set br-pft-transfer down
+sudo ip link delete br-pft-transfer type bridge
+```
+
+DC1 y los nodos GNS3 se dejaron activos. Para revertir también el estado de encendido, apagar DC1 ordenadamente, detener los doce nodos arrancados en esta intervención y Cloud1, y cerrar el proyecto; conservar NAT1 según el estado que se confirme antes del rollback. No se tocó la configuración persistente de red de PVE ni se cambió AD/DNS/GPO.
+
+## Estado
+
+La ruta de acceso a la GUI de PVE-1 quedó comprobada. P5.2 sigue **Bloqueado**: no se verificó la consola ni la instalación de Windows, PVE-2 está inaccesible y quedan pendientes las decisiones de grupos y GPO registradas en el control P5.2. P5.3 no se inició.

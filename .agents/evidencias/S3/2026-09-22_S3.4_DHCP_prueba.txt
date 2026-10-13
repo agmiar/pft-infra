@@ -1,0 +1,39 @@
+Fecha: 2026-09-22
+Tarea: S3.4 — DHCP, exclusiones, DNS y relay
+Estado: Aprobado
+
+Preestado CorevIOS-1:
+- Pools observados: VLAN10, VLAN20, VLAN30, VLAN40, VLAN60, VLAN90, BRANCH110, BRANCH115, BRANCH120, BRANCH130, BRANCH140, BRANCH150 y BRANCH160.
+- Todos tenían gateway virtual, domain-name pft.test y dns-server 192.168.50.12 192.168.50.13.
+- Exclusiones observadas para gateways, infraestructura y extremos altos de los rangos.
+
+Cambio aplicado en CorevIOS-1:
+- En los 13 pools se dejó dns-server 192.168.50.12 192.168.115.12.
+- Se ejecutó write memory.
+
+Postestado observado:
+- Los 13 pools conservan su network y default-router del plan.
+- Los 13 pools devuelven dns-server 192.168.50.12 192.168.115.12.
+- Los 13 pools devuelven domain-name pft.test.
+- DistvIOS-1: siete ip helper-address 192.168.50.2 en las SVIs BRANCH.
+- DistvIOS-2: siete ip helper-address 192.168.50.2 en las SVIs BRANCH.
+
+Prueba real en Alpine-SSHClient-1, conectado a VLAN 90:
+udhcpc -i eth0 -n -q -t 3
+udhcpc: broadcasting discover
+udhcpc: broadcasting select for 192.168.90.11, server 192.168.90.2
+udhcpc: lease of 192.168.90.11 obtained from 192.168.90.2, lease time 86400
+
+Estado del cliente durante la prueba:
+- eth0: 192.168.90.11/27
+- default via 192.168.90.1
+
+Binding en CorevIOS-1:
+192.168.90.11  0102.4292.30fa.00  Automatic  Active  Vlan90
+
+Rollback de prueba:
+- Se detuvo udhcpc.
+- Se restauró eth0 a 192.168.90.10/27 y default via 192.168.90.1.
+
+Ruta de evidencia: .agents/evidencias/S3/2026-09-22_S3.4_DHCP_prueba.txt
+

@@ -1,0 +1,12 @@
+P5.1 — PREESTADO INICIAL
+Fecha: 2026-09-14, America/Montevideo (UTC-03).
+Proyecto GNS3: sprint1-preview1, ID 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd.
+Origen del registro detallado: [captura pre original](../../../outputs/P5/2026-09-14_P5.1_AD-DNS_pre.txt). Este archivo resume sus resultados sin sustituir la fuente.
+
+Antes del primer cambio de P5.1, la API GNS3 observó el proyecto abierto, PVE-1, PVE-2 y PVE-QDEVICE iniciados, y ningún nodo DC1-PFT/DC2-PFT. Desde PVE-1, `pvecm status` mostró PFT-CLUSTER, Expected votes 3, Total votes 3, Quorum 2, `Quorate: Yes`, bandera Qdevice y membresía de ambos PVE más QDevice con un voto cada uno.
+
+En la misma captura, `pvesr status` mostró la cabecera sin trabajos; `ha-manager status` devolvió `quorum OK` sin recursos; `qm list` no mostró VMs. No existían las VMs, discos invitados, bosque ni zona DNS de P5.1. Los routers de salida estaban detenidos y no se afirmó que hubiese un upstream DNS operativo.
+
+Comandos/acciones: consulta de estado API GNS3, `pvecm status`, `pvesr status`, `ha-manager status`, inventario de VMs y almacenamiento, según la fuente enlazada.
+Resultado: precondición documentada antes de aprovisionar DC1/DC2.
+Limitación: este es un resumen del registro original; sus checkpoints de instalación, reanudación y frontend se conservan en `outputs/P5` y se referencian desde el control canónico. No representa una medición de capacidad de 10–15 minutos.

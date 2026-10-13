@@ -1,0 +1,59 @@
+# S3.1 — Preestado PVE y VMs AD/DNS
+
+**Fecha:** 2026-09-20 (UYT, UTC-03:00)  
+**Tarea:** S3.1  
+**Tipo:** pre  
+**Canal:** Alpine-SSHClient-1 y consola VNC de PVE-2.  
+**Credenciales:** no incluidas.
+
+## PVE-1 / DC1
+
+Comandos ejecutados por SSH desde Alpine:
+
+```text
+date -Is
+hostname
+qm list
+qm status 101
+qm config 101
+```
+
+Resultado observado a las `2026-09-20T05:07:33-03:00`:
+
+```text
+hostname: pve-1
+qm list:
+101 DC1 stopped 2048 60.00 0
+103 FS-HQ stopped 2048 32.00 0
+qm status 101:
+status: stopped
+```
+
+Datos relevantes de `qm config 101`: `net0=e1000=BC:24:11:EF:26:ED,bridge=vmbr0`, 2 vCPU, 2048 MiB, disco `local-lvm:vm-101-disk-0,size=60G`, VLAN de datos por el puerto físico de HQ según S2.3.
+
+## PVE-2 / DC2
+
+Preestado capturado en consola VNC local de PVE-2 antes de iniciar 102:
+
+```text
+date -Is: 2026-09-20T05:18:43-03:00
+ip -4 addr show vmbr1:
+  inet 192.168.110.10/27
+ip route:
+  default via 192.168.110.1 dev vmbr1
+systemctl is-active ssh pveproxy:
+  active
+  active
+qm list:
+102 DC2 stopped 2048 60.00 0
+301 ZBX-1 stopped 1024 32.00 0
+qm status 102:
+  status: stopped
+```
+
+Datos relevantes de `qm config 102`: `net0=e1000=BC:24:11:13:35:71,bridge=vmbr0`, 2 vCPU, 2048 MiB, disco `local-lvm:vm-102-disk-0,size=60G`, sin secreto en la configuración observada.
+
+## Acción posterior al preestado
+
+Se inició sólo DC1/101 y DC2/102. No se modificaron IP, rutas, bridges, ACL, OSPF, DNS ni AD.
+

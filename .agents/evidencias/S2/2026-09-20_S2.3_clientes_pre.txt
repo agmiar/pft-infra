@@ -1,0 +1,22 @@
+# S2.3 — Preestado de corrección de clientes
+
+- Fecha de captura: 2026-09-20 (UYT, UTC-03:00).
+- Tarea: S2.3.
+- Motivo: corregir la decisión de representación de los clientes Windows.
+- Credenciales, contraseñas, claves privadas y tokens: no incluidos.
+
+## Estado previo observado
+
+- `WIN-MGMT-HQ-01` y `WIN-MGMT-BR-01` habían sido creados incorrectamente como VMs PVE 104 y 105.
+- Ambas VMs estaban detenidas y todavía no tenían sistema operativo instalado ni datos de usuario.
+- PVE-1 mostraba como VMs de servicio/clientes: 101 DC1, 103 FS-HQ y 104 WIN-MGMT-HQ-01.
+- PVE-2 mostraba como VMs de servicio/clientes: 102 DC2, 105 WIN-MGMT-BR-01 y 301 ZBX-1.
+- GNS3 ya contenía nodos históricos `mgmtPC-1` y `mgmtPC-2`; no se reutilizaron ni se modificaron en esta corrección.
+- No existía una plantilla Windows cliente en GNS3.
+
+## Puertos elegidos para la corrección
+
+- ADvIOS-1 Gi0/0: `notconnect`, VLAN 1, sin configuración específica; destino HQ/VLAN 90.
+- AccvIOS-1 Gi0/0: `notconnect`, VLAN 1, sin configuración específica; destino BRANCH/VLAN 110.
+
+La ISO disponible para la nueva plantilla es `/home/agmiar/Desktop/PFT-S1/ISOs/en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso`. No se incluyen secretos.

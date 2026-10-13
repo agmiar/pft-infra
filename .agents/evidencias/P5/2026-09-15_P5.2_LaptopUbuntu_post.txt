@@ -1,0 +1,103 @@
+P5.2 — Estado de acceso desde LaptopUbuntu (solo lectura)
+
+Fecha: 2026-09-15
+Marca de tiempo de pruebas de red: 2026-09-15T17:37:59-03:00 (UYT)
+Comprobación posterior de consola: dentro del intervalo 17:37–17:46 UYT; hora exacta no capturada.
+Tarea: P5.2
+
+Acciones y resultados observados:
+
+- Se abrió sesión SSH interactiva con 192.168.1.190; la autenticación a Ubuntu fue correcta. No se registró ningún valor de acceso.
+- El operador informó que ejecutó en Ubuntu la habilitación de SSH y la consulta del socket local; esta sesión verificó los estados siguientes.
+- systemctl is-enabled ssh → enabled.
+- systemctl is-active ssh → active.
+- ss -lnt filtrado por el puerto 22 → LISTEN en 0.0.0.0:22 y [::]:22.
+- ip route get 192.168.50.10 → vía 192.168.1.1, interfaz wlp0s20f3, origen 192.168.1.190.
+- ip route get 192.168.100.6 → vía 192.168.1.1, interfaz wlp0s20f3, origen 192.168.1.190.
+- Pruebas TCP con timeout de 1 s: PVE-1 192.168.50.10:22 y :8006; PVE-2 192.168.50.11:22 y :8006; DC1 192.168.50.12:5985 y :3389; DC2 192.168.50.13:5985 y :3389; Web 192.168.100.6:22. Todas expiraron.
+- Desde Ubuntu, 127.0.0.1:5904 (consola GNS3 PVE-1), :5900 (PVE-2) y :5903 (QDevice) aceptaron TCP.
+- El handshake de solo lectura a la consola local de PVE-1 informó RFB 3.8, tipo de seguridad None y framebuffer QEMU (PVE-1), 1280×800. Se mostró la solicitud de inicio de sesión de la consola.
+- Se envió una única entrada interactiva con la referencia de acceso PVE proporcionada. El estado resultante no pudo verificarse con seguridad; no se ejecutó ningún comando en PVE y no se repitió la autenticación. Un marco transitorio de consola mostró texto de entrada sensible; no se guardó una copia en disco ni se transcribió el valor al proyecto, pero la imagen quedó como salida de esta sesión.
+
+Resultado de la captura inicial desde Ubuntu:
+
+El acceso SSH a la laptop quedó disponible y los puertos VNC de GNS3 sólo se comprobaron en loopback. Las rutas de LaptopUbuntu a las redes de PVE y Web seguían saliendo por 192.168.1.1 y las conexiones a PVE/DC/Web expiraron. En esa captura inicial no se obtuvo shell de PVE ni preestado de PVE, DC1/DC2, DNS, OUs, grupos, GPO o frontend. La captura posterior desde la consola PVE-1 se registra abajo.
+
+Cambios y rollback:
+
+El operador habilitó SSH en LaptopUbuntu. Desde esta sesión no se modificaron la red PFT, VMs, GNS3, AD/DNS ni servicios del proyecto. No aplica rollback de esas configuraciones. La sesión SSH se cerró.
+
+Limitación de la captura inicial:
+
+La autenticación de consola PVE no quedó verificada en esa sesión. Según la instrucción del operador no se probaron variantes ni se repitió el intento. P5.2 seguía Bloqueado y no había prueba de aceptación; la captura posterior no completó la autenticación administrativa de Windows.
+
+Actualización posterior — acceso a PVE y preestado DNS (2026-09-15):
+
+- Una sesión posterior por SSH a LaptopUbuntu abrió la consola VNC local de PVE-1 y verificó un shell root en `pve-1`. Esta observación posterior reemplaza la limitación de acceso PVE registrada arriba para la sesión inicial.
+- `pvecm status` mostró `PFT-CLUSTER` con `Quorate: Yes`, 3 votos esperados/recibidos, quorum 2 y bandera QDevice. El inventario del clúster mostró DC1/VMID 101 en PVE-1 y DC2/VMID 102 en PVE-2, ambas `running`; el agente QEMU de DC1 no respondía.
+- Desde PVE-1, ICMP y TCP/389, /445 y /5985 a DC1 respondieron; TCP/3389 expiró. Una solicitud GET a `/wsman` devolvió HTTP 405 `Allow: POST`, que no determina autenticación. La única solicitud autenticada fue un POST vacío por WinRM/HTTP y devolvió HTTP 401 Unauthorized; no se envió cuerpo SOAP ni instrucción WMI. Se detuvo el acceso sin reintentos ni variantes.
+- Las consultas DNS directas y sin autenticación a ambos controladores devolvieron SOA de `pft.test` y `_msdcs.pft.test` con seriales coincidentes por zona; `web.pft.test` resolvió a `192.168.100.6`. Las consultas A a PVE, PG, VIP y Zabbix devolvieron NXDOMAIN. La consulta SOA inversa devolvió SERVFAIL; no se puede concluir que la zona no exista. No se ejecutaron `dcdiag` ni `repadmin`.
+- No se consultó el inventario interno de AD DS/DNS, OUs, grupos, membresías, GPO o vínculos, y no se aplicaron cambios. El detalle está en [preestado PVE/DNS](2026-09-15_P5.2_AD-DNS_pre.txt) y [incidente WinRM](2026-09-15_P5.2_AD-DNS_incidente.md).
+
+Actualización final de estado — 2026-09-15:
+
+- Durante la comprobación, `qm status 101` informó DC1 detenida a las 19:37:24 UYT; el preestado anterior la registraba `running`. El historial de PVE tenía una tarea `qmshutdown` con resultado OK para `root@pam`, sin atribución comprobada.
+- Se ejecutó `qm start 101` para restituir el estado previo. DC1 volvió a `running` aproximadamente a las 19:38:26 UYT; la verificación final a las 19:50:40 UYT confirmó DC1 encendida y quorum 3/3, `Quorate: Yes`, con QDevice.
+- El POST vacío a `/wsman` devolvió HTTP 401. No se envió una instrucción WMI, no se modificó AD/DNS y no se repitió la autenticación. Ver el [postestado PVE-1/DC1 de acceso y quorum](2026-09-15_P5.2_AD-DNS_post.txt).
+
+Actualización de canal de gestión — 2026-09-15:
+
+- La sesión SSH interactiva a LaptopUbuntu terminó con `client_loop: send disconnect: Connection reset` durante la prueba del puente local de consola `qm vncproxy`. No se obtuvo el marco de DC1/VMID 101 y la credencial de Windows no se introdujo.
+- En la medición posterior desde Windows, `Test-Connection -ComputerName 192.168.1.190 -Count 1 -Quiet` devolvió `True`; `Test-NetConnection` devolvió `False` para TCP/22, TCP/3080 y TCP/5904. El reloj local se consultó a las `2026-09-15T22:27:49.1285607-03:00`.
+- No se modificaron SSH, GNS3, red, ACL o VM durante estas verificaciones. Debido a la pérdida del canal no se pudo comprobar si el proceso temporal del puente llegó a ejecutarse o terminó. La reanudación requiere restablecer el acceso SSH existente y verificar ese proceso antes de continuar; no se solicita exponer TCP/3080 ni puertos VNC.
+
+Revalidación tras la indicación del operador — 2026-09-15, aproximadamente 22:41–23:02 UYT:
+
+- La prueba SSH inicial sin permiso de red devolvió `Permission denied` antes del saludo del servidor. Después, la sesión SSH directa a `bruno@192.168.1.190` se autenticó correctamente con la autenticación por contraseña forzada (`PubkeyAuthentication=no`, `PreferredAuthentications=password`). Ubuntu informó 26.04.1 LTS; la sesión se originó desde `192.168.1.186`. En Ubuntu, `ss -lnt` confirmó SSH en `0.0.0.0:22` y `[::]:22`. La medición TCP anterior no describe que el servicio remoto estuviera cerrado.
+- `ss -lntp` mostró GNS3 en `127.0.0.1:3080` y las consolas QEMU sólo en loopback. La consulta anónima `GET /v2/version` devolvió HTTP 401 con desafío Basic; usando en memoria la configuración existente del servicio, la API identificó GNS3 2.2.61, el proyecto `sprint1-preview1` abierto y PVE-1/PVE-2/PVE-QDEVICE como nodos iniciados. La API mapeó las consolas VNC locales: PVE-1 `127.0.0.1:5904`, PVE-2 `:5900`, QDevice `:5903`. No se imprimieron valores de configuración ni se abrió ningún puerto.
+- En Ubuntu no se halló proceso local que coincidiera con `qm vncproxy`, `socat`, `nc -l`, `ncat` o `websockify`. Esto no permite concluir si existe un proceso temporal dentro de PVE.
+- La consola VNC local de PVE-1 mostró `pve-1 login:`. Se hizo un único intento interactivo con la referencia PVE ya proporcionada, pero no se verificó un shell; por instrucción no se repitió. Se canceló una línea inocua `whoami` antes de enviarla. No se ejecutaron comandos en PVE ni se revalidaron el estado actual de DC1 o el quorum tras la pérdida de canal. No se guardaron capturas ni valores de acceso.
+- No se modificaron AD/DNS, GNS3, PVE, VMs, red ni servicios. La sesión SSH se cerró.
+
+Revalidación actual por SSH — 2026-09-15, 23:35–23:39 UYT:
+
+- Una nueva sesión SSH interactiva se autenticó correctamente en LaptopUbuntu. hostname devolvió bruno-ThinkPad-E15-Gen-2; el reloj local informó 2026-09-15T23:35:08-03:00 y 2026-09-15T23:39:03-03:00 durante la comprobación.
+- ss -lntp mostró el servicio SSH escuchando en 0.0.0.0:22 y [::]:22. La medición TCP anterior desde Windows no describía el estado del servicio en Ubuntu.
+- La API GNS3, usando la configuración local en memoria sin mostrar sus valores, informó versión 2.2.61 y el proyecto sprint1-preview1 abierto. PVE-1, PVE-2 y PVE-QDEVICE estaban started. Las consolas y la API permanecían enlazadas a loopback; no se expuso ningún puerto.
+- ip route get 192.168.50.10 indicó la ruta por 192.168.1.1, interfaz wlp0s20f3. Desde Ubuntu, el ping a PVE-1 no respondió y TCP/22 y TCP/8006 expiraron.
+- La búsqueda local de procesos qm vncproxy, socat, nc -l, ncat y websockify no encontró coincidencias en Ubuntu. Esto no determina el estado de un helper dentro de PVE.
+- No se repitió la autenticación PVE, no se ejecutaron comandos en PVE y no se verificó de nuevo DC1/quorum. No hubo cambios en AD/DNS, GNS3, PVE, VMs, red ni servicios.
+
+Resultado: SSH/22 a Ubuntu y la API GNS3 funcionan. El acceso administrativo interno a PVE y el preestado actual de Windows siguen sin verificarse; P5.2 permanece Bloqueado.
+
+Limpieza de temporales locales — 2026-09-15:
+
+- En la raíz del proyecto se localizaron dos archivos temporales sin enlace de evidencia: .pft_p52_tmp_capture.png (5874 bytes) y .pft_p52_tmp_capture.jpg (0 bytes). No se abrieron ni se mostró su contenido; no se puede afirmar si la imagen contenía texto sensible.
+- Se eliminaron esos dos archivos por ruta exacta después de comprobar que ambos estaban dentro de la carpeta autorizada. La verificación posterior confirmó que ninguno existe. No se alteró ningún artefacto histórico de evidencia.
+
+Revalidación de SSH, API y consola VNC — 2026-09-15 23:59 UYT:
+
+- Una sesión SSH a LaptopUbuntu `192.168.1.190:22` se autenticó correctamente con contraseña forzada. `date --iso-8601=seconds` informó `2026-09-15T23:59:34-03:00`; `ss` confirmó SSH en `0.0.0.0:22` y `[::]:22`.
+- La API GNS3 escucha en `127.0.0.1:3080`. El `GET /v2/version` sin autenticación devolvió HTTP 401 con desafío Basic; usando en memoria la configuración local del servicio, los `GET /v2/version` y `/v2/projects/<id>/nodes` también devolvieron HTTP 401. No se probaron otras credenciales ni variantes. Esto no invalida la lectura autenticada observada en una sesión anterior, pero esa lectura no quedó confirmada en esta revalidación.
+- La consola QEMU de PVE-1 escucha en `127.0.0.1:5904`; PVE-2 en `127.0.0.1:5900` y QDevice en `127.0.0.1:5903`. El handshake de PVE-1 fue RFB 3.8 con tipo de seguridad `None` en el canal VNC. Se recibió un marco de 1280×800 para inspección visual; este acceso no autenticó el sistema operativo ni produjo un shell PVE. No se ingresó ninguna credencial en esta revalidación.
+- El marco se materializó sólo de forma temporal en la raíz autorizada del proyecto para poder inspeccionarlo y se eliminó por ruta exacta; la comprobación confirmó su ausencia. No se guardó como evidencia. No se abrió ningún puerto ni se creó un relay.
+- No se obtuvo un shell administrativo PVE ni se revalidaron DC1, DC2 o quorum. No hubo cambios en AD/DNS, GNS3, PVE, VMs, red o servicios. La sesión SSH se cerró.
+
+Resultado: se confirma SSH a Ubuntu y una consola VNC local de PVE-1 sin autenticación a nivel RFB; el plano de gestión de PVE continúa sin shell verificado. P5.2 sigue Bloqueado.
+
+## Revalidación del puente PVE-2 → PVE-1 → DC1 — 2026-09-16
+
+- Desde una consola root confirmada de PVE-2 se verificó SSH root a PVE-1, `pvesh create .../qemu/101/vncproxy` y una prueba directa de `qm vncproxy 101` que produjo los 12 bytes `RFB 003.008\n`.
+- PVE-1 publicó temporalmente un relay TCP/5905 sólo dentro de la red de gestión; `nc -vz` desde PVE-2 confirmó el puerto abierto. Un cliente Python de biblioteca estándar en PVE-2 intentó leer la consola de VMID 101, pero terminó por timeout o `ConnectionRefused`; no obtuvo framebuffer ni shell Windows.
+- Al terminar se interrumpieron los procesos temporales y se emitió la limpieza de sus archivos en `/tmp` de PVE-1/PVE-2. No se capturó una verificación posterior de esos directorios.
+- No se modificaron AD/DNS, GNS3, ACL, red ni configuración de PVE. P5.2 permanece Bloqueado por falta de acceso funcional a DC1/DC2.
+
+Revalidación de SSH, API y consola VNC — 2026-09-15 23:59 UYT:
+
+- Una sesión SSH a LaptopUbuntu `192.168.1.190:22` se autenticó correctamente con contraseña forzada. `date --iso-8601=seconds` informó `2026-09-15T23:59:34-03:00`; `ss` confirmó SSH en `0.0.0.0:22` y `[::]:22`.
+- La API GNS3 escucha en `127.0.0.1:3080`. El `GET /v2/version` sin autenticación devolvió HTTP 401 con desafío Basic; usando en memoria la configuración local del servicio, los `GET /v2/version` y `/v2/projects/<id>/nodes` también devolvieron HTTP 401. No se probaron otras credenciales ni variantes. Esto no invalida la lectura autenticada observada en una sesión anterior, pero esa lectura no quedó confirmada en esta revalidación.
+- La consola QEMU de PVE-1 escucha en `127.0.0.1:5904`; PVE-2 en `127.0.0.1:5900` y QDevice en `127.0.0.1:5903`. El handshake de PVE-1 fue RFB 3.8 con tipo de seguridad `None` en el canal VNC. Se recibió un marco de 1280×800 para inspección visual; este acceso no autenticó el sistema operativo ni produjo un shell PVE. No se ingresó ninguna credencial en esta revalidación.
+- El marco se materializó sólo de forma temporal en la raíz autorizada del proyecto para poder inspeccionarlo y se eliminó por ruta exacta; la comprobación confirmó su ausencia. No se guardó como evidencia. No se abrió ningún puerto ni se creó un relay.
+- No se obtuvo un shell administrativo PVE ni se revalidaron DC1, DC2 o quorum. No hubo cambios en AD/DNS, GNS3, PVE, VMs, red o servicios. La sesión SSH se cerró.
+
+Resultado: se confirma SSH a Ubuntu y una consola VNC local de PVE-1 sin autenticación a nivel RFB; el plano de gestión de PVE continúa sin shell verificado. P5.2 sigue Bloqueado.

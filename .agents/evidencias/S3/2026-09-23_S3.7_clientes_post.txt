@@ -1,0 +1,45 @@
+Fecha: 2026-09-23
+Tarea: S3.7
+Estado al corte de esa prueba: Bloqueado
+
+Nota de vigencia: el encabezado conserva la limitación de las pruebas pendientes de ese corte; no significa que los clientes estén actualmente bloqueados. Su disponibilidad Zabbix y su recuperación están validadas en `evidencias/S5/2026-10-12_T10_clientes_alertas_recuperacion.md`.
+
+WIN-MGMT-HQ-01:
+- Nombre observado: WIN-MGMT-HQ-01.
+- Red: 192.168.90.12/27, gateway 192.168.90.1, DNS 192.168.50.12 y 192.168.115.12, sufijo pft.test.
+- Dominio: pft.test, PartOfDomain=True.
+- Canal seguro: nltest /sc_query:pft.test -> NERR_Success; DC confiable observado: DC2-PFT.pft.test.
+- GPO: gpupdate /force exitoso; gpresult /r /scope computer mostró Default Domain Policy, GPO-01, GPO-05 y GPO-06.
+
+WIN-MGMT-BR-01:
+- Nombre observado: WIN-MGMT-BR-01.
+- Red: 192.168.110.11/27, gateway 192.168.110.1, DNS 192.168.50.12 y 192.168.115.12.
+- Dominio: unión a pft.test completada y GPO de equipo observadas en la estación.
+- TCP/445 a FS-HQ: TcpTestSucceeded=True.
+- TCP/22 y TCP/8006 a PVE-2 192.168.110.10: abiertos desde la estación BRANCH.
+
+Corrección operativa relacionada:
+- Se confirmó el defecto de aprendizaje tardío de MAC de GNS3 en los enlaces de PVE; el reinicio controlado de PVE-1/PVE-2 volvió a aprender las MAC en los access ports correspondientes.
+- No se cambió la VLAN ni se dejó una ruta temporal de diagnóstico.
+
+Pendientes de aceptación:
+- Validar desde HQ el acceso autorizado al PVE-1 192.168.90.20:22/8006.
+- Capturar desde las dos estaciones la sesión SMB permitida y la denegada.
+- Registrar login interactivo con una cuenta de dominio distinta de la cuenta local.
+
+Evidencias visuales locales:
+- /tmp/hq_rejoin_sc.png
+- /tmp/hq_gpupdate.png
+- /tmp/hq_gpresult_computer.png
+- /tmp/br_gpresult_computer.png
+- /tmp/br_smb_post_restart.png
+- /tmp/br_pve_smb_ok5.png
+
+No se registran contraseñas, tickets ni claves.
+
+## Intento de cierre — 2026-09-23
+
+- Desde Alpine-SSHClient-1, PVE-1 `192.168.90.20` respondió TCP/22 y TCP/8006.
+- En consola SSH de PVE-1, `qm status 101` y `qm status 103` informaron `running`; `qm agent 101 ping` y `qm agent 103 ping` informaron `QEMU guest agent is not running`.
+- El acceso desde la estación HQ a PVE-1 no pudo capturarse de forma independiente; tampoco se obtuvo login interactivo de una cuenta de dominio estable en la estación.
+- Resultado: S3.7 sigue Bloqueado por pruebas estación→PVE-1 y SMB autenticado pendientes; el problema de aprendizaje de MAC de los access ports sí quedó corregido y probado.

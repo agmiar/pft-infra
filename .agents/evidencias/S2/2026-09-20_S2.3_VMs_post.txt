@@ -1,0 +1,61 @@
+# S2.3 — Postestado de VMs de servicio y clientes GNS3
+
+- Fecha de captura: 2026-09-20 (UYT, UTC-03:00).
+- Tarea: S2.3.
+- Fuente: SSH desde `Alpine-SSHClient-1` a PVE-1/PVE-2, consola IOS runtime y API GNS3.
+- Credenciales y secretos: no incluidos.
+
+## PVE-1 / HQ
+
+`date -Is`: `2026-09-20T03:47:29-03:00`.
+
+```text
+VMID NAME STATUS  MEM(MB) BOOTDISK(GB)
+101  DC1  stopped 2048    60.00
+103  FS-HQ stopped 2048    32.00
+
+local-lvm: 41865216 KiB total, 6392818 KiB used, 35472397 KiB available, 15.27%
+```
+
+- DC1/101: `net0 bridge=vmbr0`, 2 vCPU, 2 GiB, disco 60 GiB, VLAN 50 por puerto de datos HQ.
+- FS-HQ/103: `net0 bridge=vmbr0`, 2 vCPU, 2 GiB, disco 32 GiB, Windows Server Evaluation ISO y drivers montados.
+- La VM PVE 104, creada durante la interpretación anterior, fue destruida después de verificar `stopped`; no tenía SO instalado ni datos de usuario.
+
+## PVE-2 / BRANCH
+
+`date -Is`: `2026-09-20T03:47:29-03:00`.
+
+```text
+VMID NAME STATUS  MEM(MB) BOOTDISK(GB)
+102  DC2  stopped 2048    60.00
+301  ZBX-1 stopped 1024    32.00
+
+local-lvm: 41865216 KiB total, 6434683 KiB used, 35430532 KiB available, 15.37%
+```
+
+- DC2/102: `net0 bridge=vmbr0`, 2 vCPU, 2 GiB, disco 60 GiB, VLAN 115 por el nuevo puerto de datos BRANCH.
+- ZBX-1/301: `net0 bridge=vmbr0`, 2 vCPU, 1 GiB, disco 32 GiB, tipo de SO `l26`, VLAN 115.
+- La VM PVE 105, creada durante la interpretación anterior, fue destruida después de verificar `stopped`; no tenía SO instalado ni datos de usuario.
+
+## Clientes Windows GNS3
+
+- Plantilla: `Windows 10 Client LTSC 2021`, template ID `ac8ee5bc-adf2-484b-a143-809bbcd7dbbb`.
+- ISO montada en ambos appliances: `/home/agmiar/Desktop/PFT-S1/ISOs/en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso`; MD5 observado por GNS3: `b5a7be560dbd73619945129e52be1b5f`.
+- `WIN-MGMT-HQ-01`: node ID `9b3bf1d3-7dc3-4b9c-91fc-cb0f8892506b`, stopped, 2 vCPU, 2048 MiB, `empty30G.qcow2`, consola VNC 5901, enlace `3795d122-24f4-44a1-9546-0e566f76d482` a ADvIOS-1 Gi0/0.
+- `WIN-MGMT-BR-01`: node ID `ee078982-7f01-4ec5-8215-b642f756286b`, stopped, 2 vCPU, 2048 MiB, `empty30G.qcow2`, consola VNC 5903, enlace `625ab9aa-5427-4268-b399-28959dbc6608` a AccvIOS-1 Gi0/0.
+
+## Enlaces y VLAN
+
+- Preestado: PVE-2 eth0 estaba conectado a ADvIOS-9b Gi0/3, puerto de acceso VLAN 50.
+- Postestado API: link `29f14d9e-ca79-47bf-849d-beb95e4394e1`, PVE-2 adapter 0 ↔ AccvIOS-1 adapter 8.
+- AccvIOS-1 runtime `Gi2/0`: `connected`, acceso VLAN 115, descripción `PVE-2_VM_BRIDGE_VLAN115`, MAC aprendida de PVE-2 `0c6a.8f9b.0000`.
+- AccvIOS-1 `Gi1/3` conserva la gestión PVE-2 en acceso VLAN 110; no se modificó.
+- PVE-1 `Gi0/3` de ADvIOS-9a permanece como acceso VLAN 50 para `vmbr0`; su puerto de gestión sigue en VLAN 90.
+- ADvIOS-1 `Gi0/0`: `connected`, acceso VLAN 90, descripción `WIN-MGMT-HQ-01_GNS`.
+- AccvIOS-1 `Gi0/0`: `connected`, acceso VLAN 110, descripción `WIN-MGMT-BR-01_GNS`.
+
+## Servicios y límites
+
+- `ssh` y `pveproxy` quedaron `active` en PVE-2 y escuchando en TCP/22 y TCP/8006.
+- Desde Alpine se verificó TCP/22 y TCP/8006 abiertos hacia `192.168.110.10`; la última prueba ICMP obtuvo 3/5 respuestas (40% de pérdida), por lo que no se declara una métrica de rendimiento.
+- Las VMs de servicio y los appliances clientes no se iniciaron. La ISO Windows cliente está montada en los appliances, pero no se declara SO instalado, DHCP obtenido ni unión al dominio.

@@ -1,0 +1,20 @@
+Fecha: 2026-09-24
+Tarea: S4.4
+Estado: Aprobado
+
+Objeto: S4-restore-probe.txt
+Share: Administracion
+
+point-01: archivo presente antes de la eliminación.
+point-02: archivo eliminado; listado vacío en Administracion.
+point-03: archivo cargado desde point-01 y presente nuevamente.
+
+Verificación de integridad:
+  SHA256 original:   4b020231792f26b8ac25f66c1c492aafd0ee0fa063ec63a809d0d32d3f7d2eb4
+  SHA256 recuperado: 4b020231792f26b8ac25f66c1c492aafd0ee0fa063ec63a809d0d32d3f7d2eb4
+  Resultado: coincide
+
+Control de permisos:
+  Administración pudo operar en Administracion.
+  La misma identidad fue rechazada en Finanzas.
+  No se modificó DC1 ni se usó snapshot de DC para restaurar.

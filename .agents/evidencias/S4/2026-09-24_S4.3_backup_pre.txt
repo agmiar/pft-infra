@@ -1,0 +1,11 @@
+Fecha: 2026-09-24
+Tarea: S4.3
+Estado: Preestado
+
+- No existía BKP-1 activo en el proyecto.
+- No existía SVI VLAN160 ni puerto de acceso dedicado para backup.
+- El destino persistente de backup no contenía el árbol WindowsImageBackup de DC1 ni los tres puntos FS-HQ.
+- Se conservaron las configuraciones previas de Core/ADvIOS y se capturó el inventario GNS3 antes de crear el servicio.
+- La decisión de diseño fue un contenedor Alpine/Samba de bajo consumo con volumen persistente GNS3.
+
+No se registran secretos.

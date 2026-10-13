@@ -1,0 +1,31 @@
+Fecha: 2026-09-23
+Tarea: S3.6
+Estado: Bloqueado
+
+Prueba real de permisos SMB/AGDLP desde el segmento HQ:
+- Origen de red: Alpine-SSHClient-1, usando el camino L3 real hacia 192.168.50.18.
+- Identidad de prueba: adm01@pft.test con credencial autorizada; el secreto se omite.
+- Share permitido: Administracion; la consulta SMB listó . y .. sin error.
+- Share no permitido: Finanzas; la consulta SMB devolvió STATUS_ACCESS_DENIED.
+- El resultado coincide con GG-Administracion -> DL_FS_Administracion_RW y el rechazo de acceso a DL_FS_Finanzas_RW.
+
+Prueba de alcance desde BRANCH:
+- Desde WIN-MGMT-BR-01 se verificó TCP/445 abierto hacia 192.168.50.18 (TcpTestSucceeded=True).
+- La autenticación de share desde la estación BRANCH todavía no quedó capturada como sesión SMB; no se declara aceptación cross-sede completa.
+
+Consulta reproducible:
+- En un cliente: Test-NetConnection 192.168.50.18 -Port 445.
+- Con una cuenta de área: net use \\192.168.50.18\Administracion /user:<cuenta> y luego dir.
+- Repetir contra \\192.168.50.18\Finanzas para observar el rechazo.
+
+Resultado y limitación:
+- La implementación local de FS-HQ y la matriz permitida/denegada responden correctamente.
+- Falta repetir ambas acciones desde las dos estaciones Windows para cerrar la aceptación formal de S3.6.
+- No se registran contraseñas, tickets ni claves.
+
+## Intento de cierre — 2026-09-23
+
+- Desde Alpine-SSHClient-1, TCP/445 hacia `192.168.90.12` y `192.168.110.11` expiró; esto no sustituye una prueba estación→FS-HQ y no se interpreta como fallo del share.
+- La única prueba autenticada reproducible continúa siendo la del segmento HQ: Administracion permitió listado y Finanzas devolvió `STATUS_ACCESS_DENIED`.
+- La estación BRANCH ya había demostrado salida TCP/445 hacia FS-HQ, pero no se pudo capturar una sesión SMB autenticada desde Windows.
+- Resultado: S3.6 sigue Bloqueado por falta de las dos pruebas desde estaciones, no por fallo observado en AGDLP/ACL de FS-HQ.

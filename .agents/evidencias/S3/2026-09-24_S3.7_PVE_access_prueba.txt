@@ -1,0 +1,32 @@
+Fecha: 2026-09-24
+Tarea: S3.7 — prueba de GUI/API de Proxmox desde Alpine
+Tipo: prueba
+Estado: Aprobado
+
+Comandos reproducibles desde Alpine-SSHClient-1
+
+  nc -zvw3 192.168.90.20 22
+  nc -zvw3 192.168.90.20 8006
+  nc -zvw3 192.168.110.10 22
+  nc -zvw3 192.168.110.10 8006
+
+Resultado real posterior
+
+  192.168.90.20 (192.168.90.20:22) open
+  192.168.90.20 (192.168.90.20:8006) open
+  192.168.110.10 (192.168.110.10:22) open
+  192.168.110.10 (192.168.110.10:8006) open
+
+Consulta web
+- PVE-1: https://192.168.90.20:8006
+- PVE-2: https://192.168.110.10:8006
+- Aceptar la advertencia del certificado autofirmado sólo dentro del laboratorio.
+- Si el navegador del host no tiene ruta a GNS3, usar el túnel SSH documentado en DEMOSTRACION_S3_S4.md.
+
+Consulta CLI de switch
+
+  show interfaces status
+  show mac address-table dynamic interface GigabitEthernet1/0
+  show mac address-table dynamic interface GigabitEthernet1/3
+
+Resultado esperado y observado: puertos connected y MAC aprendida en la VLAN de gestión correspondiente.

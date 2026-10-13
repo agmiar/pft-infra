@@ -1,0 +1,24 @@
+# Postestado PVE/DC — preparación P5.2
+
+- Fecha/hora: 2026-09-17 14:58–15:06 UYT (UTC-03:00).
+- Método: comandos de sólo lectura y arranque por SSH desde `Alpine-SSHClient-1` a los PVE; sin contraseñas en este archivo.
+
+## Arranque y quorum
+
+- En PVE-1 (`192.168.50.10`) se ejecutó `qm start 101`; `qm status 101` devolvió `status: running`.
+- En PVE-2 (`192.168.50.11`) se ejecutó `qm start 102`; `qm status 102` devolvió `status: running`.
+- `pvecm status`, consultado desde ambos PVE después de iniciar las VMs, mostró `PFT-CLUSTER`, Expected votes 3, Total votes 3, Quorum 2, `Quorate: Yes` y bandera `Qdevice`.
+- DC1/VMID 101 y DC2/VMID 102 estaban `stopped` en el [preestado](2026-09-17_P5.2_PVE_pre.txt); se encendieron para cumplir la solicitud de dejar listo el entorno.
+
+## Comprobaciones sin autenticación a Windows
+
+- Desde PVE-1 y PVE-2, `dig @192.168.50.12 pft.test SOA` y `dig @192.168.50.13 pft.test SOA` respondieron `NOERROR`; ambos mostraron serial SOA `69` en la captura. Que los seriales coincidan no demuestra por sí solo replicación AD.
+- Desde PVE-1, TCP/5985 a ambas IP respondió y un GET sin credenciales a `http://192.168.50.12:5985/wsman` y `http://192.168.50.13:5985/wsman` devolvió HTTP 405. Esto confirma respuesta del listener ante GET, no autenticación ni disponibilidad de una sesión PowerShell.
+- Desde `Alpine-SSHClient-1`, ping a DC1 y DC2 fue 1/1; TCP/53, /389 y /445 respondió abierto en ambos. La consulta DNS UDP `nslookup pft.test` expiró contra ambos; TCP/5985 expiró hacia DC1 y estaba abierto hacia DC2 desde ese origen. No se concluye que Windows autentique por WinRM.
+- En `/etc/resolv.conf` de ambos PVE se observó `nameserver 192.168.122.1`, distinto del `.12` histórico. No se modificó. Las consultas directas de PVE a DC1/DC2 anteriores sí respondieron.
+
+## Resultado, límite y rollback
+
+PVE/QDevice están quorate y ambas VMs Windows quedaron `running`. No se envió ninguna solicitud autenticada a DC1/DC2, no se ejecutaron comandos PowerShell ni se modificaron zonas, OUs, grupos o GPO. P5.2 continúa **Bloqueado**; estos resultados son preparación y transporte, no aceptación.
+
+Rollback de este arranque, si se solicita: `qm shutdown 101` en PVE-1 y `qm shutdown 102` en PVE-2; no se ejecutó porque el operador pidió dejarlas encendidas. Ver [preestado GNS3](2026-09-17_P5.2_GNS3_pre.txt), [postestado GNS3](2026-09-17_P5.2_GNS3_post.txt) y [guía P5.2](<../../../configs INFRA/8. Active Directory/2. DNS, OUs, grupos AGDLP y GPO base (P5.2).md>).

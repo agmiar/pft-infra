@@ -1,0 +1,33 @@
+Fecha: 2026-09-23
+Tarea: S3.6
+Estado de aceptación: Bloqueado
+
+Resultado real de FS-HQ:
+- VM: 103 en PVE-1.
+- Nombre observado: FS-HQ.
+- IPv4 observada: 192.168.50.18/27.
+- Gateway observado: 192.168.50.1.
+- DNS IPv4 observado: 192.168.50.12 y 192.168.115.12.
+- Rol File Server: instalado; Success=True, Restart Needed=No, Exit Code=Success.
+- Recursos de la VM: 2 vCPU, 2048 MiB, disco de 32 GB.
+- Dominio observado: pft.test.
+- Identidad observada después del join: pft\administrator.
+- PartOfDomain observado: True.
+
+Implementación AGDLP observada:
+- Grupos locales de dominio: DL_FS_Administracion_RW, DL_FS_Finanzas_RW, DL_FS_RRHH_RW, DL_FS_TI_RW y DL_FS_Operaciones_RW.
+- Membresías observadas: GG-Administracion, GG-Finanzas, GG-RRHH, GG-TI y GG-Operaciones en su DL_FS_* correspondiente.
+- Shares observados: Administracion, Finanzas, RRHH, TI y Operaciones.
+- Share access observado: grupo DL_FS_* del área con Change y PFT\GG-Administradores con Full.
+- ACL NTFS observada: SYSTEM y Administrators con Full; DL_FS_* del área con Modify; cinco procesos sin errores.
+
+Incidente de instalación:
+- Windows Setup no detectaba el disco con el adjunto SCSI inicial.
+- Se detuvo VM 103, se quitó sólo la asignación SCSI y se volvió a adjuntar el mismo volumen como SATA0. No se borró el volumen.
+
+Prueba todavía pendiente:
+- No se capturó aún acceso autorizado y denegado desde un cliente HQ y uno BRANCH.
+- No se declara aceptación integral SMB/AGDLP sin esa prueba real.
+
+Rollback:
+- Retirar sólo shares/ACL si el test cruzado falla; conservar VM, disco, rol, grupos y red.

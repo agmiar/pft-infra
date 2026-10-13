@@ -1,0 +1,115 @@
+# S2.1 — Postestado runtime PVE
+
+- Fecha: 2026-09-20 (UYT, UTC-03:00).
+- Tarea: S2.1.
+- Acceso: SSH desde `Alpine-SSHClient-1`; no se incluyen credenciales.
+- Comandos base ejecutados en ambos PVE: `date -Is`, `hostname`, `ip -br link`, `ip -br addr`, `ip route`, `bridge link`, `bridge vlan`, `systemctl is-active pveproxy ssh`, `ss -lntp`, `cat /etc/network/interfaces`, `qm list`, `pvecm status`, `ifquery --check -a`.
+
+## PVE-1
+
+Captura final a las `2026-09-20T02:45:00-03:00`; validación de persistencia a las `2026-09-20T02:51:43-03:00`.
+
+```text
+hostname: pve-1
+ens3 UP 0c:b2:fd:f2:00:00
+ens4 UP 0c:b2:fd:f2:00:01
+vmbr0 UP, sin IPv4 del host
+vmbr1 UP, 192.168.90.20/27
+default via 192.168.90.1 dev vmbr1
+ens3 master vmbr0 state forwarding
+ens4 master vmbr1 state forwarding
+VLAN 1 PVID/untagged en los puertos de bridge
+pveproxy: active
+ssh: active
+SSH: 0.0.0.0:22 y [::]:22
+pveproxy: *:8006
+ifquery --check -a: código 0
+interfaces: archivo presente y no vacío
+```
+
+Configuración persistente aplicada:
+
+```text
+auto lo
+iface lo inet loopback
+
+iface ens3 inet manual
+
+auto vmbr0
+iface vmbr0 inet manual
+bridge-ports ens3
+bridge-stp off
+bridge-fd 0
+
+iface ens4 inet manual
+
+auto vmbr1
+iface vmbr1 inet static
+address 192.168.90.20/27
+gateway 192.168.90.1
+bridge-ports ens4
+bridge-stp off
+bridge-fd 0
+
+source /etc/network/interfaces.d/*
+```
+
+`qm list` mostró DC1 (VMID 101) detenido. `pvecm status` mostró sólo el nodo local y `Quorate: No` después de retirar la IP antigua; esto queda para S2.2.
+
+## PVE-2
+
+Captura final a las `2026-09-20T02:48:53-03:00`; validación de persistencia a las `2026-09-20T02:52:15-03:00`.
+
+```text
+hostname: pve-2
+ens3 UP 0c:6a:8f:9b:00:00
+ens4 UP 0c:6a:8f:9b:00:01
+vmbr0 UP, sin IPv4 del host
+vmbr1 UP, 192.168.110.10/27
+default via 192.168.110.1 dev vmbr1
+ens3 master vmbr0 state forwarding
+ens4 master vmbr1 state forwarding
+VLAN 1 PVID/untagged en los puertos de bridge
+pveproxy: active
+ssh: active
+SSH: 0.0.0.0:22 y [::]:22
+pveproxy: *:8006
+ifquery --check -a: código 0
+interfaces: archivo presente y no vacío
+```
+
+Configuración persistente aplicada:
+
+```text
+auto lo
+iface lo inet loopback
+
+iface ens3 inet manual
+
+auto vmbr0
+iface vmbr0 inet manual
+bridge-ports ens3
+bridge-stp off
+bridge-fd 0
+
+iface ens4 inet manual
+
+auto vmbr1
+iface vmbr1 inet static
+address 192.168.110.10/27
+gateway 192.168.110.1
+bridge-ports ens4
+bridge-stp off
+bridge-fd 0
+
+source /etc/network/interfaces.d/*
+```
+
+`qm list` mostró DC2 (VMID 102) detenido. `pvecm status` mostró sólo el nodo local y `Quorate: No` después de retirar la IP antigua; esto queda para S2.2.
+
+## Resultado y limitaciones
+
+- Ambos bridges de gestión están activos y los bridges de VMs conservan la NIC de datos sin IP del host.
+- SSH y pveproxy permanecen activos y la configuración pasa la comprobación persistente.
+- No se reiniciaron los PVE porque el clúster legado quedó sin quorum y S2.2 debe retirarlo primero.
+- No se declara aquí disponibilidad de las VMs detenidas ni una prueba de CRUD; esas pruebas pertenecen a S2.3 y etapas posteriores.

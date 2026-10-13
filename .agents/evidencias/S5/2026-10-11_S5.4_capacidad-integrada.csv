@@ -1,0 +1,2 @@
+timestamp_uyt,ram_free_bytes,swap_used_bytes,disk_free_bytes,cpu_percent,io_metric,status,reason
+2026-10-11T03:42:26-03:00,,,,,,Excluido,"S0.4 omitido por decisión explícita del operador; no se inventan métricas de capacidad"

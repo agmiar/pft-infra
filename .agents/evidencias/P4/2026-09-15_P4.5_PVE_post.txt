@@ -1,0 +1,63 @@
+P4.5 — POSTESTADO Y RECUPERACIÓN
+Fecha: 2026-09-15 (UYT)
+Proyecto GNS3: sprint1-preview1 (47a3267f-9b02-4e97-a0e8-0aacb46d5ffd)
+
+Acciones de recuperación observadas:
+- Tras apagarse el sistema PVE-1, la API local mostró el nodo GNS3 PVE-1 como `stopped`; PVE-2 y PVE-QDEVICE seguían `started`.
+- `POST /v2/projects/47a3267f-9b02-4e97-a0e8-0aacb46d5ffd/nodes/420d7a01-a8d8-4c11-a920-e4b9e5518188/start` -> HTTP 200; la consulta posterior mostró PVE-1 `started`.
+- Se confirmó acceso SSH al host recuperado y `hostname -f` devolvió `pve-1.pft.test`.
+- DC1 no tiene `onboot`/`startup` configurado. `qm list` mostró VMID 101 `stopped`; se ejecutó `qm start 101` para restaurar el estado que tenía antes de la prueba. `qm status 101` devolvió `status: running` y `qm list` volvió a mostrar DC1 `running`.
+
+Captura desde PVE-1, 2026-09-15T14:23:19-03:00
+Comandos: `pvecm status`; `systemctl is-active pve-cluster corosync corosync-qdevice`; `pvesr status`; `ha-manager status`; `ha-manager config`; `qm list`; `pct list`.
+
+`pvecm status`:
+Name: PFT-CLUSTER
+Nodes: 2
+Node ID: 0x00000001
+Quorate: Yes
+Expected votes: 3
+Highest expected: 3
+Total votes: 3
+Quorum: 2
+Flags: Quorate Qdevice
+Membresía: 192.168.50.10 local (1 voto), 192.168.50.11 (1 voto), Qdevice (1 voto).
+
+Servicios `pve-cluster`, `corosync`, `corosync-qdevice`: `active`, `active`, `active`.
+`pvesr status`: tabla sin filas de trabajos (código 0).
+`ha-manager status`: `quorum OK`.
+`ha-manager config`: salida vacía, código 0.
+`qm list`: VMID 101, DC1, `running`, 2048 MB.
+`pct list`: salida vacía, código 0.
+
+Validación de retorno DNS de DC1 desde PVE-1, 2026-09-15T14:22:24-03:00
+`nc -zvw 2 192.168.50.12 53` -> puerto abierto.
+`nc -zvw 2 192.168.50.12 389` -> puerto abierto.
+`dig +time=2 +tries=1 @192.168.50.12 _ldap._tcp.dc._msdcs.pft.test SRV +noall +answer` devolvió dos registros SRV, para `dc1-pft.pft.test.` y `dc2-pft.pft.test.`.
+La misma consulta directa a `192.168.50.13` devolvió los mismos dos registros SRV.
+
+Captura desde PVE-2, 2026-09-15T14:24:11-03:00
+Comandos: `pvecm status`; `systemctl is-active pve-cluster corosync corosync-qdevice`; `pvesr status`; `ha-manager status`; `ha-manager config`; `qm list`; `pct list`.
+
+`pvecm status`:
+Name: PFT-CLUSTER
+Nodes: 2
+Node ID: 0x00000002
+Quorate: Yes
+Expected votes: 3
+Highest expected: 3
+Total votes: 3
+Quorum: 2
+Flags: Quorate Qdevice
+Membresía: 192.168.50.10 (1 voto), 192.168.50.11 local (1 voto), Qdevice (1 voto).
+
+Servicios `pve-cluster`, `corosync`, `corosync-qdevice`: `active`, `active`, `active`.
+`pvesr status`: tabla sin filas de trabajos (código 0).
+`ha-manager status`: `quorum OK`.
+`ha-manager config`: salida vacía, código 0.
+`qm list`: VMID 102, DC2, `running`, 2048 MB.
+`pct list`: salida vacía, código 0.
+
+Resultado del postestado: ambos PVE y QDevice están activos, el clúster volvió a 3/3 con quorum y DC1/DC2 están `running`. No se modificaron parámetros del clúster, HA ni replicación.
+Consulta de solo lectura a la API GNS3 local, 2026-09-15T14:38:36-03:00: proyecto `sprint1-preview1` `opened`; PVE-1, PVE-2, PVE-QDEVICE, WebUbuntuServer-1, ADvIOS-10 y NAT1 `started`; BorderRouter-1, ISPRouter-1 y DummyInternet `stopped`.
+Limitación: las consultas DNS verifican que ambos DNS responden con los SRV de AD después de la prueba; no son una prueba de failover de AD/DNS ni validan el forwarder externo.

@@ -1,0 +1,26 @@
+# P5.2 — preestado de acceso a PVE desde LaptopUbuntu
+
+- Fecha/hora: 2026-09-17 17:24 UYT (UTC-03:00).
+- Proyecto GNS3: `sprint1-preview1`, ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd`.
+- Objetivo: diagnosticar y preparar un canal temporal para abrir la GUI de PVE y la consola de DC1/DC2. No es una prueba de aceptación P5.2.
+
+## Acciones y estado observado antes de cualquier cambio
+
+- Se estableció SSH a LaptopUbuntu (`bruno@192.168.1.190`) forzando autenticación por contraseña. La contraseña no se copia a este archivo.
+- `ip -br addr` / `ip -br link`: `wlp0s20f3` UP con `192.168.1.190/24`; `enp4s0` DOWN y `NO-CARRIER`; `br-pft-transfer` no existe.
+- `ip route get 192.168.50.10`: el tráfico a PVE-1 sale por `192.168.1.1`, dispositivo `wlp0s20f3`, origen `192.168.1.190`.
+- HTTPS a `192.168.50.10:8006` y `192.168.50.11:8006`: expiró tras ~4 segundos en ambos casos, HTTP `000`.
+- GNS3 servidor local sigue configurado en `localhost:3080`, con autenticación habilitada. Se consultó la API autenticada en memoria; ningún usuario, contraseña ni token se imprimió o guardó aquí.
+- La API informó el proyecto `sprint1-preview1` en estado `closed`. No se halló proceso QEMU que coincidiera con los identificadores de PVE-1, PVE-2 o SwitchvIOSL3-1; sus estados interiores no estaban disponibles.
+- Lectura filtrada del archivo local `sprint1-preview1.gns3`: `Cloud1` tiene el puerto 1 mapeado a `br-pft-transfer`, y ese puerto está enlazado a `SwitchvIOSL3-1` adaptador 0/puerto 0. El puerto 0 mapeado a `wlp0s20f3` no es el enlace mostrado hacia ese switch.
+- Recursos en el anfitrión: memoria disponible ~28 GiB, swap 8 GiB con uso <1 MiB; `/` tenía ~8.8 GiB disponibles.
+
+## Límites
+
+- No se abrió el proyecto, no se iniciaron nodos, no se creó el puente, no se cambiaron interfaces/rutas ni se modificó PVE.
+- No se comprobó la instalación de Windows Server ni se intentó autenticar en Windows.
+- El estado cerrado actual difiere de la comprobación GNS3 anterior de las 15:17 UYT, que registró 13/45 nodos iniciados.
+- El procedimiento existente `configs INFRA/7. Proxmox/4. Pasar ISOs a Proxmox.txt` documenta el puente temporal `br-pft-transfer` (`172.31.255.1/24`) y su rollback; la interfaz aún no fue recreada ni se asume que por sí sola habilite TCP/8006.
+
+- Resultado del preestado: canal directo a PVE desde la ruta Wi-Fi no disponible; queda pendiente restaurar una vía de gestión temporal y reversible.
+- Rollback: no aplica, no hubo cambios.

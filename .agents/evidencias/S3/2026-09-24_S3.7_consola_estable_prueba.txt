@@ -1,0 +1,46 @@
+Fecha: 2026-09-24 03:51 -03
+Tarea: S3.7 — consola estable
+Estado: Aprobado para RDP persistente de HQ y BR; S3.7 global continúa Bloqueado por pruebas PVE/SMB pendientes.
+
+PREPARACIÓN REAL
+- GNS3 project: 235f2725-d822-47d0-b422-2497b9167cc8
+- WIN-MGMT-HQ-01: node 9b3bf1d3-7dc3-4b9c-91fc-cb0f8892506b; IP 192.168.90.12; boot_priority=c
+- WIN-MGMT-BR-01: node ee078982-7f01-4ec5-8215-b642f756286b; IP 192.168.110.11; boot_priority=c
+- Snapshot QEMU previo: pre-rdp-console-20260924
+
+CAMBIOS OBSERVADOS EN CONSOLA ADMINISTRATIVA
+- HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\fDenyTSConnections = 0; resultado: The operation completed successfully.
+- Regla PFT-RDP-MGMT para TCP/3389 desde 192.168.90.0/27 y 192.168.110.0/27; resultado: Ok.
+- TermService start=auto; resultado: [SC] ChangeServiceConfig SUCCESS.
+- TermService; resultado: The requested service has already been started.
+
+PRUEBA INICIAL DESDE Alpine-SSHClient-1
+$ nc -vz -w 5 192.168.90.12 3389
+192.168.90.12 (192.168.90.12:3389) open
+$ nc -vz -w 5 192.168.110.11 3389
+192.168.110.11 (192.168.110.11:3389) open
+
+PRUEBA DE PERSISTENCIA TRAS REINICIO
+- HQ: API GNS3 stop/start; resultado HQ_RDP_AFTER_REBOOT=open; nodo WIN-MGMT-HQ-01 started; boot_priority=c.
+- BR: API GNS3 stop/start; resultado BR_RDP_AFTER_REBOOT=open; nodo WIN-MGMT-BR-01 started; boot_priority=c.
+
+ESTADO FINAL Y CONTROL DE ALCANCE
+- Prueba final TCP/3389 desde Alpine: HQ open; BR open.
+- Control TCP/445 hacia HQ: timeout.
+- Control TCP/5985 hacia BR: timeout.
+- Estado GNS3 final: ambos nodos started.
+- No quedaron puentes TCP temporales ni consolas VNC abiertas.
+
+CONSULTA Y DEMOSTRACIÓN
+1. Iniciar GNS3 y confirmar ambos clientes started.
+2. Desde Alpine repetir `nc -vz -w 5 192.168.90.12 3389` y `nc -vz -w 5 192.168.110.11 3389`.
+3. Desde una red de gestión abrir RDP contra la IP de la sede correspondiente y autenticarse con una cuenta autorizada.
+4. Reiniciar una VM y repetir la prueba TCP/3389 para demostrar persistencia.
+5. Desde una consola administrativa consultar `sc qc TermService`, `reg query` del valor fDenyTSConnections y `netsh advfirewall firewall show rule name=PFT-RDP-MGMT`.
+
+ROLLBACK
+- Eliminar la regla PFT-RDP-MGMT, fijar fDenyTSConnections=1, detener TermService y dejar el servicio en demand.
+- Si el rollback lógico no fuera suficiente, restaurar el snapshot QEMU pre-rdp-console-20260924 con la VM detenida.
+
+LIMITACIÓN
+- Esta prueba demuestra solamente el canal estable de consola. No demuestra por sí misma la aceptación completa de S3.5, S3.6 ni S3.7.

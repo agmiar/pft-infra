@@ -1,0 +1,45 @@
+Fecha: 2026-09-23
+Tarea: S3.7
+Estado al corte inicial: Bloqueado
+
+Nota de vigencia: este registro conserva el preestado del 2026-09-23; las pruebas posteriores y el estado actual de los clientes están referenciados en `evidencias/S5/2026-10-12_T10_clientes_alertas_recuperacion.md`.
+
+WIN-MGMT-HQ-01:
+- Appliance GNS3 instalado con Windows 10 Enterprise LTSC 2021.
+- Nombre observado: WIN-MGMT-HQ-01.
+- DHCP observado: 192.168.90.12/27.
+- Gateway observado: 192.168.90.1.
+- DHCP server observado: 192.168.90.2.
+- DNS observado: 192.168.50.12 y 192.168.115.12.
+- Sufijo DNS observado: pft.test.
+- nslookup pft.test: resolvió 192.168.50.12 y 192.168.115.12.
+- Ping a DC1 192.168.50.12: exitoso.
+- Test-NetConnection a DC1: TCP 389, 445, 135 y 88 exitosos.
+- SRV _ldap._tcp.dc._msdcs.pft.test: publicó dc2-pft.pft.test/192.168.115.12 y dc1-pft.pft.test/192.168.50.12.
+- DC2 desde VLAN90: ping sin respuesta y TCP 389 sin conexión.
+- nltest /dsgetdc:pft.test: ERROR_NO_SUCH_DOMAIN (1355).
+- Join forzado a dc1-pft.test: rechazado por validación de usuario/contraseña.
+- Domain join, gpresult, PVE y SMB: pendientes; no se declaran resultados supuestos.
+
+WIN-MGMT-BR-01:
+- Appliance QEMU definido en GNS3 para VLAN110.
+- Instalación Windows, DHCP, join, gpresult, PVE y SMB: pendientes.
+
+Incidente relacionado:
+- La consola SSH/GUI de PVE-1 no quedó operativa desde la red de administración durante la sesión; se documenta por separado en 2026-09-23_S3.7_incidente.md.
+
+Rollback:
+- No se aplicó rollback de red porque el síntoma principal es reachability real de DC2 y autenticación de join; conservar el estado para diagnóstico.
+
+## Actualización runtime 2026-09-23
+
+El registro anterior conserva el preestado del bloqueo y no representa el estado final. Las pruebas posteriores están en:
+
+- 2026-09-23_S3.7_clientes_post.txt: unión de HQ/BR, canal seguro, GPO, TCP/445 y PVE-2.
+- 2026-09-23_S3.7_access_ports_PVE_prueba.txt: pre/post de aprendizaje de MAC y recuperación de los enlaces GNS3.
+
+Resultado posterior:
+- HQ y BR quedaron unidos a pft.test.
+- HQ tiene canal seguro operativo y GPO de equipo aplicadas.
+- BR tiene DHCP real, GPO de equipo aplicadas, TCP/445 hacia FS-HQ y TCP/22/TCP/8006 hacia PVE-2.
+- Permanecen pendientes las pruebas SMB autenticadas desde las estaciones y el acceso PVE-1 desde HQ.

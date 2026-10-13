@@ -1,0 +1,61 @@
+# S2.2 — Preestado runtime antes de retirar PVE cluster/QDevice
+
+- Fecha/hora de captura: 2026-09-20, UYT (UTC-03:00).
+- Tarea: S2.2.
+- Proyecto GNS3: `PFT-sprint2-preview1`.
+- Fuente: consolas/runtime PVE mediante la consola local de Alpine-SSHClient-1 y SSH entre PVE-2 y PVE-1.
+- Credenciales, claves privadas y secretos: no incluidos.
+
+## Topología GNS3 observada
+
+- Proyecto `PFT-sprint2-preview1`: abierto; API GNS3 local `2.2.61` accesible.
+- PVE-1: iniciado; consola VNC local `5904`.
+- PVE-2: iniciado; consola VNC local `5900`.
+- PVE-QDEVICE: detenido; no se usará como nodo activo.
+- Alpine-SSHClient-1: iniciado; usado como acceso operativo.
+
+## PVE-1
+
+```text
+date -Is: 2026-09-20T03:03:20-03:00
+hostname: pve-1
+vmbr0: UP, sin IPv4 del host
+vmbr1: UP, 192.168.90.20/27
+default route: 192.168.90.1 dev vmbr1
+pvecm status: cluster PFT-CLUSTER; Expected votes 3; Total votes 1; Quorum 2; Quorate No; Flags Qdevice
+pvecm nodes: pve-1 local, Qdevice votes 1
+systemctl is-active: pve-cluster active; corosync active; corosync-qdevice active
+systemctl is-enabled: pve-cluster enabled; corosync enabled; corosync-qdevice enabled
+corosync-qdevice-tool -s: QNetd 192.168.90.28:5403; State Connecting; configured node list 1 and 2
+qm list: VMID 101 DC1 stopped, 2048 MB, 60.00 GB
+```
+
+## PVE-2
+
+```text
+date -Is: 2026-09-20T03:02:10-03:00
+hostname: pve-2
+vmbr0: UP, sin IPv4 del host
+vmbr1: UP, 192.168.110.10/27
+default route: 192.168.110.1 dev vmbr1
+pvecm status: cluster PFT-CLUSTER; Expected votes 3; Total votes 1; Quorum 2; Quorate No; Flags Qdevice
+pvecm nodes: pve-2 local, Qdevice votes 1
+systemctl is-active: pve-cluster active; corosync active; corosync-qdevice active
+systemctl is-enabled: pve-cluster enabled; corosync enabled; corosync-qdevice enabled
+corosync-qdevice-tool -s: QNetd 192.168.90.28:5403; State Connecting; configured node list 1 and 2
+qm list: VMID 102 DC2 stopped, 2048 MB, 60.00 GB
+```
+
+## Configuración de clúster observada
+
+`/etc/pve/corosync.conf` y `/etc/corosync/corosync.conf` estaban presentes en ambos PVE. El contenido observado definía:
+
+- nombre de clúster `PFT-CLUSTER`;
+- nodos `pve-1`/`pve-2` con anillos históricos `192.168.50.10`/`192.168.50.11`;
+- QDevice modelo `net`, QNetd `192.168.90.28`, TCP/5403 y TLS activo.
+
+## Limitaciones del preestado
+
+- El clúster ya estaba sin quorum tras S2.1; no se ejecutó `pvecm expected` ni se intentó recuperar quorum.
+- `pvesr status` y `ha-manager status` no se usan como prueba de HA: el estado sin quorum impedía adquirir el lock de configuración. La comprobación de ausencia de replicación/HA se realizará después de dejar los nodos independientes.
+- Las VMs estaban detenidas; este preestado no acredita servicio AD/DNS ni tráfico de invitado.

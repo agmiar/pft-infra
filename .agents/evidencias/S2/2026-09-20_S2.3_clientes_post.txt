@@ -1,0 +1,41 @@
+# S2.3 — Postestado de clientes Windows GNS3
+
+- Fecha de captura: 2026-09-20 (UYT, UTC-03:00).
+- Tarea: S2.3.
+- Estado: Aprobado.
+- Credenciales, contraseñas, claves privadas y tokens: no incluidos.
+
+## Appliances GNS3
+
+| Cliente | Node ID | Tipo/estado | Recursos | Disco/ISO | Enlace/VLAN |
+|---|---|---|---|---|---|
+| WIN-MGMT-HQ-01 | `9b3bf1d3-7dc3-4b9c-91fc-cb0f8892506b` | QEMU / detenido | 2 vCPU, 2048 MiB | `empty30G.qcow2`; Windows 10 Enterprise LTSC 2021 | ADvIOS-1 Gi0/0 / VLAN 90 |
+| WIN-MGMT-BR-01 | `ee078982-7f01-4ec5-8215-b642f756286b` | QEMU / detenido | 2 vCPU, 2048 MiB | `empty30G.qcow2`; Windows 10 Enterprise LTSC 2021 | AccvIOS-1 Gi0/0 / VLAN 110 |
+
+- Plantilla GNS3: `Windows 10 Client LTSC 2021`, ID `ac8ee5bc-adf2-484b-a143-809bbcd7dbbb`.
+- ISO montada: `/home/agmiar/Desktop/PFT-S1/ISOs/en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso`.
+- MD5 observado por GNS3: `b5a7be560dbd73619945129e52be1b5f`.
+- Enlaces GNS3: HQ `3795d122-24f4-44a1-9546-0e566f76d482`; BRANCH `625ab9aa-5427-4268-b399-28959dbc6608`.
+
+## PVE tras la corrección
+
+- PVE-1: VMs 101 DC1 y 103 FS-HQ detenidas; VM 104 retirada.
+- PVE-2: VMs 102 DC2 y 301 ZBX-1 detenidas; VM 105 retirada.
+- Las VM 104/105 se destruyeron sólo después de comprobar estado `stopped`; no tenían SO instalado ni datos de usuario.
+
+## Puertos de acceso
+
+- ADvIOS-1 Gi0/0: `connected`, acceso VLAN 90, descripción `WIN-MGMT-HQ-01_GNS`, configuración persistida.
+- AccvIOS-1 Gi0/0: `connected`, acceso VLAN 110, descripción `WIN-MGMT-BR-01_GNS`, configuración persistida.
+
+## Documentación declarativa
+
+- `configs INFRA/8. Windows-GNS3/WIN-MGMT-HQ-01.txt` — plantilla, recursos, ISO, VNC, enlace, VLAN y limitaciones del appliance HQ.
+- `configs INFRA/8. Windows-GNS3/WIN-MGMT-BR-01.txt` — plantilla, recursos, ISO, VNC, enlace, VLAN y limitaciones del appliance BRANCH.
+- `configs INFRA/1. ADvIOS/ADvIOS-1.txt` — configuración declarada de Gi0/0 para WIN-MGMT-HQ-01 en VLAN 90.
+- `configs INFRA/3. AccvIOS/AccvIOS-1.txt` — configuración declarada de Gi0/0 para WIN-MGMT-BR-01 en VLAN 110.
+- `Direccionamiento y VLANs.xlsx` — hojas `Direccionamiento vIOS`, `VLANs` y `Fuentes y contraste` actualizadas con esta decisión.
+
+## Limitaciones
+
+Los appliances están creados y tienen la ISO montada, pero permanecen detenidos. Esta evidencia no acredita instalación de Windows, DHCP, DNS, unión al dominio, GPO, SMB ni acceso a PVE; se verificará en S3.4 y S3.7.

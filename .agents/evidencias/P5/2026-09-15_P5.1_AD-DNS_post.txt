@@ -1,0 +1,22 @@
+P5.1 — POSTESTADO AD DS/DNS Y RESTAURACIÓN TRAS P4.5
+Fecha de evidencia original: 2026-09-15 12:48 UYT; revalidación posterior a P4.5: 2026-09-15 14:22–14:24 UYT.
+Proyecto GNS3: sprint1-preview1 — 47a3267f-9b02-4e97-a0e8-0aacb46d5ffd.
+
+CIERRE P5.1 ORIGINAL (12:48 UYT)
+- PVE-1 y PVE-2 en PFT-CLUSTER, 3 votos esperados/recibidos, quorum 2, `Quorate: Yes`, QDevice.
+- VMID 101/DC1 en PVE-1 y VMID 102/DC2 en PVE-2 estaban `running`; sin tareas pvesr ni recursos HA.
+- DC1-PFT 192.168.50.12/27 y DC2-PFT 192.168.50.13/27, gateway .1, DNS cruzado .12/.13. AD DS/DNS activos en ambos y zonas `pft.test`/`_msdcs.pft.test` integradas con AD.
+- DCDIAG final pasó en ambos; repadmin /replsummary informó 0/5 fallas por dirección y error 0; consultas SRV directas a ambos DNS devolvieron ambos controladores, puerto 389.
+- El frontend tenía 192.168.100.6/29, gateway 192.168.100.1 y DNS .12/.13. `resolvectl query web.pft.test` resolvió a 192.168.100.6 en 32.1 ms.
+- La evidencia original de postestado y de matriz de resultados está en [post original](../../../outputs/P5/2026-09-15_P5.1_post.txt) y [resultado original](../../../outputs/P5/2026-09-15_P5.1_resultado.md).
+
+REVALIDACIÓN REAL DESPUÉS DE P4.5
+- PVE-1 informó 3/3 votos, `Quorate: Yes`, QDevice y servicios pve-cluster/corosync/corosync-qdevice activos a las 14:23:19 UYT; DC1/VMID 101 estaba `running`.
+- PVE-2 informó 3/3 votos, `Quorate: Yes`, QDevice y los tres servicios activos a las 14:24:11 UYT; DC2/VMID 102 estaba `running`.
+- Consulta de solo lectura a la API GNS3 local, 2026-09-15T14:38:36-03:00: proyecto `sprint1-preview1` `opened`; PVE-1, PVE-2, PVE-QDEVICE, WebUbuntuServer-1, ADvIOS-10 y NAT1 `started`; BorderRouter-1, ISPRouter-1 y DummyInternet `stopped`.
+- Desde PVE-1, TCP 53 y 389 de 192.168.50.12 respondían `open`. `dig` directo a DNS .12 y .13 para `_ldap._tcp.dc._msdcs.pft.test SRV` devolvió dc1-pft.pft.test y dc2-pft.pft.test por puerto 389.
+- `pvesr status` no mostró trabajos en ninguno; `ha-manager status` devolvió `quorum OK` y `ha-manager config` no mostró recursos.
+- Salidas de recuperación: [P4.5 postestado](../P4/2026-09-15_P4.5_PVE_post.txt) y [P4.5 prueba](../P4/2026-09-15_P4.5_PVE_prueba.md).
+
+Resultado: P5.1 continúa operativa después de la prueba P4.5; DC1 y DC2 están ejecutando y el DNS de ambos respondió con los SRV de AD.
+Limitación: la revalidación posterior a P4.5 no repitió DCDIAG ni repadmin; esos resultados corresponden a la captura original de las 12:31–12:33 UYT. No se afirma resolución DNS externa ni forwarder.

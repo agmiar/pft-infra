@@ -1,0 +1,33 @@
+P4.5 — ESTADO DURANTE LA CAÍDA DE PVE-1
+Fecha: 2026-09-15 (UYT)
+Proyecto: GNS3 sprint1-preview1 (47a3267f-9b02-4e97-a0e8-0aacb46d5ffd)
+Acción: `systemctl poweroff` ejecutado desde PVE-1 después de capturar el preestado. El apagado del sistema quedó en curso mientras `pve-guests.service` detenía las VMs. Se observó el estado estable desde PVE-2 una vez retirado PVE-1 de la membresía.
+
+Transición observada desde PVE-2, 2026-09-15T14:15:41-03:00
+Comandos: `pvecm status`; `systemctl is-active pve-cluster corosync corosync-qdevice`; `pvesr status`; `ha-manager status`; `ha-manager config`; `qm list`; `pct list`; `timeout 3 nc -zvw 2 192.168.50.10 22`.
+Resultado intermedio real: PVE-2 ya informaba `Quorate: Yes` y bandera `Qdevice`; PVE-1 figuraba `NR` en membresía. El apagado ordenado aún estaba procesando `pve-guests.service`; no se considera esta lectura intermedia el resultado estable de la caída.
+
+Estado estable desde PVE-2, 2026-09-15T14:18:33-03:00
+Comando: `pvecm status`
+Name: PFT-CLUSTER
+Nodes: 1
+Node ID: 0x00000002
+Quorate: Yes
+Expected votes: 3
+Highest expected: 3
+Total votes: 2
+Quorum: 2
+Flags: Quorate Qdevice
+Membresía: 192.168.50.11 local (1 voto) y Qdevice (1 voto); PVE-1 ya no figura.
+
+Comprobaciones simultáneas desde PVE-2:
+- `systemctl is-active pve-cluster corosync corosync-qdevice`: `active` en los tres servicios.
+- `pvesr status`: cabecera de tabla sin filas de trabajos (código de salida 0).
+- `ha-manager status`: `quorum OK`.
+- `ha-manager config`: sin recursos configurados (salida vacía, código de salida 0).
+- `qm list`: solo VMID 102, DC2, `running`.
+- `pct list`: salida vacía (código de salida 0).
+- `timeout 3 nc -zvw 2 192.168.50.10 22`: `Connection timed out`, confirmando que SSH de PVE-1 no estaba disponible desde PVE-2.
+
+Resultado observado: PVE-2 más QDevice mantuvieron quorum mínimo 2/2 mientras PVE-1 estaba fuera de la membresía. DC2 siguió ejecutándose en PVE-2. No había replicación ni HA de VMs; por ello no se afirma failover automático de DC1.
+Limitación: prueba de quorum del clúster PVE; no prueba la disponibilidad de servicios AD/DNS ni recuperación de una VM, que pertenecen a otros criterios.

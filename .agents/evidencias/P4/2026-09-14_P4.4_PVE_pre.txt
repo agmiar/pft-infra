@@ -1,0 +1,49 @@
+Fecha: 2026-09-14 (hora local America/Montevideo, UTC-03)
+Tarea: P4.4 — estado previo al clúster Proxmox
+Origen: consola de Ubuntu/GNS3, AlpineSSHClient-1 y SSH por contraseña a los nodos. No se guardaron contraseñas ni claves.
+
+PVE-1 — pve-1.pft.test
+Hora reportada: 2026-09-14T20:51:44-03:00
+hostname --fqdn: pve-1.pft.test
+ip -br address: vmbr0 UP 192.168.50.10/27; ens3 UP; ens4 DOWN
+ip route: default via 192.168.50.1 dev vmbr0; 192.168.50.0/27 dev vmbr0 src 192.168.50.10
+/etc/resolv.conf: search pft.test; nameserver 192.168.50.12
+pvecm status / pvecm nodes: ambos informan que /etc/pve/corosync.conf no existe; nodo independiente.
+dpkg-query corosync-qdevice: no instalado.
+apt-cache policy corosync-qdevice: sin salida/índices disponibles.
+qm list: sin VMs.
+ha-manager status: quorum OK (estado local standalone).
+pvesr status: sin jobs.
+getent ahostsv4 deb.debian.org: no obtuvo respuesta con el DNS configurado.
+nc -zvw3 192.168.90.28 5403: puerto abierto.
+
+PVE-2 — pve-2.pft.test
+Hora reportada: 2026-09-14T20:53:21-03:00
+hostname --fqdn: pve-2.pft.test
+pvecm status / pvecm nodes: ambos informan que /etc/pve/corosync.conf no existe; nodo independiente.
+dpkg-query corosync-qdevice: no instalado.
+apt-cache policy corosync-qdevice: sin salida/índices disponibles.
+qm list: sin VMs.
+ha-manager status: quorum OK (estado local standalone).
+pvesr status: sin jobs.
+
+QDevice — pve-qdevice.pft.test
+Hora reportada: 2026-09-14T20:54:59-03:00
+ip -br address: ens3 UP 192.168.90.28/27
+ip route: default via 192.168.90.1 dev ens3
+systemctl is-active corosync-qnetd: active
+dpkg-query corosync-qnetd: install ok installed, versión 3.0.3-1
+apt-cache policy corosync-qdevice: candidato 3.0.3-1 desde Debian bookworm; no se encontró .deb en /var/cache/apt/archives.
+/etc/resolv.conf: search pft.test; nameservers 192.168.50.12, 192.168.50.13 y 1.1.1.1
+timeout 5 getent ahostsv4 deb.debian.org: terminó por timeout.
+
+AlpineSSHClient-1 / salida para paquetes
+Alpine está en 192.168.90.10/27, ruta por defecto 192.168.90.1 y nameserver 192.168.122.1.
+busybox nslookup deb.debian.org 192.168.122.1: timeout, sin respuesta.
+ping -c 1 -W 2 1.1.1.1: 0/1 respuestas ICMP (esto por sí solo no demuestra fallo de HTTPS).
+curl no está instalado en la imagen Alpine.
+
+Estado runtime GNS3 (API local): PVE-1, PVE-2, PVE-QDEVICE, AlpineSSHClient-1 y NAT1 estaban started. BorderRouter-1/2, ISPRouter-1/2 y DummyInternet estaban stopped.
+Capacidad Ubuntu observada: 30 GiB RAM total, 22 GiB disponibles; 34 GiB libres en /home.
+
+Resultado pre-cambio: no se creó clúster ni se alteró la configuración de PVE. La precondición para instalar corosync-qdevice está pendiente de acceso al repositorio oficial por la salida NAT aprobada. Las comprobaciones P4.3 omitidas permanecen como limitaciones aceptadas por la aprobación manual previa; no se reportan como pruebas ejecutadas.

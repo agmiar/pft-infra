@@ -1,0 +1,32 @@
+# P5.2 — Preestado inmediato de los cambios autorizados
+Captura local: 2026-09-16 14:01:13 -03:00
+Acción: lectura de DNS A y membresías AGDLP antes de las escrituras autorizadas.
+Comandos remotos: hostname; Get-DnsServerResourceRecord; Get-ADGroupMember. Canal: WinRM por túnel SSH temporal; no se guardan credenciales.
+## DC1-PFT
+HOST=DC1-PFT
+TIME=2026-09-16 14:01:12 -07:00
+A postgres=absent
+A zabbix=absent
+Members DL_PVE_SSH=GG_MGMT_PVE_ADMINS
+Members DL_PVE_GUI_ADMIN=GG_MGMT_PVE_ADMINS
+Members DL_APP_USE=GG_MGMT_USERS
+Members DL_DB_ADMIN=GG_DB_ADMINS
+Members DL_ZABBIX_ADMIN=GG_ZABBIX_ADMINS
+Group exists GG_MGMT_PVE_ADMINS=Global
+Group exists GG_MGMT_USERS=Global
+Group exists GG_DB_ADMINS=Global
+Group exists GG_ZABBIX_ADMINS=Global
+## DC2-PFT
+HOST=DC2-PFT
+TIME=2026-09-16 14:01:15 -07:00
+A postgres=absent
+A zabbix=absent
+Members DL_PVE_SSH=GG_MGMT_PVE_ADMINS
+Members DL_PVE_GUI_ADMIN=GG_MGMT_PVE_ADMINS
+Members DL_APP_USE=GG_MGMT_USERS
+Members DL_DB_ADMIN=GG_DB_ADMINS
+Members DL_ZABBIX_ADMIN=GG_ZABBIX_ADMINS
+Group exists GG_MGMT_PVE_ADMINS=Global
+Group exists GG_MGMT_USERS=Global
+Group exists GG_DB_ADMINS=Global
+Group exists GG_ZABBIX_ADMINS=Global

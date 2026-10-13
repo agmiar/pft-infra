@@ -1,0 +1,20 @@
+# Postestado del anfitrión Ubuntu — preparación P5.2
+
+- Fecha/hora: 2026-09-17 15:09 UYT (UTC-03:00).
+- Host: `bruno-ThinkPad-E15-Gen-2`; acceso SSH autenticado. No se guardaron credenciales.
+
+## Espacio y recursos
+
+- Antes: `df -hT /` mostró 7.3 GiB disponibles de 79 GiB (91%).
+- Después: `df -B1 /` mostró 83,954,655,232 bytes totales, 70,263,222,272 usados y 9,379,741,696 disponibles (aprox. 8.74 GiB; 89%). Aumento neto aproximado: 1.4 GiB. No se alcanzaron 20 GiB libres.
+- `free -h`: 31 GiB de RAM total, 16 GiB disponibles; swap 8 GiB, 0 usado.
+- Se eliminó la caché regenerable `~/.cache/BraveSoftware` (663 MiB; no había proceso Brave/Chromium activo) y las revisiones Snap deshabilitadas Firefox 8819 y Snapd 27710. Luego `~/.cache` ocupaba 26 MiB y `snap list --all` no mostraba revisiones deshabilitadas.
+- Acciones exactas: validación de directorio y proceso de navegador, luego `rm -rf -- /home/bruno/.cache/BraveSoftware`; `sudo snap remove --revision=8819 firefox`; `sudo snap remove --revision=27710 snapd`.
+- No se eliminó ni copió ningún archivo del proyecto GNS3, disco de VM, ISO, respaldo o evidencia; no se exportó el proyecto. La limpieza de la caché se puede revertir regenerándola; una revisión Snap antigua se podría reinstalar si fuera necesario.
+- Comprobación de sólo lectura de la partición NTFS `/dev/nvme0n1p3` con `ntfsinfo -m`: 4,901,664 clústeres libres de 4,096 bytes, equivalentes a 20,077,215,744 bytes (aprox. 20.1 GB decimales / 18.7 GiB). No estaba montada; no se montó ni modificó. No se verificó cuánto ocupará una exportación allí.
+
+## Resultado
+
+Se recuperó espacio seguro en Ubuntu, pero aún no hay 20 GiB libres en `/`. El objetivo de exportación queda pendiente; la partición NTFS es una alternativa sólo potencial y tiene margen limitado. No se hizo exportación ni copia del proyecto.
+
+El [preestado](2026-09-17_P5.2_LaptopUbuntu_pre.txt) registra la medición inicial. El estado GNS3 y sus nodos está en [postestado GNS3](2026-09-17_P5.2_GNS3_post.txt); el estado de PVE/DC en [postestado PVE](2026-09-17_P5.2_PVE_post.txt).

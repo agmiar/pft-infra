@@ -1,0 +1,25 @@
+# Preestado P5.2 — anfitrión Ubuntu y GNS3
+
+- Fecha/hora: 2026-09-17 14:40 UYT (UTC-03:00).
+- Tarea: P5.2, preparar el entorno GNS3 para reanudar pruebas; el estado de P5.2 continúa Bloqueado.
+- Acceso: SSH autenticado al anfitrión `bruno-ThinkPad-E15-Gen-2` (`192.168.1.190`); no se conserva ninguna credencial.
+
+## Comandos y resultados observados
+
+- `date -Is`, `hostname`: `2026-09-17T14:40:23-03:00`; `bruno-ThinkPad-E15-Gen-2`.
+- `df -hT /`: `/dev/nvme0n1p4`, ext4, 79 GiB total, 67 GiB usados, 7.3 GiB disponibles (91%).
+- `df -i /`: 5% de inodos usados.
+- `free -h`, `swapon --show`: 31 GiB RAM total, 29 GiB disponibles; swap de 8 GiB sin uso.
+- Desglose `du`: `/home/bruno/GNS3` ocupa 49 GiB; el directorio del proyecto `sprint1-preview1` ocupa 46 GiB. No se modificó ni eliminó ningún archivo del proyecto.
+- El archivo local `sprint1-preview1.gns3` contiene el ID `47a3267f-9b02-4e97-a0e8-0aacb46d5ffd` y 45 nodos; es metadato guardado, no una lectura del estado activo de los nodos.
+- API `127.0.0.1:3080`: no respondió (error local `URLError`). No se observó listener en 3080 ni procesos GNS3/QEMU/Dynamips/ubridge; los nodos no estaban ejecutándose en el momento del preestado.
+- Docker daemon/containerd estaban activos, pero `docker system df` mostró 4 imágenes (55.36 MB) y 3 contenedores detenidos; sólo 23.62 MB figuraban como recuperables.
+- `du` identificó 663 MiB en `~/.cache/BraveSoftware`; Snap mostraba revisiones antiguas deshabilitadas de Firefox (8819) y Snapd (27710). El caché apt era 20 KiB; no se encontraron archivos de usuario mayores de 500 MiB fuera de GNS3.
+
+## Estado antes de cambios
+
+GNS3 API/servidor y nodos detenidos; proyecto guardado intacto. En este preestado no se consultaron DC1/DC2 ni quorum PVE y no se cambió AD/DNS, PVE, red, GNS3 ni datos del proyecto. A continuación se limpiarán sólo cachés regenerables y revisiones Snap deshabilitadas, y se iniciará el subconjunto de nodos necesario para P5.2.
+
+## Límites
+
+Los 45 nodos proceden del archivo guardado. Los estados internos de PVE/DC1/DC2 y la salud AD/DNS/replicación aún requieren verificación real después de recuperar GNS3. El espacio seguro identificado antes de limpiar es menor de 1 GiB y no basta para alcanzar 20 GiB libres.

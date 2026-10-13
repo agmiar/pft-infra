@@ -1,0 +1,66 @@
+P5.2 — Preestado parcial de PVE y consultas DNS
+
+Fecha: 2026-09-15
+Hora local informada por PVE en `pvecm status`: Tue Sep 15 18:39:52 2026. Las consultas DNS individuales no tienen hora exacta capturada.
+Tarea: P5.2
+Fuente: consola local VNC de PVE-1 abierta desde la sesión SSH autorizada a LaptopUbuntu. Las salidas se transcriben sin secretos; no se guardó una captura con credenciales.
+
+Acciones y resultados observados
+
+1. Acceso y estado del clúster
+
+- `id` → `uid=0(root) gid=0(root) groups=0(root)`; `hostname` → `pve-1`.
+- `pvecm status` → clúster `PFT-CLUSTER`, config version 3, transporte `knet`, autenticación segura activa; `Nodes: 2`, `Quorate: Yes`, `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, flags `Quorate Qdevice`. Miembros PVE-1 `192.168.50.10`, PVE-2 `192.168.50.11` y QDevice.
+- `qm list` en PVE-1 → VMID 101 `DC1`, estado `running`, 2048 MiB, disco de arranque 60.00 GB, PID 1195.
+- `pvesh get /cluster/resources --type vm --output-format json` → VMID 101 `DC1`, nodo `pve-1`, estado `running`; VMID 102 `DC2`, nodo `pve-2`, estado `running`. Las muestras de memoria visibles fueron aproximadamente 1.24 GiB y 1.10 GiB, respectivamente; ambas VMs tienen 2 GiB asignados y disco de 60 GiB.
+- `qm config 101` → `agent: enabled=1`, 2 cores y memoria 2048 MiB. `qm agent 101 ping` y `qm guest exec 101 ...` → `QEMU guest agent is not running`.
+- `cat /etc/resolv.conf` → `nameserver 192.168.50.12`.
+
+2. Alcance de red desde PVE-1 hacia DC1
+
+- `ping -c 1 -W 1 192.168.50.12` → respuesta ICMP; RTT observado 0.834 ms.
+- `nc -vz -w 2 192.168.50.12 389` → TCP/389 abierto.
+- `nc -vz -w 2 192.168.50.12 445` → TCP/445 abierto.
+- `nc -vz -w 2 192.168.50.12 5985` → TCP/5985 abierto.
+- `nc -vz -w 2 192.168.50.12 3389` → conexión expirada.
+- `ping -c 1 -W 1 192.168.1.190` desde PVE-1 → `From 192.168.50.2 ... Packet filtered`, sin respuesta. No se alteró ninguna ACL ni ruta.
+
+3. Consultas DNS sin autenticación a DC1 y DC2
+
+- `dig @192.168.50.12 pft.test SOA +short` → `dc1-pft.pft.test. hostmaster.pft.test. 49 900 600 86400 3600`.
+- `dig @192.168.50.13 pft.test SOA +short` → `dc2-pft.pft.test. hostmaster.pft.test. 49 900 600 86400 3600`.
+- `host -t SOA _msdcs.pft.test 192.168.50.12` → SOA de `dc1-pft.pft.test`, serial 25, refresh 900, retry 600, expire 86400, minimum 3600.
+- `host -t SOA _msdcs.pft.test 192.168.50.13` → SOA de `dc2-pft.pft.test`, serial 25, refresh 900, retry 600, expire 86400, minimum 3600.
+- `host -t SOA 50.168.192.in-addr.arpa <DNS>` → `SERVFAIL` al consultar tanto `192.168.50.12` como `192.168.50.13`. Este resultado no permite afirmar si la zona existe o no.
+- Consultas `host -t A` a `pve-1.pft.test`, `pve-2.pft.test`, `pg-1.pft.test` y `pg-2.pft.test` contra ambos DNS → `NXDOMAIN`.
+- Consultas `host -t A` a `postgres.pft.test` y `zabbix.pft.test` contra ambos DNS → `NXDOMAIN`.
+- Consulta `host -t A web.pft.test` contra ambos DNS → dirección `192.168.100.6`.
+
+4. Comprobación de acceso administrativo a DC1
+
+- `curl --ntlm --user administrator ... -i http://192.168.50.12:5985/wsman` mediante GET → HTTP/1.1 405, `Allow: POST`. No se considera resultado de autenticación.
+- Se envió una única solicitud HTTP POST vacía a `/wsman` por TCP/5985 con la referencia Administrator proporcionada. Devolvió HTTP/1.1 401 Unauthorized y desafíos `Negotiate` y `Kerberos`. No se envió cuerpo SOAP ni instrucción WMI, no se solicitó ejecutar procesos o crear archivos y no hubo reintentos ni variantes.
+
+Resultado y límites
+
+Se verificó el estado actual del clúster y que ambas VMs DC1/DC2 están encendidas. Ambos DNS responden consultas SOA de las zonas directa y `_msdcs`; los seriales consultados coinciden por zona. Esto no demuestra salud de AD DS ni replicación AD: no se ejecutaron `dcdiag` ni `repadmin` durante esta captura. Se confirmó `web.pft.test` → `192.168.100.6`; los registros A PVE, PG, VIP y Zabbix consultados faltan en ambos DNS. La consulta SOA inversa devolvió SERVFAIL en ambos DNS.
+
+No se pudo enumerar dentro de Windows el estado de servicios AD DS/DNS, OUs, grupos, membresías, GPO ni vínculos. En esta captura inicial no se realizaron cambios en AD/DNS, GNS3, PVE, red o VMs. P5.2 sigue Bloqueado; ver [incidente de autenticación y alcance](2026-09-15_P5.2_AD-DNS_incidente.md).
+
+## Revalidación de estado durante el intento final — 2026-09-15
+
+- A las 19:37:24 UYT, `qm status 101` informó `stopped`; el estado documentado en el preestado anterior era `running`. `pvecm status` mantuvo quorum 3/3, `Quorate: Yes` y QDevice.
+- El historial de tareas mostró una tarea `qmshutdown` con resultado OK para `root@pam`, sin atribución comprobada. Se ejecutó `qm start 101` para restituir el estado previo; después `qm status 101` informó `running` aproximadamente a las 19:38:26 UYT.
+- El [postestado de acceso y quorum](2026-09-15_P5.2_AD-DNS_post.txt) registra la única solicitud HTTP POST vacía a `/wsman` (HTTP 401) y la comprobación final de DC1 y quorum. No se envió una instrucción WMI ni se modificó AD/DNS.
+
+## Revalidación previa a reactivar DC1 — 2026-09-15
+
+Hora local de captura en Windows: `2026-09-15T22:11:54.5525995-03:00`. Fuente del estado: consola local de PVE-1 abierta desde LaptopUbuntu; no se guardó captura de pantalla.
+
+- `date --iso-8601=seconds` en PVE-1 informó `2026-09-15T22:11:54+00:00`.
+- `qm status 101` informó `status: stopped`.
+- `pvecm status` informó `PFT-CLUSTER`, `Nodes: 2`, `Expected votes: 3`, `Total votes: 3`, `Quorum: 2`, `Quorate: Yes`, `Flags: Quorate Qdevice`. La membresía visible fue PVE-1 `192.168.50.10`, PVE-2 `192.168.50.11` y QDevice, con un voto cada uno.
+- El reloj local, al convertirlo a UTC, marcaba `2026-09-16T01:11:54.5525995+00:00`, mientras PVE-1 reportaba `2026-09-15T22:11:54+00:00`. Se registran ambas lecturas sin corregirlas; no se cambió la hora. La sincronización de tiempo corresponde a P5.3.
+- Una comprobación inmediatamente anterior informó que VMID 102 no tenía configuración local en PVE-1. Esto no determina el estado actual de DC2.
+
+Esta captura es el preestado inmediato antes de restituir el estado `running` de DC1 que figura en el postestado P5.2 anterior. No se había ejecutado aún ninguna acción de arranque durante esta revalidación.

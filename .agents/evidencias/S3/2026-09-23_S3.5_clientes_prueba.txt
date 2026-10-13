@@ -1,0 +1,34 @@
+Fecha: 2026-09-23
+Tarea: S3.5
+Estado: Bloqueado
+
+Pruebas reales de clientes:
+- WIN-MGMT-HQ-01: nltest /sc_query:pft.test devolvió Trusted DC Connection Status = 0 0x0 NERR_Success y canal seguro operativo.
+- WIN-MGMT-HQ-01: gpupdate /force devolvió Computer Policy update has completed successfully y User Policy update has completed successfully.
+- WIN-MGMT-HQ-01: gpresult /r /scope computer mostró Default Domain Policy, GPO-01-Baseline, GPO-05-Updates y GPO-06-LogonNotice como aplicadas; GPO-07 no aparece porque el equipo/usuario de prueba no pertenece a TI.
+- WIN-MGMT-BR-01: la captura real de gpresult /r /scope computer mostró el mismo conjunto de GPO de equipo y GPO-07 filtrada, consistente con su ubicación fuera de TI.
+
+Resultado:
+- La aplicación de las GPO de equipo y el filtrado de GPO-07 fueron comprobados en dos estaciones reales.
+- El positivo de GPO-07 con una cuenta TI y la prueba de GPO-03/GPO-07 en alcance de usuario todavía no fueron capturados.
+
+Evidencias visuales locales de la sesión:
+- /tmp/hq_rejoin_sc.png
+- /tmp/hq_gpupdate.png
+- /tmp/hq_gpresult_computer.png
+- /tmp/br_gpresult_computer.png
+
+Consulta reproducible:
+- En cada cliente: nltest /sc_query:pft.test, gpupdate /force, gpresult /r /scope computer.
+- En DC1: Get-GPResultantSetOfPolicy o GPMC para confirmar el filtrado de GPO-07.
+
+Limitación y condición de cierre:
+- Falta iniciar sesión con una cuenta de GG-TI y registrar el marcador de excepción; por trazabilidad el estado permanece Bloqueado.
+- No se registran contraseñas, tickets ni claves.
+
+## Intento de cierre — 2026-09-23
+
+- Desde DC1 se consultó la cuenta de laboratorio `ti01`; la salida real de `Get-ADPrincipalGroupMembership` confirmó `Domain Users` y `GG-TI`.
+- Se restableció temporalmente la credencial de `ti01` para intentar el login interactivo y se restauró al finalizar; no se registra ningún secreto.
+- La consola VNC no mantuvo una sesión interactiva reproducible de `ti01`, por lo que no se obtuvo `gpresult /scope user` ni el marcador de GPO-07 en `HKCU`.
+- Resultado: S3.5 sigue Bloqueado por falta de la prueba de aplicación de usuario, no por ausencia de `GG-TI` ni por un fallo observado en el filtrado de GPO-07.

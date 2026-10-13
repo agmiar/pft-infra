@@ -1,0 +1,22 @@
+Fecha: 2026-09-24
+Tarea: S1.6
+Estado: Aprobado para caída/restauración de un enlace
+
+Pre:
+  Core1 route 192.168.120.0/26: vía 10.0.5.2 Gi3/0 y vía 10.0.7.2 Gi3/1
+  OSPF 3.3.3.3 FULL por 10.0.5.2/Gi3/0
+  OSPF 4.4.4.4 FULL por 10.0.7.2/Gi3/1
+  Alpine -> 192.168.110.1: 3/3, promedio 14.952 ms
+
+Falla controlada:
+  Link GNS3 d3e50491-bdbb-48eb-9d67-e1d6e2081326 suspend:true
+  Core1: Gi3/0 down; vecino 3.3.3.3 FULL -> DOWN
+  Ruta remota conservada por 10.0.7.2/Gi3/1
+  Alpine: branch-gw=UP en todas las muestras entre 14:54:29 y 14:55:15
+
+Recuperación:
+  Link GNS3 suspend:false
+  Después de 12 s: Alpine -> 192.168.110.1: 3/3, promedio 16.251 ms
+  OSPF 3.3.3.3 volvió a aparecer por 10.0.5.2/Gi3/0
+
+Limitación: no se probó una caída simultánea ni el plano de gestión de PVE-2.

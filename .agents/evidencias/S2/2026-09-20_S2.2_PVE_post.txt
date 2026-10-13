@@ -1,0 +1,75 @@
+# S2.2 — Postestado runtime tras retirar PVE cluster/QDevice
+
+- Fecha/hora de captura: 2026-09-20, UYT (UTC-03:00).
+- Tarea: S2.2.
+- Fuente: consolas/runtime PVE mediante Alpine-SSHClient-1 y SSH entre PVE-2 y PVE-1; API GNS3 local para el estado del nodo QDevice.
+- Credenciales, claves privadas y secretos: no incluidos.
+
+## Estado de gestión y servicios
+
+### PVE-1
+
+```text
+date -Is: 2026-09-20T03:15:19-03:00
+hostname: pve-1
+vmbr1: UP, 192.168.90.20/27
+default route: 192.168.90.1 dev vmbr1
+pve-cluster: active, enabled
+corosync: inactive, disabled
+corosync-qdevice: inactive, disabled
+pveproxy: active
+ssh: active
+```
+
+### PVE-2
+
+```text
+date -Is: 2026-09-20T03:14:58-03:00
+hostname: pve-2
+vmbr1: UP, 192.168.110.10/27
+default route: 192.168.110.1 dev vmbr1
+pve-cluster: active, enabled
+corosync: inactive, disabled
+corosync-qdevice: inactive, disabled
+pveproxy: active
+ssh: active
+```
+
+## Ausencia de clúster activo
+
+- En ambos PVE, `pvecm status` y `pvecm nodes` devolvieron: `Error: Corosync config '/etc/pve/corosync.conf' does not exist - is this node part of a cluster?`.
+- En PVE-2 se verificó además la ausencia de `/etc/pve/corosync.conf`, `/etc/corosync/corosync.conf` y `/etc/corosync/authkey`.
+- En PVE-1 se verificó con `ls` que esos tres paths no existen.
+- El paquete `corosync-qdevice` no fue purgado: quedó instalado como antecedente/posible rollback, pero su servicio está inactivo y deshabilitado; no forma parte del diseño activo.
+
+## VMs y ausencia de HA/replicación
+
+```text
+PVE-1 qm list: 101 DC1 stopped, 2048 MB, 60.00 GB
+PVE-2 qm list: 102 DC2 stopped, 2048 MB, 60.00 GB
+pvesr status: encabezado sin trabajos configurados
+ha-manager status: quorum OK (comprobación local, no Corosync)
+ha-manager config: sin recursos HA listados
+/etc/pve/replication.cfg: vacío
+```
+
+Los archivos de configuración de VM `101.conf` y `102.conf` permanecieron presentes. No se borraron VMs, discos, almacenamiento, bridges, IPs ni enlaces GNS3.
+
+## Estado GNS3
+
+Consulta de sólo lectura a la API GNS3 `2.2.61` del proyecto `PFT-sprint2-preview1`:
+
+```text
+PVE-QDEVICE  stopped  VNC 5903
+PVE-1        started  VNC 5904
+PVE-2        started  VNC 5900
+```
+
+## Respaldos operativos locales
+
+En ambos PVE se conservaron respaldos fuera del repositorio en `/root/s2.2-pre-20260920/`, incluyendo la configuración previa de Corosync/QDevice y las configuraciones de VM. No se incluyeron sus contenidos en esta evidencia.
+
+## Limitaciones
+
+- No se ejecutó una caída de nodo ni un arranque automático de VM; el cierre de S2.2 exige declarar recuperación manual, no demostrar S2.4.
+- Los paquetes Corosync/QDevice no se desinstalaron. La aceptación se basa en que no hay configuración ni servicios activos; su purga requiere una decisión separada y no aporta valor a la recuperación manual.

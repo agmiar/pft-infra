@@ -1,0 +1,33 @@
+Fecha: 2026-09-24
+Tarea: S3.7 — acceso de gestión a PVE desde la red interna y consola reproducible
+Tipo: post
+Estado: Aprobado para la subprueba de acceso TCP/22 y TCP/8006 desde Alpine
+
+Acciones realizadas
+- Se identificó que los puertos de acceso asociados a PVE habían quedado en VLAN 1 durante la ejecución de GNS3.
+- Se restablecieron y guardaron las VLAN de acceso, sin modificar los trunks:
+  - ADvIOS-1 Gi1/0 hacia PVE-1: VLAN 90.
+  - ADvIOS-9a Gi0/3 hacia el bridge de VMs de PVE-1: VLAN 50.
+  - AccvIOS-1 Gi1/3 hacia PVE-2: VLAN 110.
+  - AccvIOS-1 Gi2/0 hacia el bridge de VMs de PVE-2: VLAN 115.
+- PVE-1 quedó con comportamiento anómalo de CPU y sin aprendizaje MAC. Se intentó apagado ACPI mediante el monitor QEMU; como no completó, se ejecutó stop/start controlado del nodo PVE-1 desde la API local de GNS3.
+- Luego del reinicio se iniciaron nuevamente DC1 VMID 101 y FS-HQ VMID 103 mediante la API de Proxmox.
+
+Verificación posterior en switches
+- ADvIOS-1: Gi1/0 connected, VLAN 90; MAC dinámica 0cb2.fdf2.0001 en Gi1/0.
+- ADvIOS-9a: Gi0/3 connected, VLAN 50; MAC dinámica 0cb2.fdf2.0000 y MACs de bridge en Gi0/3.
+- AccvIOS-1: Gi1/3 connected, VLAN 110; MAC dinámica 0c6a.8f9b.0001 en Gi1/3.
+- AccvIOS-1: Gi2/0 connected, VLAN 115; MAC dinámica 0c6a.8f9b.0000 y MAC de bridge en Gi2/0.
+
+Estado Proxmox verificado por API
+- PVE-1: online; DC1/101 running; FS-HQ/103 running.
+- PVE-2: online; DC2/102 running; ZBX-1/301 stopped.
+- PVE-1 vmbr1: 192.168.90.20/27 sobre ens4, gateway 192.168.90.1.
+- PVE-2 vmbr1: 192.168.110.10/27 sobre ens4, gateway 192.168.110.1.
+
+Limitaciones
+- La GUI fue verificada por conectividad desde Alpine, que es el punto con ruta a las VLAN internas. El navegador del host puede requerir un túnel SSH local; el procedimiento está en DEMOSTRACION_S3_S4.md.
+- La URL 192.168.50.10 corresponde al bridge/red de VMs de PVE-1, no a la dirección de gestión de la GUI.
+
+Rollback
+- No se aplicó rollback porque la corrección dejó operativos ambos accesos y las VLAN esperadas.

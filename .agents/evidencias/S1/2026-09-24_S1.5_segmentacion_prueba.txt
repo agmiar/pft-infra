@@ -1,0 +1,23 @@
+Fecha: 2026-09-24
+Tarea: S1.5
+Estado: Bloqueado
+
+Pruebas positivas desde BKP-1 192.168.160.10:
+  DC1 192.168.50.12:445 -> open
+  FS-HQ 192.168.50.18:445 -> open
+  PVE-1 192.168.90.20:22 -> open
+
+Pruebas negativas desde BKP-1:
+  DC1 192.168.50.12:22 -> Host is unreachable
+  PVE-1 192.168.90.20:23 -> Host is unreachable
+  192.168.90.28:22 -> Host is unreachable
+
+Prueba pendiente que bloquea el cierre:
+  PVE-2 192.168.110.10:22 -> Operation timed out
+  PVE-2 192.168.110.10:8006 -> Host is unreachable
+
+Contadores observados en CorevIOS-1 después de las pruebas:
+  VLAN_160_IN: OSPF/HSRP, SMB DC1/FS-HQ, SSH PVE-1 y denegaciones RFC1918/any con coincidencias.
+  VLAN_50_IN: permisos explícitos DC1->BKP y FS-HQ->BKP con coincidencias.
+
+La evidencia prueba el control de los flujos disponibles; no prueba un acceso positivo a PVE-2.

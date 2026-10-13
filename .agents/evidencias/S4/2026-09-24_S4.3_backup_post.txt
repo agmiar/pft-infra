@@ -1,0 +1,16 @@
+Fecha: 2026-09-24
+Tarea: S4.3
+Estado: Bloqueado en la confirmación final de System State; backup por hito de FS-HQ aprobado
+
+Estado posterior observado:
+- BKP-1 persistente y arrancable en GNS3.
+- Samba responde en TCP/445 sólo en la red de backup.
+- El volumen persistente conserva el árbol DC1 System State y `FS-HQ/2026-09-24/`; el VHDX de DC1 es un archivo VHDX válido y estable.
+- Se verifican tres puntos FS-HQ con estado antes de eliminación, después de eliminación y después de restauración.
+- ACL/HSRP/OSPF de VLAN160 quedaron documentados y guardados.
+
+Limitaciones/bloqueo:
+- Falta confirmar la versión final mediante `wbadmin get versions` o una consulta equivalente desde DC1 después del reinicio controlado.
+- Recuperación manual, sin HA de almacenamiento ni copia fuera del host físico.
+- El proyecto GNS3 sigue dependiendo de un único host físico.
+- S4.3 no incluye backup continuo ni retención externa.

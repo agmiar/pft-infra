@@ -1,0 +1,66 @@
+# S3.1 — Postestado de access ports PVE-2
+
+Fecha: 2026-09-22 (UYT, UTC-03:00)
+Tarea: S3.1
+Tipo: post
+Estado: Aprobado
+
+## AccvIOS-1 — configuración runtime
+
+```text
+show running-config interface GigabitEthernet1/3
+interface GigabitEthernet1/3
+ description PVE-2_MANAGEMENT_VLAN110
+ switchport access vlan 110
+ switchport mode access
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+show running-config interface GigabitEthernet2/0
+interface GigabitEthernet2/0
+ description PVE-2_VM_BRIDGE_VLAN115
+ switchport access vlan 115
+ switchport mode access
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+```
+
+## Estado L2 final
+
+```text
+Gi1/3  PVE-2_MANAGEMENT_V  connected  110
+Gi2/0  PVE-2_VM_BRIDGE_VL  connected  115
+
+Gi1/3: static access / static access / Access Mode VLAN 110 (BRANCH-GESTION)
+Gi1/3: designated forwarding, portfast edge, BPDU guard enabled
+Gi1/3: 0c6a.8f9b.0001 DYNAMIC Gi1/3
+
+Gi2/0: bc24.1113.3571 DYNAMIC Gi2/0
+```
+
+La MAC de DC2 se registra en VLAN 115 y la MAC de gestión de PVE-2 se
+registra en VLAN 110. El hecho de que la MAC de gestión apareciera después de
+generar tráfico desde PVE-2 es consistente con un aprendizaje dinámico tardío
+del bridge/GNS3; no se observó una mala asignación de VLAN.
+
+## PVE-2 y prueba desde Alpine-SSHClient-1
+
+```text
+2026-09-22T05:14:00-03:00
+vmbr1 UP 192.168.110.10/27
+default via 192.168.110.1 dev vmbr1
+192.168.110.0/27 dev vmbr1 proto kernel scope link src 192.168.110.10
+qm status 102: status: running
+ss: 0.0.0.0:22 y *:8006 en LISTEN
+
+nc -vz -w 3 192.168.110.10 22: open
+nc -vz -w 3 192.168.110.10 8006: open
+```
+
+La ruta temporal de diagnóstico `192.168.115.0/27 dev vmbr0` fue eliminada y
+no aparece en la tabla final de PVE-2. No se dejó cambio persistente adicional
+en el switch.

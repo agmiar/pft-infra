@@ -1,0 +1,26 @@
+Fecha: 2026-09-23
+Tarea: S3.7
+Estado: Bloqueado
+Resultado de la corrección de enlace: Aprobado; la aceptación completa de S3.7 sigue pendiente por pruebas de cliente.
+
+Preestado real:
+- PVE-2: AccvIOS-1 Gi1/3 estaba conectado en VLAN 110 pero sin MAC de gestión aprendida; Gi2/0 estaba conectado en VLAN 115 y aprendía la MAC de DC2.
+- PVE-1: ADvIOS-1 Gi1/0 estaba conectado en VLAN 90 sin MAC aprendida y ADvIOS-9a Gi0/3 estaba conectado en VLAN 50 sin MAC aprendida.
+- La consola de los PVE mostraba bridges e IP correctas; el síntoma era de enlace/bridge GNS3, no de una VLAN declarada incorrectamente.
+
+Acciones:
+- Se probaron rebotes controlados de los access ports sin obtener aprendizaje estable.
+- Se reinició PVE-2 por la API GNS3 y se confirmó el aprendizaje de 0c6a.8f9b.0001 en AccvIOS-1 Gi1/3.
+- Se reinició PVE-1 por la API GNS3 y se confirmó el aprendizaje de 0cb2.fdf2.0001 en ADvIOS-1 Gi1/0 y 0cb2.fdf2.0000 en ADvIOS-9a Gi0/3.
+- Se iniciaron manualmente DC1 VMID 101 y FS-HQ VMID 103 en PVE-1; ambos quedaron en ejecución.
+
+Postestado y prueba:
+- PVE-2 conserva vmbr1 192.168.110.10/27, SSH/8006 en escucha y acceso TCP abierto desde Alpine.
+- Desde WIN-MGMT-BR-01: PVE-2 TCP/22 y TCP/8006 abiertos; FS-HQ TCP/445 abierto.
+- No se modificó la configuración persistente de los access ports; no se dejó la ruta temporal hacia VLAN 115.
+
+Rollback:
+- La acción es reversible apagando el nodo reiniciado y restaurando el estado GNS3 del enlace; no se borraron discos ni configuraciones de switch.
+
+Limitación:
+- El acceso TCP a PVE-1 desde una estación Windows todavía debe registrarse de forma independiente.

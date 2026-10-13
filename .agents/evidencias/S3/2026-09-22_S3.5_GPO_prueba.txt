@@ -1,0 +1,27 @@
+Fecha: 2026-09-22
+Tarea: S3.5
+Estado: Bloqueado
+
+Preestado y acciones:
+- Se consultó DC1-PFT por su consola de administración.
+- Se crearon y enlazaron GPO-01-Baseline, GPO-03-Users, GPO-05-Updates, GPO-06-LogonNotice y GPO-07-TI-Exception.
+- Se ajustó el filtrado de seguridad de GPO-07 para lectura de Authenticated Users y aplicación de GG-TI.
+
+Resultado observado en la salida de verificación de DC1:
+- Las cinco GPO devolvieron estado de configuración habilitada.
+- Los enlaces devolvieron estado habilitado y no forzado.
+- GPO-07 mostró GG-TI con permiso de aplicación y Authenticated Users con permiso de lectura.
+
+Limitación real:
+- Las estaciones WIN-MGMT-HQ-01 y WIN-MGMT-BR-01 aún no están unidas al dominio. Por eso no se capturó gpresult de cliente, no se probó el aviso en estación ni la excepción TI en sesión interactiva.
+
+Consulta reproducible:
+- Get-GPO -All
+- Get-GPInheritance -Target <DN de dominio, OU de usuarios y OU TI>
+- En cliente unido: gpupdate /force y gpresult /h C:\Temp\gpresult.html
+
+Rollback:
+- Desenlazar la GPO afectada y volver a aplicar la política anterior; conservar los objetos para poder repetir la prueba.
+
+Ruta de evidencia de control:
+- .agents/evidencias/S3/2026-09-22_S3.5_GPO_control.md

@@ -1,0 +1,46 @@
+Fecha: 2026-09-17 (hora no informada)
+Tarea: P5.2 — diagnóstico de acceso a la administración de Proxmox
+Fuente: salidas que el operador pegó en la conversación. El agente no ejecutó estos comandos en la laptop y no recibió una captura íntegra de la terminal.
+
+Comandos y resultados reportados
+
+1. Consulta de ruta a PVE-1:
+
+ip route get 192.168.50.10
+192.168.50.10 via 192.168.1.1 dev wlp0s20f3 src 192.168.1.190 uid 1000 cache
+
+2. Consulta de ruta a PVE-2:
+
+ip route get 192.168.50.11
+192.168.50.11 via 192.168.1.1 dev wlp0s20f3 src 192.168.1.190 uid 1000 cache
+
+3. Conexión HTTPS a la GUI de PVE-1:
+
+El operador informó curl error 28, tiempo agotado después de aproximadamente 4002 ms y código HTTP 000. No se recibió respuesta HTTP desde 192.168.50.10:8006 en esa prueba.
+
+4. Interfaz Ethernet mostrada por la configuración de Cloud en GNS3:
+
+El operador informó que la ventana mostraba “Ethernet interfaces” y “enp4s0”. No se confirmó si enp4s0 estaba seleccionada/asignada al puerto Cloud o sólo aparecía en la lista de interfaces disponibles.
+
+5. Estado de enp4s0:
+
+El operador informó que el segundo comando, ip -br addr show enp4s0, mostraba “down”. La línea completa no fue proporcionada. No se recibió la salida de ip link show enp4s0; por ello no se distingue entre falta de portadora/enlace físico y una interfaz administrativamente inactiva.
+
+Resultado e interpretación
+
+- Las consultas de ruta reportadas muestran que Linux envía el tráfico destinado a ambas IP PVE por la interfaz Wi-Fi wlp0s20f3, con origen 192.168.1.190 y siguiente salto 192.168.1.1. No muestran una ruta específica a través de la interfaz enp4s0.
+- El timeout de curl significa que la solicitud desde LaptopUbuntu no obtuvo respuesta HTTP del panel de PVE-1. Por sí solo no identifica si el obstáculo está en el enrutamiento posterior a 192.168.1.1, la conexión de Cloud, un filtro o el servicio de PVE. No demuestra que PVE esté detenido ni que sus credenciales sean incorrectas.
+- Los resultados apuntan a que el camino de administración desde LaptopUbuntu aún no está establecido. El estado/mapeo real de Cloud y el estado físico de enp4s0 quedan pendientes de confirmar.
+- Esta prueba de conectividad no es una prueba de aceptación de P5.2.
+
+Acciones y cambios
+
+Sólo se reportaron consultas de lectura. No se modificaron rutas, interfaces, Cloud, GNS3, PVE, ACL, AD, DNS, OUs, grupos ni GPO. No se intentó autenticar en PVE o Windows.
+
+Rollback
+
+No aplica: no se reportaron cambios técnicos.
+
+Limitaciones y condición de reanudación
+
+Obtener la salida completa de ip link show enp4s0 y confirmar en GNS3 si esa interfaz está efectivamente asignada a Cloud y a qué conexión de PVE llega. Después debe verificarse un camino autorizado entre LaptopUbuntu y la red de administración PVE sin publicar la API de GNS3 ni las consolas VNC. Volver a probar TCP/8006 y registrar su resultado antes de usar la GUI como canal administrativo.

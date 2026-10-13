@@ -1,0 +1,891 @@
+﻿# P5.2  inventario real de DNS, OUs, grupos y GPO
+# Capturado: 2026-09-16 13:05:06 -03:00
+# Canal: WinRM autenticado por túnel SSH temporal; sin credenciales.
+# Alcance: sólo lectura; no se crearon ni modificaron objetos.
+## DNS zones and forwarders
+
+
+ZoneName            : _msdcs.pft.test
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Forest
+DynamicUpdate       : Secure
+IsReverseLookupZone : False
+
+ZoneName            : 0.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+
+ZoneName            : 127.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+
+ZoneName            : 255.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+
+ZoneName            : 50.168.192.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Domain
+DynamicUpdate       : Secure
+IsReverseLookupZone : True
+
+ZoneName            : pft.test
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Domain
+DynamicUpdate       : Secure
+IsReverseLookupZone : False
+
+
+
+
+
+IPAddress   : 192.168.50.13
+Timeout     : 3
+UseRootHint : True
+
+
+
+
+## DNS records relevant
+### ZONE pft.test
+
+
+HostName   : @
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : @
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : _msdcs
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : dc1-pft
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : DC2-PFT
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : DomainDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : DomainDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : ForestDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : ForestDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pg-1
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pg-2
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pve-1
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pve-2
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : web
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+
+
+### ZONE _msdcs.pft.test
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : 1397283e-2009-4019-bff6-e0ce5a26a0fb
+RecordType : CNAME
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordCName
+
+HostName   : 65a31835-674a-44ab-8dcf-45f0559b2348
+RecordType : CNAME
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordCName
+
+HostName   : gc
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : gc
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+
+
+### ZONE 50.168.192.in-addr.arpa
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : 10
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 11
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 12
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 13
+RecordType : PTR
+TimeToLive : 00:20:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 14
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 15
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 16
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 17
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+
+
+
+## OUs actual
+
+Name                  DistinguishedName                                                    ProtectedFromAccidentalDeletion
+----                  -----------------                                                    -------------------------------
+Administrativo-VLAN10 OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test                                             
+Admins                OU=Admins,OU=PFT,DC=pft,DC=test                                                                     
+Computers             OU=Computers,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test                                
+Computers             OU=Computers,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test                                          
+Computers             OU=Computers,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test                                      
+Computers             OU=Computers,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test                                   
+Computers             OU=Computers,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test                                        
+Computers             OU=Computers,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test                                        
+Computers             OU=Computers,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test                                          
+Database              OU=Database,OU=Servers,OU=PFT,DC=pft,DC=test                                                        
+DMZ-VLAN100           OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test                                                       
+Docentes-VLAN20       OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test                                                   
+Domain Controllers    OU=Domain Controllers,DC=pft,DC=test                                                                
+Domain-Controllers    OU=Domain-Controllers,OU=Servers,OU=PFT,DC=pft,DC=test                                              
+Domain-Local          OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test                                                     
+Estudiantes-VLAN30    OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test                                                
+Global                OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test                                                           
+Groups                OU=Groups,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test                                   
+Groups                OU=Groups,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test                                             
+Groups                OU=Groups,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test                                         
+Groups                OU=Groups,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test                                      
+Groups                OU=Groups,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test                                           
+Groups                OU=Groups,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test                                           
+Groups                OU=Groups,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test                                             
+Groups                OU=Groups,OU=PFT,DC=pft,DC=test                                                                     
+Guests-VLAN60         OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test                                                     
+Lab-IT-VLAN40         OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test                                                     
+Linux                 OU=Linux,OU=Servers,OU=PFT,DC=pft,DC=test                                                           
+MGMT-VLAN90           OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test                                                       
+Monitoring            OU=Monitoring,OU=Servers,OU=PFT,DC=pft,DC=test                                                      
+PFT                   OU=PFT,DC=pft,DC=test                                                                               
+Servers               OU=Servers,OU=PFT,DC=pft,DC=test                                                                    
+Service-Accounts      OU=Service-Accounts,OU=PFT,DC=pft,DC=test                                                           
+Users                 OU=Users,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test                                    
+Users                 OU=Users,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test                                              
+Users                 OU=Users,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test                                          
+Users                 OU=Users,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test                                       
+Users                 OU=Users,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test                                            
+Users                 OU=Users,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test                                            
+Users                 OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test                                              
+Zones                 OU=Zones,OU=PFT,DC=pft,DC=test                                                                      
+
+
+
+## AGDLP groups and members
+
+
+Name     : DL_APP_USE
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_APP_USE,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : DL_DB_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_DB_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : DL_PVE_GUI_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_PVE_GUI_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : DL_PVE_SSH
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_PVE_SSH,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : DL_ZABBIX_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_ZABBIX_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_ADMINISTRATIVO_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ADMINISTRATIVO_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_APP_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_APP_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_DB_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DB_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_DMZ_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DMZ_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_DOCENTES_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DOCENTES_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_ESTUDIANTES_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ESTUDIANTES_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_GUESTS_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_GUESTS_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_LAB_IT_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_LAB_IT_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_MGMT_PVE_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_MGMT_PVE_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_MGMT_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_MGMT_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Name     : GG_ZABBIX_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ZABBIX_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+
+
+
+## GPO inventory
+
+
+DisplayName      : Default Domain Controllers Policy
+Id               : 6ac1786c-016f-11d2-945f-00c04fb984f9
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 15-09-2026 9:54:01
+ModificationTime : 15-09-2026 9:54:00
+Owner            : PFT\Domain Admins
+
+DisplayName      : Default Domain Policy
+Id               : 31b2f340-016d-11d2-945f-00c04fb984f9
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 15-09-2026 9:54:01
+ModificationTime : 15-09-2026 9:54:00
+Owner            : PFT\Domain Admins
+
+DisplayName      : PFT-Baseline-Computers
+Id               : 7e3a0b5d-7b46-4af6-9c12-1d37a05b7e01
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 16-09-2026 9:40:24
+ModificationTime : 16-09-2026 9:40:24
+Owner            : PFT\Domain Admins
+
+DisplayName      : PFT-Baseline-Users
+Id               : 7e3a0b5d-7b46-4af6-9c12-1d37a05b7e02
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 16-09-2026 9:40:24
+ModificationTime : 16-09-2026 9:40:24
+Owner            : PFT\Domain Admins
+
+DisplayName      : PFT-Domain-Audit
+Id               : 7e3a0b5d-7b46-4af6-9c12-1d37a05b7e05
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 16-09-2026 9:40:24
+ModificationTime : 16-09-2026 9:40:24
+Owner            : PFT\Domain Admins
+
+DisplayName      : PFT-LAPS
+Id               : 7e3a0b5d-7b46-4af6-9c12-1d37a05b7e04
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 16-09-2026 9:40:24
+ModificationTime : 16-09-2026 9:40:24
+Owner            : PFT\Domain Admins
+
+DisplayName      : PFT-MGMT-Workstations
+Id               : 7e3a0b5d-7b46-4af6-9c12-1d37a05b7e03
+GpoStatus        : AllSettingsEnabled
+CreationTime     : 16-09-2026 9:40:24
+ModificationTime : 16-09-2026 9:40:24
+Owner            : PFT\Domain Admins
+
+
+
+
+## GPO inheritance root and PFT branches
+### TARGET DC=pft,DC=test
+
+
+GpoInheritanceBlocked : False
+Name                  : pft.test
+Path                  : dc=pft,dc=test
+ContainerType         : Domain
+GpoLinks              : {Default Domain Policy}
+InheritedGpoLinks     : {Default Domain Policy}
+
+
+
+### TARGET OU=PFT,DC=pft,DC=test
+
+
+GpoInheritanceBlocked : False
+Name                  : pft
+Path                  : ou=pft,dc=pft,dc=test
+ContainerType         : OU
+GpoLinks              : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+
+
+
+### TARGET OU=Groups,OU=PFT,DC=pft,DC=test
+
+
+GpoInheritanceBlocked : False
+Name                  : groups
+Path                  : ou=groups,ou=pft,dc=pft,dc=test
+ContainerType         : OU
+GpoLinks              : {}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+
+
+
+### TARGET OU=Servers,OU=PFT,DC=pft,DC=test
+
+
+GpoInheritanceBlocked : False
+Name                  : servers
+Path                  : ou=servers,ou=pft,dc=pft,dc=test
+ContainerType         : OU
+GpoLinks              : {}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+
+
+
+### TARGET OU=Zones,OU=PFT,DC=pft,DC=test
+
+
+GpoInheritanceBlocked : False
+Name                  : zones
+Path                  : ou=zones,ou=pft,dc=pft,dc=test
+ContainerType         : OU
+GpoLinks              : {}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+
+
+
+
+## GPO XML report
+[ERROR] Error in the application.
+## replication current
+Replication Summary Start Time: 2026-09-16 13:05:23
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC2-PFT                   19m:51s    0 /   5    0  
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC1-PFT                   19m:51s    0 /   5    0  
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC2-PFT.pft.test
+
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC1-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+DSA invocationID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:50:54 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 13:01:25 was successful.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC2-PFT via RPC
+
+        DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+        Last attempt @ 2026-09-16 12:45:32 was successful.
+
+
+
+
+## DNS relevant records with values and GPO effective result
+## DNS relevant records with values
+### ZONE pft.test
+
+Host                                                     Type TTL      Data                                                                                                                 
+----                                                     ---- ---      ----                                                                                                                 
+@                                                        A    00:10:00 192.168.50.13                                                                                                        
+@                                                        A    00:10:00 192.168.50.12                                                                                                        
+@                                                        NS   01:00:00 dc2-pft.pft.test.                                                                                                    
+@                                                        NS   01:00:00 dc1-pft.pft.test.                                                                                                    
+@                                                        SOA  01:00:00 dc1-pft.pft.test.                                                                                                    
+_msdcs                                                   NS   01:00:00 dc1-pft.pft.test.                                                                                                    
+_gc._tcp.Default-First-Site-Name._sites                  SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_gc._tcp.Default-First-Site-Name._sites                  SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_kerberos._tcp.Default-First-Site-Name._sites            SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._tcp.Default-First-Site-Name._sites            SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites                SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites                SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_gc._tcp                                                 SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_gc._tcp                                                 SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._tcp                                           SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._tcp                                           SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_kpasswd._tcp                                            SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kpasswd._tcp                                            SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp                                               SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp                                               SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._udp                                           SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._udp                                           SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_kpasswd._udp                                            SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_kpasswd._udp                                            SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+dc1-pft                                                  A    01:00:00 192.168.50.12                                                                                                        
+DC2-PFT                                                  A    01:00:00 192.168.50.13                                                                                                        
+DomainDnsZones                                           A    00:10:00 192.168.50.13                                                                                                        
+DomainDnsZones                                           A    00:10:00 192.168.50.12                                                                                                        
+_ldap._tcp.Default-First-Site-Name._sites.DomainDnsZones SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites.DomainDnsZones SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.DomainDnsZones                                SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.DomainDnsZones                                SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+ForestDnsZones                                           A    00:10:00 192.168.50.13                                                                                                        
+ForestDnsZones                                           A    00:10:00 192.168.50.12                                                                                                        
+_ldap._tcp.Default-First-Site-Name._sites.ForestDnsZones SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites.ForestDnsZones SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.ForestDnsZones                                SRV  00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.ForestDnsZones                                SRV  00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+pg-1                                                     A    01:00:00 192.168.50.14                                                                                                        
+pg-2                                                     A    01:00:00 192.168.50.15                                                                                                        
+pve-1                                                    A    01:00:00 192.168.50.10                                                                                                        
+pve-2                                                    A    01:00:00 192.168.50.11                                                                                                        
+web                                                      A    01:00:00 192.168.100.6                                                                                                        
+
+
+### ZONE _msdcs.pft.test
+
+Host                                                    Type  TTL      Data                                                                                                                 
+----                                                    ----  ---      ----                                                                                                                 
+@                                                       NS    01:00:00 dc1-pft.pft.test.                                                                                                    
+@                                                       NS    01:00:00 dc2-pft.pft.test.                                                                                                    
+@                                                       SOA   01:00:00 dc1-pft.pft.test.                                                                                                    
+1397283e-2009-4019-bff6-e0ce5a26a0fb                    CNAME 00:10:00 dc1-pft.pft.test.                                                                                                    
+65a31835-674a-44ab-8dcf-45f0559b2348                    CNAME 00:10:00 dc2-pft.pft.test.                                                                                                    
+_kerberos._tcp.Default-First-Site-Name._sites.dc        SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._tcp.Default-First-Site-Name._sites.dc        SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites.dc            SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites.dc            SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_kerberos._tcp.dc                                       SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_kerberos._tcp.dc                                       SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.dc                                           SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.dc                                           SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+gc                                                      A     00:10:00 192.168.50.13                                                                                                        
+gc                                                      A     00:10:00 192.168.50.12                                                                                                        
+_ldap._tcp.Default-First-Site-Name._sites.gc            SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.Default-First-Site-Name._sites.gc            SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.gc                                           SRV   00:10:00 DomainName     : dc2-pft.pft.test....                                                                                
+_ldap._tcp.gc                                           SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+_ldap._tcp.pdc                                          SRV   00:10:00 DomainName     : dc1-pft.pft.test....                                                                                
+
+
+### ZONE 50.168.192.in-addr.arpa
+
+Host Type TTL      Data              
+---- ---- ---      ----              
+@    NS   01:00:00 dc1-pft.pft.test. 
+@    NS   01:00:00 dc2-pft.pft.test. 
+@    SOA  01:00:00 dc1-pft.pft.test. 
+10   PTR  01:00:00 pve-1.pft.test.   
+11   PTR  01:00:00 pve-2.pft.test.   
+12   PTR  01:00:00 dc1-pft.pft.test. 
+13   PTR  00:20:00 DC2-PFT.pft.test. 
+14   PTR  01:00:00 pg-1.pft.test.    
+15   PTR  01:00:00 pg-2.pft.test.    
+16   PTR  01:00:00 postgres.pft.test.
+17   PTR  01:00:00 zabbix.pft.test.  
+
+
+## GPO links and effective result
+
+
+Name                  : pft
+Path                  : ou=pft,dc=pft,dc=test
+GpoLinks              : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+GpoInheritanceBlocked : False
+
+
+
+
+
+Name                  : servers
+Path                  : ou=servers,ou=pft,dc=pft,dc=test
+GpoLinks              : {}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+GpoInheritanceBlocked : False
+
+
+
+
+
+Name                  : zones
+Path                  : ou=zones,ou=pft,dc=pft,dc=test
+GpoLinks              : {}
+InheritedGpoLinks     : {PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users, PFT-Baseline-Computers...}
+GpoInheritanceBlocked : False
+
+
+
+
+
+Name                  : mgmt-vlan90
+Path                  : ou=mgmt-vlan90,ou=zones,ou=pft,dc=pft,dc=test
+GpoLinks              : {PFT-MGMT-Workstations}
+InheritedGpoLinks     : {PFT-MGMT-Workstations, PFT-Domain-Audit, PFT-LAPS, PFT-Baseline-Users...}
+GpoInheritanceBlocked : False
+
+
+
+
+Microsoft (R) Windows (R) Operating System Group Policy Result tool v2.0
+c Microsoft Corporation. All rights reserved.
+
+Created on ?9/?16/?2026 at 1:06:27 PM
+
+
+
+RSOP data for PFT\Administrator on DC1-PFT : Logging Mode
+----------------------------------------------------------
+
+OS Configuration:            Primary Domain Controller
+OS Version:                  10.0.20348
+Site Name:                   Default-First-Site-Name
+Roaming Profile:             N/A
+Local Profile:               C:\Users\Administrator
+Connected over a slow link?: No
+
+
+COMPUTER SETTINGS
+------------------
+    CN=DC1-PFT,OU=Domain Controllers,DC=pft,DC=test
+    Last time Group Policy was applied: 9/16/2026 at 1:01:31 PM
+    Group Policy was applied from:      DC1-PFT.pft.test
+    Group Policy slow link threshold:   500 kbps
+    Domain Name:                        PFT
+    Domain Type:                        Windows 2008 or later
+
+    Applied Group Policy Objects
+    -----------------------------
+        Default Domain Controllers Policy
+        Default Domain Policy
+
+    The following GPOs were not applied because they were filtered out
+    -------------------------------------------------------------------
+        Local Group Policy
+            Filtering:  Not Applied (Empty)
+
+    The computer is a part of the following security groups
+    -------------------------------------------------------
+        BUILTIN\Administrators
+        Everyone
+        BUILTIN\Users
+        BUILTIN\Pre-Windows 2000 Compatible Access
+        Windows Authorization Access Group
+        NT AUTHORITY\NETWORK
+        NT AUTHORITY\Authenticated Users
+        This Organization
+        DC1-PFT$
+        Domain Controllers
+        NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERS
+        Authentication authority asserted identity
+        Denied RODC Password Replication Group
+        System Mandatory Level
+        
+
+USER SETTINGS
+--------------
+    CN=Administrator,CN=Users,DC=pft,DC=test
+    Last time Group Policy was applied: 9/16/2026 at 12:15:19 PM
+    Group Policy was applied from:      DC1-PFT.pft.test
+    Group Policy slow link threshold:   500 kbps
+    Domain Name:                        PFT
+    Domain Type:                        Windows 2008 or later
+    
+    Applied Group Policy Objects
+    -----------------------------
+        N/A
+
+    The following GPOs were not applied because they were filtered out
+    -------------------------------------------------------------------
+        Local Group Policy
+            Filtering:  Not Applied (Empty)
+
+    The user is a part of the following security groups
+    ---------------------------------------------------
+        Domain Users
+        Everyone
+        BUILTIN\Administrators
+        BUILTIN\Users
+        BUILTIN\Pre-Windows 2000 Compatible Access
+        NT AUTHORITY\INTERACTIVE
+        CONSOLE LOGON
+        NT AUTHORITY\Authenticated Users
+        This Organization
+        LOCAL
+        Group Policy Creator Owners
+        Domain Admins
+        Schema Admins
+        Enterprise Admins
+        Authentication authority asserted identity
+        Denied RODC Password Replication Group
+        High Mandatory Level
+        
+
+## GPO security filtering (read-only recheck)
+### Captured: 2026-09-16 13:11 UYT (DC1-PFT via WinRM)
+
+Command: `Get-GPO -All | Get-GPPermissions -All` with trustee name/domain, permission and inheritance fields.
+
+Observed for each `PFT-Baseline-Computers`, `PFT-Baseline-Users`, `PFT-Domain-Audit`, `PFT-LAPS` and `PFT-MGMT-Workstations`:
+
+- `NT AUTHORITY\Authenticated Users`: `GpoApply`.
+- `PFT\Domain Admins` and `PFT\Enterprise Admins`: `GpoEditDeleteModifySecurity`.
+- `NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERS`: `GpoRead`.
+- `NT AUTHORITY\SYSTEM`: `GpoEditDeleteModifySecurity`.
+- All listed permissions reported `Inherited: False`.
+
+This confirms the current security filtering and permissions only. It does not verify the intended setting values inside the GPOs; `Get-GPOReport -All -ReportType Xml` still returns `Error in the application` in this environment. `gpresult /r` on DC1 applies only the two default domain-controller policies because DC1 is in `OU=Domain Controllers`, outside `OU=PFT`.
+
+## GPO SYSVOL payload check (read-only)
+### Captured: 2026-09-16 13:13 UYT (DC1-PFT via WinRM)
+
+For each of the five `PFT-*` GPO GUID directories under `C:\Windows\SYSVOL\domain\Policies`, `Get-ChildItem -Recurse -File` returned only `GPT.INI` (24 bytes, last write 2026-09-16 09:41:22). No `Machine\Registry.pol`, `User\Registry.pol`, scripts or other setting payloads were present. Together with the `Get-GPOReport` error, this means the five GPOs are linked/enabled skeletons whose intended settings are not technically configured or verifiable yet.
+
+## Clarificación de membresías directas GG→DL — preestado 2026-09-16 14:01 UYT
+
+La sección `AGDLP groups and members` anterior utilizó `Get-ADGroupMember -Recursive` y enumeró miembros hoja; por ello dejó las relaciones entre grupos vacías cuando los GG no tenían usuarios. La consulta directa `Get-ADGroupMember -Identity <DL>` antes del cambio de DNS confirmó en DC1 y DC2:
+
+| Grupo domain-local | Miembro global directo |
+|---|---|
+| `DL_PVE_SSH` | `GG_MGMT_PVE_ADMINS` |
+| `DL_PVE_GUI_ADMIN` | `GG_MGMT_PVE_ADMINS` |
+| `DL_APP_USE` | `GG_MGMT_USERS` |
+| `DL_DB_ADMIN` | `GG_DB_ADMINS` |
+| `DL_ZABBIX_ADMIN` | `GG_ZABBIX_ADMINS` |
+
+`Get-ADGroupMember` directo de `GG_MGMT_PVE_ADMINS`, `GG_MGMT_USERS`, `GG_DB_ADMINS` y `GG_ZABBIX_ADMINS` no devolvió miembros. No se alteró ningún grupo. Ver [preestado inmediato](2026-09-16_P5.2_AD-DNS_pre_cambios.txt).
+

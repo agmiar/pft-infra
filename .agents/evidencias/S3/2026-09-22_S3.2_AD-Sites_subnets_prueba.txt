@@ -1,0 +1,50 @@
+S3.2 — evidencia de prueba real
+Fecha: 2026-09-22
+Estado: Aprobado
+
+Comandos ejecutados en DC1-PFT:
+  Get-ADReplicationSite -Identity HQ
+  Get-ADReplicationSite -Identity BRANCH
+  Get-ADReplicationSubnet -Identity 192.168.50.0/27
+  Get-ADReplicationSubnet -Identity 192.168.90.0/27
+  Get-ADReplicationSubnet -Identity 192.168.100.0/29
+  Get-ADReplicationSubnet -Identity 192.168.110.0/27
+  Get-ADReplicationSubnet -Identity 192.168.115.0/27
+  Get-ADReplicationSubnet -Identity 192.168.120.0/26
+  Get-ADReplicationSubnet -Identity 192.168.130.0/26
+  Get-ADReplicationSubnet -Identity 192.168.140.0/26
+  Get-ADReplicationSubnet -Identity 192.168.150.0/26
+  Get-ADReplicationSubnet -Identity 192.168.160.0/27
+  Set-ADReplicationSiteLink -Identity DEFAULTIPSITELINK -SitesIncluded @{Add="HQ","BRANCH"}
+  Get-ADReplicationSiteLink -Identity DEFAULTIPSITELINK
+  Move-ADDirectoryServer -Identity DC1-PFT -Site HQ
+  Move-ADDirectoryServer -Identity DC2-PFT -Site BRANCH
+  nltest /dsgetsite
+  nltest /dsgetsite /server:DC2-PFT
+  repadmin /replsummary
+
+Resultados clave observados:
+  HQ: CN=hq,CN=Sites,CN=Configuration,DC=pft,DC=test
+  BRANCH: CN=branch,CN=Sites,CN=Configuration,DC=pft,DC=test
+  192.168.50.0/27 -> hq
+  192.168.90.0/27 -> hq
+  192.168.100.0/29 -> hq
+  192.168.110.0/27 -> branch
+  192.168.115.0/27 -> branch
+  192.168.120.0/26 -> branch
+  192.168.130.0/26 -> branch
+  192.168.140.0/26 -> branch
+  192.168.150.0/26 -> branch
+  192.168.160.0/27 -> branch
+  DEFAULTIPSITELINK -> branch, hq, Default-First-Site-Name
+  nltest /dsgetsite (DC1-PFT) -> hq
+  nltest /dsgetsite /server:DC2-PFT -> branch
+
+repadmin /replsummary:
+  Source DSA:      DC1-PFT 0/5 fallos; DC2-PFT 0/5 fallos
+  Destination DSA: DC1-PFT 0/5 fallos; DC2-PFT 0/5 fallos
+
+Limitación registrada: durante el primer refresco remoto de Netlogon apareció
+ERROR_NO_LOGON_SERVERS en nltest /dsregdns; la consulta posterior de sitio
+devolvió branch y la replicación mantuvo 0 fallos.
+

@@ -1,0 +1,2096 @@
+﻿# P5.2  preestado técnico real de DC2
+# Capturado: 2026-09-16 12:30:51 -03:00
+# Canal: WinRM autenticado por túnel SSH temporal; no se registran credenciales.
+# Alcance: sólo lectura; no se ejecutan escrituras de AD/DNS/GPO.
+## hostname / identidad
+DC2-PFT
+pft\administrator
+
+miércoles, 16 de septiembre de 2026 16:30:50
+
+
+
+## red IPv4 y DNS del cliente
+
+
+PSComputerName       : 127.0.0.1
+RunspaceId           : 57f4c001-461f-48da-8798-5767df7f37fe
+ComputerName         : DC2-PFT
+InterfaceAlias       : Ethernet
+InterfaceIndex       : 4
+InterfaceDescription : Intel(R) PRO/1000 MT Network Connection
+CompartmentId        : 1
+NetAdapter           : MSFT_NetAdapter (CreationClassName = "MSFT_NetAdapter", DeviceID = "{632E8790-A13D-480E-9CB7-3504B2EDDA03}", SystemCreationClassName = "CIM_NetworkPort", SystemName = "DC2-PFT.pft.test")
+NetCompartment       : MSFT_NetCompartment (InstanceID = ";55;")
+NetIPv6Interface     : MSFT_NetIPInterface (Name = "?55??55;", CreationClassName = "", SystemCreationClassName = "", SystemName = "")
+NetIPv4Interface     : MSFT_NetIPInterface (Name = "?55?55;", CreationClassName = "", SystemCreationClassName = "", SystemName = "")
+NetProfile           : MSFT_NetConnectionProfile (InstanceID = "{632E8790-A13D-480E-9CB7-3504B2EDDA03}")
+AllIPAddresses       : {MSFT_NetIPAddress (Name = ";C?8;@B8?:8;?55?55;55;", CreationClassName = "", SystemCreationClassName = "", SystemName = ""), MSFT_NetIPAddress (Name = "poB:DDkn:BDo???Dpk??DB:kC/?55?55;55;", CreationClassName = "", SystemCreationClassName = "", SystemName = "")}
+IPv6Address          : {}
+IPv6TemporaryAddress : {}
+IPv6LinkLocalAddress : {MSFT_NetIPAddress (Name = "poB:DDkn:BDo???Dpk??DB:kC/?55?55;55;", CreationClassName = "", SystemCreationClassName = "", SystemName = "")}
+IPv4Address          : {MSFT_NetIPAddress (Name = ";C?8;@B8?:8;?55?55;55;", CreationClassName = "", SystemCreationClassName = "", SystemName = "")}
+IPv6DefaultGateway   : 
+IPv4DefaultGateway   : {MSFT_NetRoute (InstanceID = ":8:8:8:9:55?55;C?8;@B8?:8;55;")}
+DNSServer            : {MSFT_DNSClientServerAddress (Name = "4", CreationClassName = "", SystemCreationClassName = "", SystemName = "23"), MSFT_DNSClientServerAddress (Name = "4", CreationClassName = "", SystemCreationClassName = "", SystemName = "2")}
+Detailed             : False
+
+ifIndex                  : 1
+PSComputerName           : 127.0.0.1
+RunspaceId               : 57f4c001-461f-48da-8798-5767df7f37fe
+Caption                  : 
+Description              : 
+ElementName              : 
+InstanceID               : 
+CommunicationStatus      : 
+DetailedStatus           : 
+HealthState              : 
+InstallDate              : 
+Name                     : ;<A8:8:8;55;55;55;
+OperatingStatus          : 
+OperationalStatus        : 
+PrimaryStatus            : 
+Status                   : 
+StatusDescriptions       : 
+AvailableRequestedStates : 
+EnabledDefault           : 2
+EnabledState             : 
+OtherEnabledState        : 
+RequestedState           : 12
+TimeOfLastStateChange    : 
+TransitioningToState     : 12
+CreationClassName        : 
+SystemCreationClassName  : 
+SystemName               : 
+NameFormat               : 
+OtherTypeDescription     : 
+ProtocolIFType           : 4096
+ProtocolType             : 
+Address                  : 
+AddressOrigin            : 0
+AddressType              : 
+IPv4Address              : 127.0.0.1
+IPv6Address              : 
+IPVersionSupport         : 
+PrefixLength             : 8
+SubnetMask               : 
+AddressFamily            : 2
+AddressState             : 4
+InterfaceAlias           : Loopback Pseudo-Interface 1
+InterfaceIndex           : 1
+IPAddress                : 127.0.0.1
+PreferredLifetime        : 10675199.02:48:05.4775807
+PrefixOrigin             : 2
+SkipAsSource             : False
+Store                    : 1
+SuffixOrigin             : 2
+Type                     : 1
+ValidLifetime            : 10675199.02:48:05.4775807
+
+ifIndex                  : 4
+PSComputerName           : 127.0.0.1
+RunspaceId               : 57f4c001-461f-48da-8798-5767df7f37fe
+Caption                  : 
+Description              : 
+ElementName              : 
+InstanceID               : 
+CommunicationStatus      : 
+DetailedStatus           : 
+HealthState              : 
+InstallDate              : 
+Name                     : ;C<8;@B8?:8;=55>55;55;
+OperatingStatus          : 
+OperationalStatus        : 
+PrimaryStatus            : 
+Status                   : 
+StatusDescriptions       : 
+AvailableRequestedStates : 
+EnabledDefault           : 2
+EnabledState             : 
+OtherEnabledState        : 
+RequestedState           : 12
+TimeOfLastStateChange    : 
+TransitioningToState     : 12
+CreationClassName        : 
+SystemCreationClassName  : 
+SystemName               : 
+NameFormat               : 
+OtherTypeDescription     : 
+ProtocolIFType           : 4096
+ProtocolType             : 
+Address                  : 
+AddressOrigin            : 0
+AddressType              : 
+IPv4Address              : 192.168.50.13
+IPv6Address              : 
+IPVersionSupport         : 
+PrefixLength             : 27
+SubnetMask               : 
+AddressFamily            : 2
+AddressState             : 4
+InterfaceAlias           : Ethernet
+InterfaceIndex           : 4
+IPAddress                : 192.168.50.13
+PreferredLifetime        : 10675199.02:48:05.4775807
+PrefixOrigin             : 1
+SkipAsSource             : False
+Store                    : 1
+SuffixOrigin             : 1
+Type                     : 1
+ValidLifetime            : 10675199.02:48:05.4775807
+
+Address                    : {192.168.50.13, 192.168.50.12, 127.0.0.1}
+PSComputerName             : 127.0.0.1
+RunspaceId                 : 57f4c001-461f-48da-8798-5767df7f37fe
+Caption                    : 
+Description                : 
+ElementName                : Ethernet
+InstanceID                 : 
+CommunicationStatus        : 
+DetailedStatus             : 
+HealthState                : 
+InstallDate                : 
+Name                       : 4
+OperatingStatus            : 
+OperationalStatus          : 
+PrimaryStatus              : 
+Status                     : 
+StatusDescriptions         : 
+AvailableRequestedStates   : 
+EnabledDefault             : 2
+EnabledState               : 5
+OtherEnabledState          : 
+RequestedState             : 12
+TimeOfLastStateChange      : 
+TransitioningToState       : 12
+CreationClassName          : 
+SystemCreationClassName    : 
+SystemName                 : 2
+AccessContext              : 0
+AccessInfo                 : 
+InfoFormat                 : 
+OtherAccessContext         : 
+OtherInfoFormatDescription : 
+AddressFamily              : 2
+InterfaceAlias             : Ethernet
+InterfaceIndex             : 4
+ServerAddresses            : {192.168.50.13, 192.168.50.12, 127.0.0.1}
+
+Address                    : {}
+PSComputerName             : 127.0.0.1
+RunspaceId                 : 57f4c001-461f-48da-8798-5767df7f37fe
+Caption                    : 
+Description                : 
+ElementName                : Loopback Pseudo-Interface 1
+InstanceID                 : 
+CommunicationStatus        : 
+DetailedStatus             : 
+HealthState                : 
+InstallDate                : 
+Name                       : 1
+OperatingStatus            : 
+OperationalStatus          : 
+PrimaryStatus              : 
+Status                     : 
+StatusDescriptions         : 
+AvailableRequestedStates   : 
+EnabledDefault             : 2
+EnabledState               : 5
+OtherEnabledState          : 
+RequestedState             : 12
+TimeOfLastStateChange      : 
+TransitioningToState       : 12
+CreationClassName          : 
+SystemCreationClassName    : 
+SystemName                 : 2
+AccessContext              : 0
+AccessInfo                 : 
+InfoFormat                 : 
+OtherAccessContext         : 
+OtherInfoFormatDescription : 
+AddressFamily              : 2
+InterfaceAlias             : Loopback Pseudo-Interface 1
+InterfaceIndex             : 1
+ServerAddresses            : {}
+
+
+
+
+## roles AD DS y DNS
+
+
+Name           : AD-Domain-Services
+InstallState   : Installed
+FeatureType    : Role
+PSComputerName : 127.0.0.1
+RunspaceId     : 57f4c001-461f-48da-8798-5767df7f37fe
+
+Name           : DNS
+InstallState   : Installed
+FeatureType    : Role
+PSComputerName : 127.0.0.1
+RunspaceId     : 57f4c001-461f-48da-8798-5767df7f37fe
+
+
+
+
+## dominio y bosque
+
+
+AllowedDNSSuffixes                 : {}
+ChildDomains                       : {}
+ComputersContainer                 : CN=Computers,DC=pft,DC=test
+DeletedObjectsContainer            : CN=Deleted Objects,DC=pft,DC=test
+DistinguishedName                  : DC=pft,DC=test
+DNSRoot                            : pft.test
+DomainControllersContainer         : OU=Domain Controllers,DC=pft,DC=test
+DomainMode                         : Windows2016Domain
+DomainSID                          : S-1-5-21-2519828755-3130325662-3343120716
+ForeignSecurityPrincipalsContainer : CN=ForeignSecurityPrincipals,DC=pft,DC=test
+Forest                             : pft.test
+InfrastructureMaster               : DC1-PFT.pft.test
+LastLogonReplicationInterval       : 
+LinkedGroupPolicyObjects           : {CN={31B2F340-016D-11D2-945F-00C04FB984F9},CN=Policies,CN=System,DC=pft,DC=test}
+LostAndFoundContainer              : CN=LostAndFound,DC=pft,DC=test
+ManagedBy                          : 
+Name                               : pft
+NetBIOSName                        : PFT
+ObjectClass                        : domainDNS
+ObjectGUID                         : 6c1ea7a5-6a6c-4143-a8bb-625e554664b4
+ParentDomain                       : 
+PDCEmulator                        : DC1-PFT.pft.test
+PublicKeyRequiredPasswordRolling   : True
+QuotasContainer                    : CN=NTDS Quotas,DC=pft,DC=test
+ReadOnlyReplicaDirectoryServers    : {}
+ReplicaDirectoryServers            : {DC1-PFT.pft.test, DC2-PFT.pft.test}
+RIDMaster                          : DC1-PFT.pft.test
+SubordinateReferences              : {DC=ForestDnsZones,DC=pft,DC=test, DC=DomainDnsZones,DC=pft,DC=test, CN=Configuration,DC=pft,DC=test}
+SystemsContainer                   : CN=System,DC=pft,DC=test
+UsersContainer                     : CN=Users,DC=pft,DC=test
+PropertyNames                      : {AllowedDNSSuffixes, ChildDomains, ComputersContainer, DeletedObjectsContainer...}
+AddedProperties                    : {}
+RemovedProperties                  : {}
+ModifiedProperties                 : {PublicKeyRequiredPasswordRolling}
+PropertyCount                      : 30
+
+
+
+
+
+ApplicationPartitions : {DC=DomainDnsZones,DC=pft,DC=test, DC=ForestDnsZones,DC=pft,DC=test}
+CrossForestReferences : {}
+DomainNamingMaster    : DC1-PFT.pft.test
+Domains               : {pft.test}
+ForestMode            : Windows2016Forest
+GlobalCatalogs        : {DC1-PFT.pft.test, DC2-PFT.pft.test}
+Name                  : pft.test
+PartitionsContainer   : CN=Partitions,CN=Configuration,DC=pft,DC=test
+RootDomain            : pft.test
+SchemaMaster          : DC1-PFT.pft.test
+Sites                 : {Default-First-Site-Name}
+SPNSuffixes           : {}
+UPNSuffixes           : {}
+PropertyNames         : {ApplicationPartitions, CrossForestReferences, DomainNamingMaster, Domains...}
+AddedProperties       : {}
+RemovedProperties     : {}
+ModifiedProperties    : {PartitionsContainer}
+PropertyCount         : 13
+
+
+
+
+## controladores del dominio
+
+
+HostName        : DC2-PFT.pft.test
+IPv4Address     : 192.168.50.13
+Site            : Default-First-Site-Name
+IsGlobalCatalog : True
+OperatingSystem : Windows Server 2022 Standard Evaluation
+Enabled         : True
+
+HostName        : DC1-PFT.pft.test
+IPv4Address     : 192.168.50.12
+Site            : Default-First-Site-Name
+IsGlobalCatalog : True
+OperatingSystem : Windows Server 2022 Standard Evaluation
+Enabled         : True
+
+
+
+
+## zonas DNS
+
+
+ZoneName            : _msdcs.pft.test
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Forest
+DynamicUpdate       : Secure
+IsReverseLookupZone : False
+Paused              : 
+
+ZoneName            : 0.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+Paused              : 
+
+ZoneName            : 127.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+Paused              : 
+
+ZoneName            : 255.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : False
+ReplicationScope    : None
+DynamicUpdate       : None
+IsReverseLookupZone : True
+Paused              : 
+
+ZoneName            : 50.168.192.in-addr.arpa
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Domain
+DynamicUpdate       : Secure
+IsReverseLookupZone : True
+Paused              : 
+
+ZoneName            : pft.test
+ZoneType            : Primary
+IsDsIntegrated      : True
+ReplicationScope    : Domain
+DynamicUpdate       : Secure
+IsReverseLookupZone : False
+Paused              : 
+
+
+
+
+## reenviadores DNS
+
+
+IPAddress             : 
+ReorderedIPAddress    : 
+EnableReordering      : True
+Timeout               : 3
+UseRootHint           : True
+PSComputerName        : 
+CimClass              : root/Microsoft/Windows/DNS:DnsServerForwarder
+CimInstanceProperties : {EnableReordering, IPAddress, ReorderedIPAddress, Timeout...}
+CimSystemProperties   : Microsoft.Management.Infrastructure.CimSystemProperties
+
+
+
+
+## registros DNS de todas las zonas
+### ZONE _msdcs.pft.test
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : 1397283e-2009-4019-bff6-e0ce5a26a0fb
+RecordType : CNAME
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordCName
+
+HostName   : 65a31835-674a-44ab-8dcf-45f0559b2348
+RecordType : CNAME
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordCName
+
+HostName   : _kerberos._tcp.Default-First-Site-Name._sites.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp.Default-First-Site-Name._sites.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.dc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : gc
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.gc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.gc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.gc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.pdc
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+
+
+
+### ZONE 0.in-addr.arpa
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+
+
+
+### ZONE 127.in-addr.arpa
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : 1.0.0
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+
+
+
+### ZONE 255.in-addr.arpa
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+
+
+
+### ZONE 50.168.192.in-addr.arpa
+
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : 10
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 11
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 12
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 13
+RecordType : PTR
+TimeToLive : 00:20:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 14
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 15
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 16
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+HostName   : 17
+RecordType : PTR
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordPtr
+
+
+
+
+### ZONE pft.test
+
+
+HostName   : @
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : @
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : @
+RecordType : SOA
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordSoa
+
+HostName   : _msdcs
+RecordType : NS
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordNS
+
+HostName   : _gc._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _gc._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _gc._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kpasswd._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kpasswd._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._udp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kerberos._udp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kpasswd._udp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _kpasswd._udp
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : dc1-pft
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : dc2-pft
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : DomainDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : DomainDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.DomainDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.DomainDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.DomainDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.DomainDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : ForestDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : ForestDnsZones
+RecordType : A
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.ForestDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.Default-First-Site-Name._sites.ForestDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.ForestDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : _ldap._tcp.ForestDnsZones
+RecordType : SRV
+TimeToLive : 00:10:00
+RecordData : DnsServerResourceRecordSrv
+
+HostName   : pg-1
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pg-2
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pve-1
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : pve-2
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+HostName   : web
+RecordType : A
+TimeToLive : 01:00:00
+RecordData : DnsServerResourceRecordA
+
+
+
+
+
+## unidades organizativas
+
+
+Name                            : Administrativo-VLAN10
+DistinguishedName               : OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Admins
+DistinguishedName               : OU=Admins,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Computers
+DistinguishedName               : OU=Computers,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Database
+DistinguishedName               : OU=Database,OU=Servers,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : DMZ-VLAN100
+DistinguishedName               : OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Docentes-VLAN20
+DistinguishedName               : OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Domain Controllers
+DistinguishedName               : OU=Domain Controllers,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Domain-Controllers
+DistinguishedName               : OU=Domain-Controllers,OU=Servers,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Domain-Local
+DistinguishedName               : OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Estudiantes-VLAN30
+DistinguishedName               : OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Global
+DistinguishedName               : OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Groups
+DistinguishedName               : OU=Groups,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Guests-VLAN60
+DistinguishedName               : OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Lab-IT-VLAN40
+DistinguishedName               : OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Linux
+DistinguishedName               : OU=Linux,OU=Servers,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : MGMT-VLAN90
+DistinguishedName               : OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Monitoring
+DistinguishedName               : OU=Monitoring,OU=Servers,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : PFT
+DistinguishedName               : OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Servers
+DistinguishedName               : OU=Servers,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Service-Accounts
+DistinguishedName               : OU=Service-Accounts,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=Administrativo-VLAN10,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=DMZ-VLAN100,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=Docentes-VLAN20,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=Estudiantes-VLAN30,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=Guests-VLAN60,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=Lab-IT-VLAN40,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Users
+DistinguishedName               : OU=Users,OU=MGMT-VLAN90,OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+Name                            : Zones
+DistinguishedName               : OU=Zones,OU=PFT,DC=pft,DC=test
+ProtectedFromAccidentalDeletion : 
+
+
+
+
+## grupos y membresías recursivas
+
+
+Group    : Access Control Assistance Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Access Control Assistance Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Account Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Account Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Administrators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Administrators,CN=Builtin,DC=pft,DC=test
+Members  : Administrator
+
+Group    : Allowed RODC Password Replication Group
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Allowed RODC Password Replication Group,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Backup Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Backup Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Cert Publishers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Cert Publishers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Certificate Service DCOM Access
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Certificate Service DCOM Access,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Cloneable Domain Controllers
+Scope    : Global
+Category : Security
+DN       : CN=Cloneable Domain Controllers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Cryptographic Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Cryptographic Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Denied RODC Password Replication Group
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Denied RODC Password Replication Group,CN=Users,DC=pft,DC=test
+Members  : krbtgt, Administrator
+
+Group    : Distributed COM Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Distributed COM Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : DL_APP_USE
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_APP_USE,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : DL_DB_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_DB_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : DL_PVE_GUI_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_PVE_GUI_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : DL_PVE_SSH
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_PVE_SSH,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : DL_ZABBIX_ADMIN
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DL_ZABBIX_ADMIN,OU=Domain-Local,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : DnsAdmins
+Scope    : DomainLocal
+Category : Security
+DN       : CN=DnsAdmins,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : DnsUpdateProxy
+Scope    : Global
+Category : Security
+DN       : CN=DnsUpdateProxy,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Domain Admins
+Scope    : Global
+Category : Security
+DN       : CN=Domain Admins,CN=Users,DC=pft,DC=test
+Members  : Administrator
+
+Group    : Domain Computers
+Scope    : Global
+Category : Security
+DN       : CN=Domain Computers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Domain Controllers
+Scope    : Global
+Category : Security
+DN       : CN=Domain Controllers,CN=Users,DC=pft,DC=test
+Members  : DC2-PFT, DC1-PFT
+
+Group    : Domain Guests
+Scope    : Global
+Category : Security
+DN       : CN=Domain Guests,CN=Users,DC=pft,DC=test
+Members  : Guest
+
+Group    : Domain Users
+Scope    : Global
+Category : Security
+DN       : CN=Domain Users,CN=Users,DC=pft,DC=test
+Members  : Administrator, krbtgt
+
+Group    : Enterprise Admins
+Scope    : Universal
+Category : Security
+DN       : CN=Enterprise Admins,CN=Users,DC=pft,DC=test
+Members  : Administrator
+
+Group    : Enterprise Key Admins
+Scope    : Universal
+Category : Security
+DN       : CN=Enterprise Key Admins,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Enterprise Read-only Domain Controllers
+Scope    : Universal
+Category : Security
+DN       : CN=Enterprise Read-only Domain Controllers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Event Log Readers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Event Log Readers,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : GG_ADMINISTRATIVO_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ADMINISTRATIVO_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_APP_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_APP_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_DB_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DB_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_DMZ_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DMZ_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_DOCENTES_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_DOCENTES_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_ESTUDIANTES_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ESTUDIANTES_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_GUESTS_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_GUESTS_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_LAB_IT_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_LAB_IT_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_MGMT_PVE_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_MGMT_PVE_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_MGMT_USERS
+Scope    : Global
+Category : Security
+DN       : CN=GG_MGMT_USERS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : GG_ZABBIX_ADMINS
+Scope    : Global
+Category : Security
+DN       : CN=GG_ZABBIX_ADMINS,OU=Global,OU=Groups,OU=PFT,DC=pft,DC=test
+Members  : 
+
+Group    : Group Policy Creator Owners
+Scope    : Global
+Category : Security
+DN       : CN=Group Policy Creator Owners,CN=Users,DC=pft,DC=test
+Members  : Administrator
+
+Group    : Guests
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Guests,CN=Builtin,DC=pft,DC=test
+Members  : Guest
+
+Group    : Hyper-V Administrators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Hyper-V Administrators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : IIS_IUSRS
+Scope    : DomainLocal
+Category : Security
+DN       : CN=IIS_IUSRS,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Incoming Forest Trust Builders
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Incoming Forest Trust Builders,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Key Admins
+Scope    : Global
+Category : Security
+DN       : CN=Key Admins,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Network Configuration Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Network Configuration Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Performance Log Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Performance Log Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Performance Monitor Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Performance Monitor Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Pre-Windows 2000 Compatible Access
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Print Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Print Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Protected Users
+Scope    : Global
+Category : Security
+DN       : CN=Protected Users,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : RAS and IAS Servers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=RAS and IAS Servers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : RDS Endpoint Servers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=RDS Endpoint Servers,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : RDS Management Servers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=RDS Management Servers,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : RDS Remote Access Servers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=RDS Remote Access Servers,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Read-only Domain Controllers
+Scope    : Global
+Category : Security
+DN       : CN=Read-only Domain Controllers,CN=Users,DC=pft,DC=test
+Members  : 
+
+Group    : Remote Desktop Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Remote Desktop Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Remote Management Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Remote Management Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Replicator
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Replicator,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Schema Admins
+Scope    : Universal
+Category : Security
+DN       : CN=Schema Admins,CN=Users,DC=pft,DC=test
+Members  : Administrator
+
+Group    : Server Operators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Server Operators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Storage Replica Administrators
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Storage Replica Administrators,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Terminal Server License Servers
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Terminal Server License Servers,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Users
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Users,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+Group    : Windows Authorization Access Group
+Scope    : DomainLocal
+Category : Security
+DN       : CN=Windows Authorization Access Group,CN=Builtin,DC=pft,DC=test
+Members  : 
+
+
+
+
+## GPO existentes
+[ERROR] An operations error occurred. (Exception from HRESULT: 0x80072020)
+## replicación resumen
+Replication Summary Start Time: 2026-09-16 12:31:11
+
+
+
+Beginning data collection for replication summary, this may take awhile:
+
+  .....
+
+
+
+
+
+Source DSA          largest delta    fails/total %%   error
+
+ DC1-PFT                   04m:49s    0 /   5    0  
+
+
+
+
+
+Destination DSA     largest delta    fails/total %%   error
+
+ DC2-PFT                   04m:49s    0 /   5    0  
+
+
+
+
+
+Experienced the following operational errors trying to retrieve replication information:
+
+         110 - DC1-PFT.pft.test
+
+
+## replicación socios
+
+
+Repadmin: running command /showrepl against full DC localhost
+
+Default-First-Site-Name\DC2-PFT
+
+DSA Options: IS_GC 
+
+Site Options: (none)
+
+DSA object GUID: 65a31835-674a-44ab-8dcf-45f0559b2348
+
+DSA invocationID: 9920bd4a-bb88-4243-a6a1-5699b4401c50
+
+
+
+==== INBOUND NEIGHBORS ======================================
+
+
+
+DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:30:35 was successful.
+
+
+
+CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:26:22 was successful.
+
+
+
+CN=Schema,CN=Configuration,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:26:22 was successful.
+
+
+
+DC=DomainDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:26:58 was successful.
+
+
+
+DC=ForestDnsZones,DC=pft,DC=test
+
+    Default-First-Site-Name\DC1-PFT via RPC
+
+        DSA object GUID: 1397283e-2009-4019-bff6-e0ce5a26a0fb
+
+        Last attempt @ 2026-09-16 12:27:01 was successful.
+
+
+
+
+## fallos de replicación AD
+
+## diagnóstico DNS
+
+Directory Server Diagnosis
+
+
+Performing initial setup:
+
+   Trying to find home server...
+
+   * Verifying that the local machine DC2-PFT, is a Directory Server. 
+   Home Server = DC2-PFT
+
+   * Connecting to directory service on server DC2-PFT.
+
+   * Identified AD Forest. 
+   Collecting AD specific global data 
+   * Collecting site info.
+
+   Calling ldap_search_init_page(hld,CN=Sites,CN=Configuration,DC=pft,DC=test,LDAP_SCOPE_SUBTREE,(objectCategory=ntDSSiteSettings),.......
+   The previous call succeeded 
+   Iterating through the sites 
+   Looking at base site object: CN=NTDS Site Settings,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=pft,DC=test
+   Getting ISTG and options for the site
+   * Identifying all servers.
+
+   Calling ldap_search_init_page(hld,CN=Sites,CN=Configuration,DC=pft,DC=test,LDAP_SCOPE_SUBTREE,(objectClass=ntDSDsa),.......
+   The previous call succeeded....
+   The previous call succeeded
+   Iterating through the list of servers 
+   Getting information for the server CN=NTDS Settings,CN=DC1-PFT,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=pft,DC=test 
+   objectGuid obtained
+   InvocationID obtained
+   dnsHostname obtained
+   site info obtained
+   All the info for the server collected
+   Getting information for the server CN=NTDS Settings,CN=DC2-PFT,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=pft,DC=test 
+   objectGuid obtained
+   InvocationID obtained
+   dnsHostname obtained
+   site info obtained
+   All the info for the server collected
+   * Identifying all NC cross-refs.
+
+   Got error while checking if the DC is using FRS or DFSR. Error:
+
+   The operation being requested was not performed because the user has not been authenticated.T
+
+   he VerifyReferences, FrsEvent and DfsrEvent tests might fail because of this
+
+   error. 
+
+   * Found 2 DC(s). Testing 2 of them.
+
+   Done gathering initial info.
+
+
+Doing initial required tests
+
+   
+   Testing server: Default-First-Site-Name\DC1-PFT
+
+      Starting test: Connectivity
+
+         * Active Directory LDAP Services Check
+         Determining IP4 connectivity 
+         * Active Directory RPC Services Check
+         [DC1-PFT] DsBindWithSpnEx() failed with error 5,
+
+         Access is denied..
+         Got error while checking LDAP and RPC connectivity. Please check your
+
+         firewall settings.
+
+         ......................... DC1-PFT failed test Connectivity
+
+   
+   Testing server: Default-First-Site-Name\DC2-PFT
+
+      Starting test: Connectivity
+
+         * Active Directory LDAP Services Check
+         Determining IP4 connectivity 
+         * Active Directory RPC Services Check
+         ......................... DC2-PFT passed test Connectivity
+
+
+
+Doing primary tests
+
+   
+   Testing server: Default-First-Site-Name\DC1-PFT
+
+      Test omitted by user request: Advertising
+
+      Test omitted by user request: CheckSecurityError
+
+      Test omitted by user request: CutoffServers
+
+      Test omitted by user request: FrsEvent
+
+      Test omitted by user request: DFSREvent
+
+      Test omitted by user request: SysVolCheck
+
+      Test omitted by user request: KccEvent
+
+      Test omitted by user request: KnowsOfRoleHolders
+
+      Test omitted by user request: MachineAccount
+
+      Test omitted by user request: NCSecDesc
+
+      Test omitted by user request: NetLogons
+
+      Test omitted by user request: ObjectsReplicated
+
+      Test omitted by user request: OutboundSecureChannels
+
+      Test omitted by user request: Replications
+
+      Test omitted by user request: RidManager
+
+      Test omitted by user request: Services
+
+      Test omitted by user request: SystemLog
+
+      Test omitted by user request: Topology
+
+      Test omitted by user request: VerifyEnterpriseReferences
+
+      Test omitted by user request: VerifyReferences
+
+      Test omitted by user request: VerifyReplicas
+
+   
+   Testing server: Default-First-Site-Name\DC2-PFT
+
+      Test omitted by user request: Advertising
+
+      Test omitted by user request: CheckSecurityError
+
+      Test omitted by user request: CutoffServers
+
+      Test omitted by user request: FrsEvent
+
+      Test omitted by user request: DFSREvent
+
+      Test omitted by user request: SysVolCheck
+
+      Test omitted by user request: KccEvent
+
+      Test omitted by user request: KnowsOfRoleHolders
+
+      Test omitted by user request: MachineAccount
+
+      Test omitted by user request: NCSecDesc
+
+      Test omitted by user request: NetLogons
+
+      Test omitted by user request: ObjectsReplicated
+
+      Test omitted by user request: OutboundSecureChannels
+
+      Test omitted by user request: Replications
+
+      Test omitted by user request: RidManager
+
+      Test omitted by user request: Services
+
+      Test omitted by user request: SystemLog
+
+      Test omitted by user request: Topology
+
+      Test omitted by user request: VerifyEnterpriseReferences
+
+      Test omitted by user request: VerifyReferences
+
+      Test omitted by user request: VerifyReplicas
+
+   
+      Starting test: DNS
+
+            
+               Starting test: DNS
+
+                  
+
+                  DNS Tests are running and not hung. Please wait a few
+
+                  minutes...
+
+                  See DNS test in enterprise tests section for results
+                  ......................... DC1-PFT failed test DNS
+
+         See DNS test in enterprise tests section for results
+         ......................... DC2-PFT passed test DNS
+
+   
+   Running partition tests on : ForestDnsZones
+
+      Test omitted by user request: CheckSDRefDom
+
+      Test omitted by user request: CrossRefValidation
+
+   
+   Running partition tests on : DomainDnsZones
+
+      Test omitted by user request: CheckSDRefDom
+
+      Test omitted by user request: CrossRefValidation
+
+   
+   Running partition tests on : Schema
+
+      Test omitted by user request: CheckSDRefDom
+
+      Test omitted by user request: CrossRefValidation
+
+   
+   Running partition tests on : Configuration
+
+      Test omitted by user request: CheckSDRefDom
+
+      Test omitted by user request: CrossRefValidation
+
+   
+   Running partition tests on : pft
+
+      Test omitted by user request: CheckSDRefDom
+
+      Test omitted by user request: CrossRefValidation
+
+   
+   Running enterprise tests on : pft.test
+
+      Starting test: DNS
+
+         Test results for domain controllers:
+
+            
+            DC: DC1-PFT.pft.test
+
+            Domain: pft.test
+
+            
+
+                  
+               TEST: Authentication (Auth)
+                  Authentication test: Successfully completed
+                  
+               TEST: Basic (Basc)
+                  Error: No DS RPC connectivity
+                  Error: No WMI connectivity
+                  [Error details: 0x80070005 (Type: HRESULT - Facility: Win32, Description: Access is denied.) - Connection to WMI server failed]
+                  No host records (A or AAAA) were found for this DC
+
+         
+            
+            DC: DC2-PFT.pft.test
+
+            Domain: pft.test
+
+            
+
+                  
+               TEST: Authentication (Auth)
+                  Authentication test: Successfully completed
+                  
+               TEST: Basic (Basc)
+                  The OS
+
+                  Microsoft Windows Server 2022 Standard Evaluation (Service Pack level: 0.0)
+
+                  is supported.
+
+                  NETLOGON service is running
+
+                  kdc service is running
+
+                  DNSCACHE service is running
+
+                  DNS service is running
+
+                  DC is a DNS server
+
+                  Network adapters information:
+
+                  Adapter [00000001] Intel(R) PRO/1000 MT Network Connection:
+
+                     MAC address is BC:24:11:13:35:71
+                     IP Address is static 
+                     IP address: 192.168.50.13, fe80::ad08:e553:fa52:80a9
+                     DNS servers:
+
+                        192.168.50.13 (DC2-PFT) [Valid]
+                        192.168.50.12 (dc1-pft.pft.test.) [Valid]
+                        127.0.0.1 (DC2-PFT) [Valid]
+                  The A host record(s) for this DC was found
+                  The SOA record for the Active Directory zone was found
+                  The Active Directory zone on this DC/DNS server was found primary
+                  Root zone on this DC/DNS server was not found
+                  
+               TEST: Forwarders/Root hints (Forw)
+                  Recursion is enabled
+                  Forwarders are not configured on this DNS server
+                  Root hint Information: 
+                     Name: A.ROOT-SERVERS.NET. IP: 2001:503:ba3e::2:30 [Valid]
+                     Name: B.ROOT-SERVERS.NET. IP: 2001:500:84::b [Valid]
+                     Name: C.ROOT-SERVERS.NET. IP: 2001:500:2::c [Valid]
+                     Name: D.ROOT-SERVERS.NET. IP: 2001:500:2d::d [Valid]
+                     Name: E.ROOT-SERVERS.NET. IP: 192.203.230.10 [Valid]
+                     Name: F.ROOT-SERVERS.NET. IP: 2001:500:2f::f [Valid]
+                     Name: G.ROOT-SERVERS.NET. IP: 192.112.36.4 [Valid]
+                     Name: H.ROOT-SERVERS.NET. IP: 2001:500:1::53 [Valid]
+                     Name: I.ROOT-SERVERS.NET. IP: 2001:7fe::53 [Valid]
+                     Name: J.ROOT-SERVERS.NET. IP: 2001:503:c27::2:30 [Valid]
+                     Name: K.ROOT-SERVERS.NET. IP: 2001:7fd::1 [Valid]
+                     Name: L.ROOT-SERVERS.NET. IP: 2001:500:9f::42 [Valid]
+                     Name: M.ROOT-SERVERS.NET. IP: 2001:dc3::35 [Valid]
+                  
+               TEST: Delegations (Del)
+                  Delegation information for the zone: pft.test.
+                     Delegated domain name: _msdcs.pft.test.
+                        DNS server: dc1-pft.pft.test. IP:192.168.50.12 [Valid]
+                  
+               TEST: Dynamic update (Dyn)
+                  Warning: Failed to add the test record dcdiag-test-record in zone pft.test
+                  [Error details: 9017 (Type: Win32 - Description: DNS bad key.)]
+                  Test record dcdiag-test-record deleted successfully in zone pft.test
+                  
+               TEST: Records registration (RReg)
+                  Network Adapter
+
+                  [00000001] Intel(R) PRO/1000 MT Network Connection:
+
+                     Matching CNAME record found at DNS server 192.168.50.13:
+                     65a31835-674a-44ab-8dcf-45f0559b2348._msdcs.pft.test
+
+                     Matching A record found at DNS server 192.168.50.13:
+                     DC2-PFT.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._udp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kpasswd._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.gc._msdcs.pft.test
+
+                     Matching A record found at DNS server 192.168.50.13:
+                     gc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _gc._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.gc._msdcs.pft.test
+
+                     Matching CNAME record found at DNS server 192.168.50.12:
+                     65a31835-674a-44ab-8dcf-45f0559b2348._msdcs.pft.test
+
+                     Matching A record found at DNS server 192.168.50.12:
+                     DC2-PFT.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kerberos._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kerberos._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kerberos._udp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kpasswd._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kerberos._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _kerberos._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Warning: 
+                     Missing SRV record at DNS server 192.168.50.12:
+                     _ldap._tcp.gc._msdcs.pft.test
+                     
+                     Warning: 
+                     Missing A record at DNS server 192.168.50.12:
+                     gc._msdcs.pft.test
+                     
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _gc._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.12:
+                     _ldap._tcp.Default-First-Site-Name._sites.gc._msdcs.pft.test
+
+                     Matching CNAME record found at DNS server 192.168.50.13:
+                     65a31835-674a-44ab-8dcf-45f0559b2348._msdcs.pft.test
+
+                     Matching A record found at DNS server 192.168.50.13:
+                     DC2-PFT.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.6c1ea7a5-6a6c-4143-a8bb-625e554664b4.domains._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._udp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kpasswd._tcp.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.dc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _kerberos._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.gc._msdcs.pft.test
+
+                     Matching A record found at DNS server 192.168.50.13:
+                     gc._msdcs.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _gc._tcp.Default-First-Site-Name._sites.pft.test
+
+                     Matching  SRV record found at DNS server 192.168.50.13:
+                     _ldap._tcp.Default-First-Site-Name._sites.gc._msdcs.pft.test
+
+               Error: Record registrations cannot be found for all the network
+
+               adapters
+
+         
+         Summary of test results for DNS servers used by the above domain
+
+         controllers:
+
+         
+
+            DNS server: 192.112.36.4 (G.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 192.168.50.12 (dc1-pft.pft.test.)
+
+               All tests passed on this DNS server
+
+               Name resolution is functional._ldap._tcp SRV record for the forest root domain is registered 
+               DNS delegation for the domain  _msdcs.pft.test. is operational on IP 192.168.50.12
+
+               
+            DNS server: 192.168.50.13 (DC2-PFT)
+
+               All tests passed on this DNS server
+
+               Name resolution is functional._ldap._tcp SRV record for the forest root domain is registered 
+               
+            DNS server: 192.203.230.10 (E.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:1::53 (H.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:2::c (C.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:2d::d (D.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:2f::f (F.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:84::b (B.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:500:9f::42 (L.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:503:ba3e::2:30 (A.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:503:c27::2:30 (J.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:7fd::1 (K.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:7fe::53 (I.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+            DNS server: 2001:dc3::35 (M.ROOT-SERVERS.NET.)
+
+               All tests passed on this DNS server
+
+               
+         Summary of DNS test results:
+
+         
+                                            Auth Basc Forw Del  Dyn  RReg Ext
+            _________________________________________________________________
+            Domain: pft.test
+
+               DC1-PFT                      PASS FAIL n/a  n/a  n/a  n/a  n/a  
+               DC2-PFT                      PASS PASS PASS PASS WARN FAIL n/a  
+         
+         ......................... pft.test failed test DNS
+
+      Test omitted by user request: LocatorCheck
+
+      Test omitted by user request: Intersite
+
+

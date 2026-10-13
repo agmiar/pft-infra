@@ -1,0 +1,68 @@
+# S2.1 — Preestado de topología GNS3 antes del cambio
+
+- Fecha/hora de captura: 2026-09-20, UYT (UTC-03:00).
+- Tarea: S2.1.
+- Proyecto: `PFT-sprint2-preview1`, ID `235f2725-d822-47d0-b422-2497b9167cc8`.
+- Fuente: API local GNS3 `2.2.61`, consultas de sólo lectura.
+- Credenciales, contraseñas y tokens: no incluidos.
+
+## Comandos/acciones
+
+```text
+GET http://127.0.0.1:3080/v2/version
+GET http://127.0.0.1:3080/v2/projects
+GET /v2/projects/235f2725-d822-47d0-b422-2497b9167cc8/nodes
+GET /v2/projects/235f2725-d822-47d0-b422-2497b9167cc8/links
+GET /v2/projects/235f2725-d822-47d0-b422-2497b9167cc8/nodes/<ADvIOS-1>
+```
+
+## Resultado observado
+
+| Elemento | Estado previo | Observación |
+|---|---|---|
+| Proyecto `PFT-sprint2-preview1` | `opened` | API disponible. |
+| PVE-1 | `started` | Consola VNC GNS3 en 5904; estado interno aún no capturado. |
+| PVE-2 | `started` | Consola VNC GNS3 en 5900; estado interno aún no capturado. |
+| PVE-QDEVICE | `stopped` | No se usa para S2.1. |
+| Alpine-SSHClient-1 | `stopped` | Se iniciará sólo para acceder por SSH a los PVE y ejecutar pruebas. |
+| SwitchvIOSL3-1 | `stopped` | Es el switch intermedio conectado a las segundas NIC; su configuración runtime aún no está verificada. |
+
+## Cableado API antes del cambio
+
+| Equipo | NIC PVE | Extremo actual | Función a confirmar |
+|---|---|---|---|
+| PVE-1 | `eth0` / adaptador 0 | ADvIOS-9a, adaptador 3 | Red de VMs / datos. |
+| PVE-1 | `eth1` / adaptador 1 | SwitchvIOSL3-1, adaptador 1 | Gestión objetivo; VLAN/puerto aún no verificados. |
+| PVE-2 | `eth0` / adaptador 0 | ADvIOS-9b, adaptador 3 | Red de VMs / datos. |
+| PVE-2 | `eth1` / adaptador 1 | SwitchvIOSL3-1, adaptador 2 | Gestión objetivo; VLAN/puerto aún no verificados. |
+| SwitchvIOSL3-1 | adaptador 0 | Cloud1, puerto 1 | Camino temporal/externo; no se considera prueba de gestión autorizada. |
+
+## Preestado runtime de los PVE
+
+La siguiente información se capturó desde las consolas de los PVE antes de aplicar S2.1.
+
+### PVE-1
+
+- Hostname: `pve-1`.
+- `ens3` UP, MAC `0c:b2:fd:f2:00:00`; `ens4` DOWN, MAC `0c:b2:fd:f2:00:01`; `vmbr0` UP.
+- `vmbr0`: `192.168.50.10/27`; ruta por defecto vía `192.168.50.1 dev vmbr0`.
+- No existía `vmbr1`; `ens3` era el único puerto esclavo de `vmbr0`.
+- `/etc/network/interfaces` tenía `vmbr0` estático sobre `ens3` y `ens4` en modo manual.
+- `pveproxy` y `ssh`: `active`.
+- `pvecm status`: clúster `PFT-CLUSTER`, dos nodos visibles, QDevice configurado y quorum presente en el preestado.
+
+### PVE-2
+
+- Hostname: `pve-2`.
+- `ens3` UP, MAC `0c:6a:8f:9b:00:00`; `ens4` DOWN, MAC `0c:6a:8f:9b:00:01`; `vmbr0` UP.
+- `vmbr0`: `192.168.50.11/27`; ruta por defecto vía `192.168.50.1 dev vmbr0`.
+- No existía `vmbr1`; `ens3` era el único puerto esclavo de `vmbr0`.
+- `/etc/network/interfaces` tenía `vmbr0` estático sobre `ens3` y `ens4` en modo manual.
+- `pveproxy` y `ssh`: `active`.
+- `pvecm status`: clúster `PFT-CLUSTER`, dos nodos visibles, QDevice configurado y quorum presente en el preestado.
+
+## Limitaciones
+
+- Este archivo acredita sólo el preestado API de GNS3 y el cableado lógico; no acredita IPs, bridges, rutas, servicios SSH/8006 ni aislamiento dentro de PVE.
+- No se modificaron nodos, enlaces, switches, archivos de red ni servicios antes de esta captura.
+- El estado runtime se obtuvo desde consola de los PVE; el preestado de GNS3 y el runtime tienen fuentes distintas.

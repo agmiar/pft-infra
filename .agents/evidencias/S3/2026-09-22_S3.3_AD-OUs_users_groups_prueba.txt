@@ -1,0 +1,51 @@
+Fecha: 2026-09-22
+Tarea: S3.3 — OUs, usuarios, grupos y cuentas delegadas
+Estado: Aprobado
+Nodo de consulta: DC1-PFT / 192.168.50.12
+
+Resultado de la corrección de OUs:
+- OU_CREATED OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=Administracion,OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=Finanzas,OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=RRHH,OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=TI,OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=Operaciones,OU=Usuarios-PFT,DC=pft,DC=test
+- OU_CREATED OU=Equipos-PFT,DC=pft,DC=test
+- OU_CREATED OU=Clientes,OU=Equipos-PFT,DC=pft,DC=test
+
+Usuarios creados y afiliados observados en consola:
+- adm01 adm02 adm03 adm04 -> GG-Administracion
+- fin01 fin02 fin03 fin04 -> GG-Finanzas
+- rrhh01 rrhh02 rrhh03 rrhh04 -> GG-RRHH
+- ti01 ti02 ti03 ti04 -> GG-TI
+- ops01 ops02 ops03 ops04 -> GG-Operaciones
+
+Consulta adicional runtime:
+rpcclient -U Administrator 192.168.50.12 -c enumdomusers | grep -E 'adm|fin|rrhh|ti|ops'
+
+Salida relevante:
+- adm01, adm02, adm03, adm04
+- fin01, fin02, fin03, fin04
+- rrhh01, rrhh02, rrhh03, rrhh04
+- ti01, ti02, ti03, ti04
+- ops01, ops02, ops03, ops04
+
+Membresías observadas con Get-ADGroupMember:
+- GG-Administracion: adm01, adm02, adm03, adm04
+- GG-Finanzas: fin01, fin02, fin03, fin04
+- GG-RRHH: rrhh01, rrhh02, rrhh03, rrhh04
+- GG-TI: ti01, ti02, ti03, ti04
+- GG-Operaciones: ops01, ops02, ops03, ops04
+- GG-Administradores: admin.amiranda, admin.bcollazo, admin.cfernandez, admin.dsilva, admin.estevez
+- Domain Admins: Administrator, admin.amiranda, admin.bcollazo
+- Backup Operators: svc_backup
+
+Cuentas de servicio:
+- svc_backup: PasswordNeverExpires=True
+- svc_ldap_bind: PasswordNeverExpires=True
+
+Limitación registrada:
+La primera consulta automatizada con Get-ADUser -Filter fue afectada por caracteres especiales del teclado virtual de la consola; se repitió la verificación con consultas AD explícitas y rpcclient. No se usó esa salida defectuosa como evidencia de aprobación.
+
+Ruta de evidencia: .agents/evidencias/S3/2026-09-22_S3.3_AD-OUs_users_groups_prueba.txt
+

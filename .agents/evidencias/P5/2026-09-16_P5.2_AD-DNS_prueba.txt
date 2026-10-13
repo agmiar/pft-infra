@@ -1,0 +1,35 @@
+# P5.2 — Verificación DNS y servicios en ambos controladores
+
+Fecha/hora de captura: 2026-09-16 13:12:45 -03:00
+Tarea: P5.2
+Canal: WinRM autenticado por dos túneles SSH temporales; no se guardaron credenciales.
+Alcance: lectura de servicios, zonas, registros A y PTR. No se crearon ni modificaron objetos.
+
+Comandos remotos ejecutados en cada DC:
+
+- `hostname`
+- `Get-Service DNS,Kdc,Netlogon,NTDS | Select Name,Status,StartType`
+- `Get-DnsServerZone` filtrando `pft.test`, `_msdcs.pft.test` y `50.168.192.in-addr.arpa`
+- `Resolve-DnsName` para `pve-1`, `pve-2`, `pg-1`, `pg-2`, `postgres`, `zabbix` y `web`
+- `Get-DnsServerResourceRecord` para PTR 10–17 de `50.168.192.in-addr.arpa`
+
+## Resultado DC1-PFT
+
+- `DNS`, `Kdc`, `Netlogon` y `NTDS`: `Running`, inicio `Automatic`.
+- Zonas presentes e integradas con AD: `_msdcs.pft.test` (Forest), `pft.test` (Domain) y `50.168.192.in-addr.arpa` (Domain, inversa).
+- A: `pve-1` → `192.168.50.10`; `pve-2` → `192.168.50.11`; `pg-1` → `192.168.50.14`; `pg-2` → `192.168.50.15`; `web` → `192.168.100.6`.
+- A faltantes: `postgres.pft.test` y `zabbix.pft.test` devolvieron `NXDOMAIN/ERROR`.
+- PTR: `10` → `pve-1.pft.test.`; `11` → `pve-2.pft.test.`; `12` → `dc1-pft.pft.test.`; `13` → `DC2-PFT.pft.test.`; `14` → `pg-1.pft.test.`; `15` → `pg-2.pft.test.`; `16` → `postgres.pft.test.`; `17` → `zabbix.pft.test.`.
+
+## Resultado DC2-PFT
+
+- `DNS`, `Kdc`, `Netlogon` y `NTDS`: `Running`, inicio `Automatic`.
+- Las mismas tres zonas AD-integradas están presentes con los mismos ámbitos.
+- Los A de `pve-1`, `pve-2`, `pg-1`, `pg-2` y `web` resolvieron a los mismos destinos; `postgres` y `zabbix` devolvieron `NXDOMAIN/ERROR`.
+- Los PTR 10–17 devolvieron los mismos destinos que DC1.
+
+## Limitaciones
+
+- Esta captura confirma el estado observado de DNS/servicios, pero no constituye autorización para inventar destinos ni crear los A faltantes.
+- `postgres` y `zabbix` tienen PTR existentes para las IP de diseño `.16` y `.17`, pero el A correspondiente está ausente en ambos DC; se requiere confirmar que esos destinos siguen siendo los aprobados antes de escribirlos.
+- El contenido efectivo de las GPO no se verificó aquí; la consulta `Get-GPOReport -All -ReportType Xml` queda registrada con `Error in the application` en el inventario.
