@@ -1,10 +1,43 @@
 hostname DistvIOS-1
 
-interface range Gi0/1 - 2
- switchport trunk encapsulation dot1q
- switchport mode trunk
- switchport trunk native vlan 99
- switchport nonegotiate
+# S1.4–S1.6 — orden de implementación restante (pendiente)
+# S1.4: conservar las VLAN HQ 10/50/60/90/100 y el aislamiento de invitados
+# VLAN 60; no cambiar NAT/Internet sin preestado, prueba y rollback.
+# S1.5: aplicar la segmentación mínima definida en la matriz de ACL sobre los
+# SVIs correspondientes, con pre/post y contadores; no aplicar ACL al tránsito
+# L3 Core–Dist sin una regla explícita del runbook.
+# S1.6: ejecutar pruebas intersede positivas/negativas y failover: rutas OSPF,
+# DNS, SMB, aislamiento de VLAN 60 y caída/restauración de cada enlace.
+# Cierre: sólo marcar aprobado con salida real y tiempos. Rollback: retirar
+# únicamente las ACL/reglas de la fase en curso y restaurar el preestado.
+
+# S1.1 — tránsito L3 HQ–BRANCH (verificado y persistido 2026-09-19)
+interface GigabitEthernet0/1
+ description S1.1_TO_CorevIOS-1_Gi3/0
+ no switchport
+ ip address 10.0.5.2 255.255.255.252
+ no shutdown
+
+interface GigabitEthernet0/2
+ description S1.1_TO_CorevIOS-2_Gi3/0
+ no switchport
+ ip address 10.0.6.2 255.255.255.252
+ no shutdown
+
+# S1.2 — OSPF HQ/BRANCH y autenticación MD5 (verificado/persistido 2026-09-20)
+# Runtime verificado: router-id 3.3.3.3, 2 vecinos FULL, default OSPF E2 desde
+# BorderRouter-2 por ambas rutas. Clave MD5 omitida por seguridad.
+interface GigabitEthernet0/1
+ ip ospf authentication message-digest
+interface GigabitEthernet0/2
+ ip ospf authentication message-digest
+router ospf 1
+ router-id 3.3.3.3
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ no passive-interface GigabitEthernet0/2
+ network 10.0.5.0 0.0.0.3 area 10
+ network 10.0.6.0 0.0.0.3 area 10
 
 interface range Gi1/1 - 2
  switchport trunk encapsulation dot1q
@@ -15,5 +48,208 @@ interface range Gi1/1 - 2
 end
 write memory
 
-# Igual config para DistvIOS-2
+# S1.4–S1.6 — control de continuidad (pendiente; no ejecutar automáticamente)
+# S1.4 no requiere cambios en este nodo: verificar trunks, VLAN nativa 99 y
+# que las VLAN HQ continúen alcanzables según la matriz vigente.
+# S1.5 no se considera aprobado hasta comprobar permitidos/denegados y
+# failover HSRP con contadores de ACL antes/después.
+# S1.6 depende de OSPF FULL y de los enlaces 10.0.5.0/30–10.0.8.0/30 ya
+# comprobados en S1.1/S1.2; registrar DNS, SMB, aislamiento y recuperación.
 
+# S1.3 — VLANs BRANCH, SVIs/HSRP, DHCP relay y OSPF (persistido 2026-09-20)
+# DistvIOS-1 usa .2 y es activo HSRP en 110/120/140/160.
+vlan 110
+ name BRANCH-GESTION
+vlan 115
+ name BRANCH-SERVIDORES
+vlan 120
+ name BRANCH-FINANZAS
+vlan 130
+ name BRANCH-RRHH
+vlan 140
+ name BRANCH-TI
+vlan 150
+ name BRANCH-OPERACIONES
+vlan 160
+ name BRANCH-BACKUP
+
+interface Vlan110
+ description S1.3_BRANCH_GESTION
+ ip address 192.168.110.2 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 110 ip 192.168.110.1
+ standby 110 priority 200
+ standby 110 preempt
+ no shutdown
+interface Vlan115
+ description S1.3_BRANCH_SERVIDORES
+ ip address 192.168.115.2 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 115 ip 192.168.115.1
+ no shutdown
+interface Vlan120
+ description S1.3_BRANCH_FINANZAS
+ ip address 192.168.120.2 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 120 ip 192.168.120.1
+ standby 120 priority 200
+ standby 120 preempt
+ no shutdown
+interface Vlan130
+ description S1.3_BRANCH_RRHH
+ ip address 192.168.130.2 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 130 ip 192.168.130.1
+ no shutdown
+interface Vlan140
+ description S1.3_BRANCH_TI
+ ip address 192.168.140.2 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 140 ip 192.168.140.1
+ standby 140 priority 200
+ standby 140 preempt
+ no shutdown
+interface Vlan150
+ description S1.3_BRANCH_OPERACIONES
+ ip address 192.168.150.2 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 150 ip 192.168.150.1
+ no shutdown
+interface Vlan160
+ description S1.3_BRANCH_BACKUP
+ ip address 192.168.160.2 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 160 ip 192.168.160.1
+ standby 160 priority 200
+ standby 160 preempt
+ no shutdown
+
+router ospf 1
+ network 192.168.110.0 0.0.0.31 area 10
+ network 192.168.115.0 0.0.0.31 area 10
+ network 192.168.120.0 0.0.0.63 area 10
+ network 192.168.130.0 0.0.0.63 area 10
+ network 192.168.140.0 0.0.0.63 area 10
+ network 192.168.150.0 0.0.0.63 area 10
+ network 192.168.160.0 0.0.0.31 area 10
+
+end
+write memory
+
+# S1.3 — DistvIOS-2: usa .3 y es activo HSRP en 115/130/150.
+hostname DistvIOS-1
+vlan 110
+ name BRANCH-GESTION
+vlan 115
+ name BRANCH-SERVIDORES
+vlan 120
+ name BRANCH-FINANZAS
+vlan 130
+ name BRANCH-RRHH
+vlan 140
+ name BRANCH-TI
+vlan 150
+ name BRANCH-OPERACIONES
+vlan 160
+ name BRANCH-BACKUP
+
+interface Vlan110
+ description S1.3_BRANCH_GESTION
+ ip address 192.168.110.3 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 110 ip 192.168.110.1
+ no shutdown
+interface Vlan115
+ description S1.3_BRANCH_SERVIDORES
+ ip address 192.168.115.3 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 115 ip 192.168.115.1
+ standby 115 priority 200
+ standby 115 preempt
+ no shutdown
+interface Vlan120
+ description S1.3_BRANCH_FINANZAS
+ ip address 192.168.120.3 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 120 ip 192.168.120.1
+ no shutdown
+interface Vlan130
+ description S1.3_BRANCH_RRHH
+ ip address 192.168.130.3 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 130 ip 192.168.130.1
+ standby 130 priority 200
+ standby 130 preempt
+ no shutdown
+interface Vlan140
+ description S1.3_BRANCH_TI
+ ip address 192.168.140.3 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 140 ip 192.168.140.1
+ no shutdown
+interface Vlan150
+ description S1.3_BRANCH_OPERACIONES
+ ip address 192.168.150.3 255.255.255.192
+ ip helper-address 192.168.50.2
+ standby 150 ip 192.168.150.1
+ standby 150 priority 200
+ standby 150 preempt
+ no shutdown
+interface Vlan160
+ description S1.3_BRANCH_BACKUP
+ ip address 192.168.160.3 255.255.255.224
+ ip helper-address 192.168.50.2
+ standby 160 ip 192.168.160.1
+ no shutdown
+
+router ospf 1
+ network 192.168.110.0 0.0.0.31 area 10
+ network 192.168.115.0 0.0.0.31 area 10
+ network 192.168.120.0 0.0.0.63 area 10
+ network 192.168.130.0 0.0.0.63 area 10
+ network 192.168.140.0 0.0.0.63 area 10
+ network 192.168.150.0 0.0.0.63 area 10
+ network 192.168.160.0 0.0.0.31 area 10
+
+end
+write memory
+
+# Nodo API GNS3: DistvIOS-2. El hostname runtime permanece DistvIOS-1.
+hostname DistvIOS-1
+
+# S1.1 — tránsito L3 HQ–BRANCH (verificado y persistido 2026-09-19)
+interface GigabitEthernet0/1
+ description S1.1_TO_CorevIOS-1_Gi3/1
+ no switchport
+ ip address 10.0.7.2 255.255.255.252
+ no shutdown
+
+interface GigabitEthernet0/2
+ description S1.1_TO_CorevIOS-2_Gi3/1
+ no switchport
+ ip address 10.0.8.2 255.255.255.252
+ no shutdown
+
+# S1.2 — OSPF HQ/BRANCH y autenticación MD5 (verificado/persistido 2026-09-20)
+# Runtime verificado: router-id 4.4.4.4, 2 vecinos FULL, default OSPF E2 desde
+# BorderRouter-2 por ambas rutas. Clave MD5 omitida por seguridad.
+interface GigabitEthernet0/1
+ ip ospf authentication message-digest
+interface GigabitEthernet0/2
+ ip ospf authentication message-digest
+router ospf 1
+ router-id 4.4.4.4
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ no passive-interface GigabitEthernet0/2
+ network 10.0.7.0 0.0.0.3 area 10
+ network 10.0.8.0 0.0.0.3 area 10
+
+interface range Gi1/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport nonegotiate
+
+end
+write memory

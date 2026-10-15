@@ -1,0 +1,12 @@
+# S3.4 — DistvIOS-1 — 2026-09-22
+# No se registran contraseñas ni secretos.
+
+[DHCP_Relay]
+interfaces = Vlan110, Vlan115, Vlan120, Vlan130, Vlan140, Vlan150, Vlan160
+helper_address = 192.168.50.2
+count_verified = 7
+
+[Validation]
+runtime = helper-address present in running configuration for all BRANCH SVIs
+evidence = .agents/evidencias/S3/2026-09-22_S3.4_DHCP_prueba.txt
+

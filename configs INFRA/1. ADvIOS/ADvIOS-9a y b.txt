@@ -48,6 +48,16 @@ interface Gi0/3
  spanning-tree portfast
  spanning-tree bpduguard enable
  no shutdown
+
+# S3.7 runtime — PVE-1 VM bridge observado en Gi0/3, VLAN50.
+# La MAC del bridge volvió a aprenderse tras reinicio controlado de PVE-1;
+# no se cambió el modo access ni la VLAN.
+
+# S1.5 runtime — 2026-09-25
+# ADvIOS-9a Gi0/3: PVE-1 vmbr0, access VLAN 50, portfast, MACs aprendidas.
+# ADvIOS-9b Gi0/3: no es el enlace runtime de PVE-2; quedó notconnect en VLAN 1.
+# PVE-2 usa AccvIOS-1 Gi2/0 como bridge VLAN 115 y AccvIOS-1 Gi1/3 como
+# gestión VLAN 110. Evidencia: .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md
 end
 
 # REPETIR PARA ADvIOS-9b

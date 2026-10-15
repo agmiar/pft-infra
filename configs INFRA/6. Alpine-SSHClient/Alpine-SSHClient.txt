@@ -1,0 +1,146 @@
+Crear un Dockerfile con lo siguiente: (en cualquier carpeta de Linux)
+
+
+----- (guardar en archivo llamado "Dockerfile" -sin extensión-)
+
+FROM alpine:latest
+
+RUN apk update && apk add --no-cache \
+    openssh-client \
+    bash \
+    iproute2 \
+    iputils
+
+# Contraseña de root
+RUN echo "root:gns3" | chpasswd
+
+VOLUME ["/etc/network", "/root"]
+CMD ["/bin/bash"]
+
+------
+
+# Desde la consola 
+# (dentro de la carpeta donde se encuentra el Dockerfile)
+docker build -t alpine-sshclient .
+
+(En GNS3)
+Edit --> Preferences
+"Docker" --> "Docker Containers"
+  "Existing image" --> "alpine-sshclient:latest"
+    Name: "Alpine-SSHClient"
+    Adapters: 1
+    Start command: "/bin/bash"
+    Console type: "telnet" --> Next --> Finish
+
+-------
+
+(Una vez instanciado el appliance)
+Click derecho --> "Edit Config"
+
+auto eth0
+iface eth0 inet static
+    address 192.168.90.10
+    netmask 255.255.255.224
+    gateway 192.168.90.1
+post-up /bin/sh -c 'printf "nameserver 192.168.122.1\n" > /etc/resolv.conf'
+
+-------
+
+# EN ALPINE-SSHCLIENT:
+# Obliga a Alpine a usar algoritmos de intercambio de contraseña más viejos (son los que usa la imagen vIOS de Cisco)
+
+mkdir -p ~/.ssh
+
+# 192.168.90.1 es el default gateway de la VLAN MGMT
+# 192.168.90.28 fue la IP histórica de PVE-QDEVICE; el nodo está detenido
+# desde S2.2 y no debe usarse como destino operativo.
+# 192.168.90.29 queda sin uso operativo documentado en esta replanificación.
+
+cat << EOF > ~/.ssh/config
+Host 192.168.90.1
+    KexAlgorithms +diffie-hellman-group14-sha1
+    HostKeyAlgorithms +ssh-rsa
+Host 192.168.90.28
+    # Host histórico de QDevice; conservar sólo para antecedentes/rollback.
+    KexAlgorithms +diffie-hellman-group14-sha1
+    HostKeyAlgorithms +ssh-rsa
+Host 192.168.90.29
+    KexAlgorithms +diffie-hellman-group14-sha1
+    HostKeyAlgorithms +ssh-rsa
+EOF
+
+chmod 600 ~/.ssh/config
+
+
+# [!!!] Apagar el nodo y volver a prenderlo.
+
+-------
+
+Para entrar al CorevIOS desde Alpine-SSHClient.txt
+
+ssh utec@192.168.90.1
+
+
+-----------------
+
+Para instalar soporte para RDP (gestión remota de Windows clients)
+apk update
+apk add freerdp
+command -v xfreerdp
+xfreerdp /buildconfig
+
+---
+Antes hay que darle un entorno gráfico al Alpine:
+apk update
+apk add alpine-conf
+setup-xorg-base
+apk add openbox xterm font-terminus freerdp dbus
+
+mkdir -p /run/openrc /run/lock
+touch /run/openrc/softlevel
+
+rc-update add dbus
+rc-status
+rc-service dbus start
+rc-service dbus status
+
+addgroup root video
+addgroup root input
+su - root
+
+vi ~/.xinitrc
+	exec openbox-session
+	(guardar los cambios)
+	"Esc" un par de veces y luego ":wq"
+	
+(desde mi PC personal)
+sudo apt install tigervnc-standalone-server
+
+Cambiar el tipo de consola a VNC
+iniciar consola gráfica del Alpine
+
+luego, abrir una consola auxiliar
+echo "$DISPLAY"
+dbus-run-session -- openbox-session &
+xterm &
+
+apk add --no-cache openbox xterm font-terminus freerdp dbus dbus-x11
+
+openbox-session >/tmp/openbox.log 2>&1 &
+xterm >/tmp/xterm.log 2>&1 &
+
+apk add --no-cache freerdp
+command -v xfreerdp3
+xfreerdp3 /buildconfig
+
+
+Para conectarse al Windows client:
+(desde la consola VNC del AlpineSSHClient)
+abrir Xterm y ejecutar
+xfreerdp /v:192.168.90.12 \
+  /u:'Administrator@pft.test' \
+  /from-stdin:force \
+  /cert:ignore
+  
+ 
+ -----------------

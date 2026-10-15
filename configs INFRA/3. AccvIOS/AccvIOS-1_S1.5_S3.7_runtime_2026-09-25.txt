@@ -1,0 +1,16 @@
+# AccvIOS-1 — runtime S1.5/S3.7 — 2026-09-25
+
+hostname = AccvIOS-1
+
+[interfaces]
+Gi0/0 = WIN-MGMT-BR-01, access VLAN 110, portfast, bpduguard
+Gi1/3 = PVE-2_MANAGEMENT_VLAN110, access VLAN 110, portfast
+Gi2/0 = PVE-2_VM_BRIDGE_VLAN115, access VLAN 115, portfast
+
+[runtime]
+state = connected y persistido con write memory
+macs = aprendidas en Gi0/0, Gi1/3 y Gi2/0 durante la verificación
+tests = PVE-2 192.168.110.10 TCP/22 y TCP/8006 abiertos; WIN-MGMT-BR-01 192.168.110.11 TCP/3389 abierto
+evidence = .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md; .agents/evidencias/S3/2026-09-25_S3.7_clientes_control.md
+
+Rollback: restaurar las VLAN/access ports anteriores sólo con preestado y prueba posterior.

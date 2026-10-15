@@ -1,0 +1,24 @@
+# Configuración declarativa S3.7 — WIN-MGMT-HQ-01
+fecha = 2026-09-25
+estado = Aprobado: dominio, DNS/DHCP, GPO, RDP, PVE-1 y SMB verificados
+plataforma = Windows 10 Enterprise LTSC 2021; appliance QEMU GNS3
+nombre = WIN-MGMT-HQ-01
+red = VLAN 90; DHCP
+ipv4_observada = 192.168.90.12/27
+gateway_observado = 192.168.90.1
+dhcp_observado = 192.168.90.2
+dns_observado = 192.168.50.12, 192.168.115.12
+dns_suffix_observado = pft.test
+ou_prevista = OU=Clientes,OU=Equipos-PFT,DC=pft,DC=test
+domain_join = Aprobado: pft.test; PartOfDomain=True; nltest /dsgetdc:pft.test NERR_Success
+gpresult = Aprobado: Default Domain Policy, GPO-01, GPO-05 y GPO-06 aplicadas
+pve_test = Aprobado: curl HTTPS a 192.168.90.20:8006 desde la estación
+smb_test = Aprobado: net view FS-HQ y casos permitido/denegado observados
+consola_estable = Aprobado: RDP sobre TCP/3389 persistente
+rdp_scope = 192.168.90.0/27, 192.168.110.0/27
+rdp_firewall_rule = PFT-RDP-MGMT; entrada TCP/3389 limitada a las redes de gestión
+restricted_ports = TCP/445 y TCP/5985 sin respuesta en la estación
+consulta = ipconfig /all; nltest /dsgetdc:pft.test /force; gpupdate /force; gpresult /r; curl.exe -k -I https://192.168.90.20:8006
+rollback = eliminar PFT-RDP-MGMT; establecer fDenyTSConnections=1
+evidence = .agents/evidencias/S3/2026-09-25_S3.7_clientes_control.md
+secrets = no incluidos

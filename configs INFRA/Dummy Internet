@@ -33,11 +33,13 @@ auto eth2
 iface eth2 inet dhcp
 post-up sysctl -w net.ipv4.ip_forward=1
 post-up ip route replace 200.0.0.0/30 via 200.0.0.10 dev eth0
+post-up ip route replace 200.0.0.4/30 via 200.0.0.14 dev eth1
 post-up iptables -A FORWARD -i eth0 -o eth2 -j ACCEPT
 post-up iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
 post-up iptables -A FORWARD -i eth2 -o eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 post-up iptables -A FORWARD -i eth2 -o eth1 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 post-up iptables -t nat -A POSTROUTING -s 200.0.0.0/30 -o eth2 -j MASQUERADE
+post-up iptables -t nat -A POSTROUTING -s 200.0.0.4/30 -o eth2 -j MASQUERADE
 post-up iptables -t nat -A POSTROUTING -s 200.0.0.12/30 -o eth2 -j MASQUERADE
 
 
@@ -60,29 +62,28 @@ Fuente: Georgia11
 
 cat > mensaje.txt << "EOF"
                                                                                                                               
-                                                                                                                              
-                                                       mm                             mm                                      
-                                                       MM                             MM                                      
-`7MMpdMAo.`7Mb,od8 ,pW"Wq.`7M'   `MF'.gP"Ya   ,p6"bo mmMMmm ,pW"Wq.      `7MM  `7MM mmMMmm .gP"Ya   ,p6"bo                    
-  MM   `Wb  MM' "'6W'   `Wb VA   ,V ,M'   Yb 6M'  OO   MM  6W'   `Wb       MM    MM   MM  ,M'   Yb 6M'  OO                    
-  MM    M8  MM    8M     M8  VA ,V  8M"""""" 8M        MM  8M     M8       MM    MM   MM  8M"""""" 8M                         
-  MM   ,AP  MM    YA.   ,A9   VVV   YM.    , YM.    ,  MM  YA.   ,A9       MM    MM   MM  YM.    , YM.    ,                   
-  MMbmmd' .JMML.   `Ybmd9'    ,V     `Mbmmd'  YMbmd'   `Mbmo`Ybmd9'        `Mbod"YML. `Mbmo`Mbmmd'  YMbmd'                    
-  MM                         ,V                                                                                               
-.JMML.                    OOb"                                                                                                
-                                                                                                                              
-                                                                                                                              
-  mm                                                                                                    mm                    
-  MM                                                                                                    MM                    
-mmMMmm .gP"Ya `7Mb,od8 ,p6"bo   .gP"Ya `7Mb,od8     ,pP"Ybd  .gP"Ya `7MMpMMMb.pMMMb.  .gP"Ya  ,pP"Ybd mmMMmm `7Mb,od8 .gP"Ya  
-  MM  ,M'   Yb  MM' "'6M'  OO  ,M'   Yb  MM' "'     8I   `" ,M'   Yb  MM    MM    MM ,M'   Yb 8I   `"   MM     MM' "',M'   Yb 
-  MM  8M""""""  MM    8M       8M""""""  MM         `YMMMa. 8M""""""  MM    MM    MM 8M"""""" `YMMMa.   MM     MM    8M"""""" 
-  MM  YM.    ,  MM    YM.    , YM.    ,  MM         L.   I8 YM.    ,  MM    MM    MM YM.    , L.   I8   MM     MM    YM.    , 
-  `Mbmo`Mbmmd'.JMML.   YMbmd'   `Mbmmd'.JMML.       M9mmmP'  `Mbmmd'.JMML  JMML  JMML.`Mbmmd' M9mmmP'   `Mbmo.JMML.   `Mbmmd' 
-                                                                                                                              
-
-
-                                                                                                               
+                                                        
+                                                                                                                                       
+             mm                                                                               mm                                       
+             MM                                                                               MM                                       
+`7MM  `7MM mmMMmm .gP"Ya   ,p6"bo      `7MMpdMAo.`7Mb,od8 ,pW"Wq.`7M'   `MF'.gP"Ya   ,p6"bo mmMMmm ,pW"Wq.                             
+  MM    MM   MM  ,M'   Yb 6M'  OO        MM   `Wb  MM' "'6W'   `Wb VA   ,V ,M'   Yb 6M'  OO   MM  6W'   `Wb                            
+  MM    MM   MM  8M"""""" 8M             MM    M8  MM    8M     M8  VA ,V  8M"""""" 8M        MM  8M     M8                            
+  MM    MM   MM  YM.    , YM.    ,       MM   ,AP  MM    YA.   ,A9   VVV   YM.    , YM.    ,  MM  YA.   ,A9                            
+  `Mbod"YML. `Mbmo`Mbmmd'  YMbmd'        MMbmmd' .JMML.   `Ybmd9'    ,V     `Mbmmd'  YMbmd'   `Mbmo`Ybmd9'                             
+                                         MM                         ,V                                                                 
+                                       .JMML.                    OOb"                                                                  
+                                                                                                                                       
+    ,...,,                         ,,                                           ,,                                                     
+  .d' ""db                       `7MM        mm                                 db                   mm                                
+  dM`                              MM        MM                                                      MM                                
+ mMMmm`7MM  `7MMpMMMb.   ,6"Yb.    MM      mmMMmm .gP"Ya   ,p6"bo `7MMpMMMb.  `7MM  ,p6"bo   ,6"Yb.mmMMmm `7MM  `7MM  `7Mb,od8 ,6"Yb.  
+  MM    MM    MM    MM  8)   MM    MM        MM  ,M'   Yb 6M'  OO   MM    MM    MM 6M'  OO  8)   MM  MM     MM    MM    MM' "'8)   MM  
+  MM    MM    MM    MM   ,pm9MM    MM        MM  8M"""""" 8M        MM    MM    MM 8M        ,pm9MM  MM     MM    MM    MM     ,pm9MM  
+  MM    MM    MM    MM  8M   MM    MM        MM  YM.    , YM.    ,  MM    MM    MM YM.    , 8M   MM  MM     MM    MM    MM    8M   MM  
+.JMML..JMML..JMML  JMML.`Moo9^Yo..JMML.      `Mbmo`Mbmmd'  YMbmd' .JMML  JMML..JMML.YMbmd'  `Moo9^Yo.`Mbmo  `Mbod"YML..JMML.  `Moo9^Yo.
+                                                                                                                                       
+                                          
 darle 'Enter' un par de veces
 escribir "EOF" (sin las comillas) a mano y presionar 'Enter'  
 
@@ -95,6 +96,11 @@ echo
 cat mensaje.txt
 ) | nc -l -p 80
 done
+
+// SI sale un error de netcat
+apt-get update
+apt-get install -y --no-install-recommends netcat-openbsd
+command -v nc
 
 // en la PC linux Alpine...
 wget -qO- http://200.0.0.9:80/mensaje.txt

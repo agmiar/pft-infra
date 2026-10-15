@@ -1,0 +1,19 @@
+Fecha: 2026-10-14
+Tarea: S3.6 — preestado de acceso administrativo
+
+Identidad bajo prueba: PFT\Administrator
+
+Membresía real anterior de GG-Administradores:
+- admin.amiranda
+- admin.bcollazo
+- admin.cfernandez
+- admin.dsilva
+- admin.estevez
+
+Resultado: Administrator no pertenecía a GG-Administradores.
+
+ACL de share anterior: cada share de área tenía PFT\GG-Administradores en Full y el DL_FS_*_RW del área en Change, pero la identidad Administrator recibía Access is denied en la evidencia anterior.
+
+ACL NTFS observada después de resolver rutas: SYSTEM y BUILTIN\Administrators en Full; el DL_FS_*_RW de cada área en Modify.
+
+Limitación del preestado: la enumeración de membresía se realizó en DC1-PFT porque el cmdlet de Active Directory en FS-HQ no pudo contactar el servidor AD.

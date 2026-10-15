@@ -1,0 +1,31 @@
+Fecha: 2026-10-14
+Tarea: S3.6 — postestado real de FS-HQ después del renombrado
+Equipo: FS-HQ / VM 103
+Origen de ejecución: WIN-MGMT-HQ-01, PowerShell elevada
+
+Acciones reales:
+- Se retiraron sólo los shares de área antiguos: administracion, finanzas, rrhh, operaciones y ti.
+- Se renombraron las carpetas a Administracion, Docentes, Estudiantes, TI y Lab-IT; para los cambios sólo de mayúsculas/minúsculas se usó un nombre temporal intermedio.
+- Se recrearon los cinco shares con sus nombres finales.
+
+Comando: Get-SmbShare | Select Name,Path
+Resultado real relevante:
+Administracion C:\shares\Administracion
+Docentes      C:\shares\Docentes
+Estudiantes   C:\shares\Estudiantes
+Lab-IT        C:\shares\Lab-IT
+TI            C:\shares\TI
+
+Comando: net view \\FS-HQ
+Resultado real:
+Administracion
+Docentes
+Estudiantes
+Lab-IT
+TI
+The command completed successfully.
+
+ACL de share verificada: GG-Administradores y Administrator en Full; el DL_FS_*_RW correspondiente a cada área en Change.
+ACL NTFS verificada con icacls: SYSTEM y BUILTIN\Administrators en Full; DL_FS_Administracion_RW, DL_FS_Docentes_RW, DL_FS_Estudiantes_RW, dl_fs_ti_rw y DL_FS_Lab-IT_RW en Modify según la carpeta.
+
+Resultado: Aprobado.

@@ -1,0 +1,11 @@
+# S3.4 — CorevIOS-2 — 2026-09-22
+# No se registran contraseñas ni secretos.
+
+[Role]
+dhcp_role = standby/core pair; active DHCP pools remain on CorevIOS-1
+hsrp = virtual gateways remain unchanged
+
+[Validation]
+precondition = CorevIOS-1 DHCP server reachable through existing L3/HSRP design
+evidence = .agents/evidencias/S3/2026-09-22_S3.4_DHCP_prueba.txt
+

@@ -1,0 +1,318 @@
+hostname CorevIOS-2
+
+# Spanning Tree (prioridades invertidas)
+spanning-tree vlan 10,30,50,90 priority 28672
+spanning-tree vlan 20,40,60,100 priority 4096
+
+# SVIs (IPs distintas, HSRP priorities inversas)
+interface Vlan10
+ ip address 192.168.10.3 255.255.255.224
+ standby 10 ip 192.168.10.1
+ # (sin priority/preempt — Core2 es Standby)
+
+interface Vlan20
+ ip address 192.168.20.3 255.255.255.192
+ standby 20 ip 192.168.20.1
+ standby 20 priority 200
+ standby 20 preempt
+
+interface Vlan30
+ ip address 192.168.30.3 255.255.255.192
+ standby 30 ip 192.168.30.1
+
+interface Vlan40
+ ip address 192.168.40.3 255.255.255.192
+ standby 40 ip 192.168.40.1
+ standby 40 priority 200
+ standby 40 preempt
+
+interface Vlan50
+ ip address 192.168.50.3 255.255.255.224
+ standby 50 ip 192.168.50.1
+
+interface Vlan60
+ ip address 192.168.60.3 255.255.255.192
+ standby 60 ip 192.168.60.1
+ standby 60 priority 200
+ standby 60 preempt
+
+interface Vlan90
+ ip address 192.168.90.3 255.255.255.224
+ standby 90 ip 192.168.90.1
+ ip ospf authentication message-digest
+
+interface Vlan100
+ ip address 192.168.100.3 255.255.255.248
+ standby 100 ip 192.168.100.1
+ standby 100 priority 200
+ standby 100 preempt
+
+ interface GigabitEthernet2/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 50,99
+ switchport nonegotiate
+ no shutdown
+
+# S1.1 — tránsito L3 HQ–BRANCH (verificado y persistido 2026-09-19)
+interface GigabitEthernet3/0
+ description S1.1_TO_DistvIOS-1_Gi0/2
+ no switchport
+ ip address 10.0.6.1 255.255.255.252
+ ip ospf authentication message-digest
+ no shutdown
+
+interface GigabitEthernet3/1
+ description S1.1_TO_DistvIOS-2_Gi0/2
+ no switchport
+ ip address 10.0.8.1 255.255.255.252
+ ip ospf authentication message-digest
+ no shutdown
+
+# P2P L3 hacia Borders (IPs distintas)
+interface GigabitEthernet3/2
+ description Hacia BorderRouter-1
+ no switchport
+ ip address 10.0.3.1 255.255.255.252
+ ip ospf authentication message-digest
+
+interface GigabitEthernet3/3
+ description Hacia BorderRouter-2
+ no switchport
+ ip address 10.0.2.1 255.255.255.252
+ ip ospf authentication message-digest
+
+# default route (salida a BorderRouter-2)
+ip route 0.0.0.0 0.0.0.0 10.0.2.2
+
+# OSPF (router-id distinto, networks distintos para P2P)
+# S1.2 — OSPF HQ/BRANCH y autenticación MD5 (verificado/persistido 2026-09-20)
+# Runtime verificado: 5 vecinos FULL, autenticación criptográfica en 5 interfaces,
+# default estática conservada vía 10.0.2.2. Clave MD5 omitida por seguridad.
+router ospf 1
+ router-id 2.2.2.2
+ passive-interface default
+ no passive-interface Vlan90
+ no passive-interface GigabitEthernet3/2
+ no passive-interface GigabitEthernet3/3
+ no passive-interface GigabitEthernet3/0
+ no passive-interface GigabitEthernet3/1
+ network 10.0.3.0 0.0.0.3 area 0
+ network 10.0.2.0 0.0.0.3 area 0
+ network 10.0.6.0 0.0.0.3 area 10
+ network 10.0.8.0 0.0.0.3 area 10
+ network 192.168.10.0 0.0.0.31 area 0
+ network 192.168.20.0 0.0.0.63 area 0
+ network 192.168.30.0 0.0.0.63 area 0
+ network 192.168.40.0 0.0.0.63 area 0
+ network 192.168.50.0 0.0.0.7 area 0
+ network 192.168.60.0 0.0.0.63 area 0
+ network 192.168.90.0 0.0.0.31 area 0
+ network 192.168.100.0 0.0.0.7 area 0
+
+# DHCP (todas las pools están en Core1)
+
+# ACLs inter-VLAN
+ip access-list extended FILTRO_DMZ
+ # Permitir que la DMZ responda a los pings (echo-reply)
+ permit icmp 192.168.100.0 0.0.0.7 any echo-reply
+ # Bloquear que la DMZ inicie pings (echo)
+ deny icmp 192.168.100.0 0.0.0.7 192.168.0.0 0.0.255.255 echo
+ deny icmp 192.168.100.0 0.0.0.7 10.0.0.0 0.255.255.255 echo
+
+ permit ip any any
+
+interface vlan100
+ ip access-group FILTRO_DMZ in
+
+ip access-list extended VLAN_10_IN
+ # permitir tráfico intra-VLAN (de VLAN 10 a VLAN 10)
+ permit ip 192.168.10.0 0.0.0.31 192.168.10.0 0.0.0.31
+ # líneas necesarias para que DHCP funcione en las VLANs
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ # VLAN 90 puede iniciar tráfico hacia VLAN 10, no al revés.
+ permit icmp 192.168.10.0 0.0.0.31 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.10.0 0.0.0.31 192.168.90.0 0.0.0.31 established
+ # VLAN 10 tiene permitido comunicarse con VLANs 20, 30 y 100
+ permit ip 192.168.10.0 0.0.0.31 192.168.20.0 0.0.0.63
+ permit ip 192.168.10.0 0.0.0.31 192.168.30.0 0.0.0.63
+ permit ip 192.168.10.0 0.0.0.31 192.168.100.0 0.0.0.7
+ # permite que VLAN 10 tenga salida a DummyInternet
+ permit tcp any 192.168.10.0 0.0.0.31 established
+ # bloquea cualquier otro intento de contacto con otra VLAN
+ deny ip 192.168.10.0 0.0.0.31 192.168.0.0 0.0.255.255
+ # relaja un poco las restricciones para no bloquear tráfico de más
+ permit ip 192.168.10.0 0.0.0.31 any
+ permit ip any 192.168.10.0 0.0.0.31
+
+ip access-list extended VLAN_20_IN
+ permit ip 192.168.20.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.20.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.20.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.20.0 0.0.0.63 192.168.10.0 0.0.0.31
+ permit ip 192.168.20.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit ip 192.168.20.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit ip 192.168.20.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.20.0 0.0.0.63 established
+ deny ip 192.168.20.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.20.0 0.0.0.63 any
+ permit ip any 192.168.20.0 0.0.0.63
+
+ip access-list extended VLAN_30_IN
+ permit ip 192.168.30.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.30.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.30.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.30.0 0.0.0.63 192.168.10.0 0.0.0.31
+ permit ip 192.168.30.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit ip 192.168.30.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit ip 192.168.30.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.30.0 0.0.0.63 established
+ deny ip 192.168.30.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.30.0 0.0.0.63 any
+ permit ip any 192.168.30.0 0.0.0.63
+
+ip access-list extended VLAN_40_IN
+ permit ip 192.168.40.0 0.0.0.63 192.168.40.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit icmp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.40.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit ip 192.168.40.0 0.0.0.63 192.168.20.0 0.0.0.63
+ permit ip 192.168.40.0 0.0.0.63 192.168.30.0 0.0.0.63
+ permit ip 192.168.40.0 0.0.0.63 192.168.100.0 0.0.0.7
+ permit tcp any 192.168.40.0 0.0.0.63 established
+ deny ip 192.168.40.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.40.0 0.0.0.63 any
+ permit ip any 192.168.40.0 0.0.0.63
+
+ip access-list extended VLAN_50_IN
+ 10 permit ip 192.168.50.0 0.0.0.31 192.168.50.0 0.0.0.31
+ 20 permit udp any eq bootpc any eq bootps
+ 30 permit udp any eq bootps any eq bootpc
+ 40 permit icmp 192.168.50.0 0.0.0.31 192.168.90.0 0.0.0.31 echo-reply
+ 50 permit tcp 192.168.50.0 0.0.0.31 192.168.90.0 0.0.0.31 established
+ 60 permit ip 192.168.50.0 0.0.0.31 192.168.100.0 0.0.0.7
+ 70 permit tcp any 192.168.50.0 0.0.0.31 established
+ ! S2.2 (2026-09-20): 75/76 son permisos históricos PVE->QNetd; el QDevice
+ ! ya no está activo. No se retiraron ACL en S2.2; revisar en S1.5 antes de cambiar.
+ 75 permit tcp host 192.168.50.10 host 192.168.90.28 eq 5403
+ 76 permit tcp host 192.168.50.11 host 192.168.90.28 eq 5403
+ 77 permit icmp host 192.168.50.18 host 192.168.90.28 echo
+ 78 permit icmp host 192.168.50.19 host 192.168.90.28 echo
+ 80 deny ip 192.168.50.0 0.0.0.31 192.168.0.0 0.0.255.255
+ 90 permit ip 192.168.50.0 0.0.0.31 any
+ 100 permit ip any 192.168.50.0 0.0.0.31
+
+ip access-list extended VLAN_60_IN
+ permit ip 192.168.60.0 0.0.0.63 192.168.60.0 0.0.0.63
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.60.0 0.0.0.63 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.60.0 0.0.0.63 192.168.90.0 0.0.0.31 established
+ permit tcp any 192.168.60.0 0.0.0.63 established
+ deny ip 192.168.60.0 0.0.0.63 192.168.0.0 0.0.255.255
+ permit ip 192.168.60.0 0.0.0.63 any
+ permit ip any 192.168.60.0 0.0.0.63
+
+ip access-list extended VLAN_90_IN
+ permit ip 192.168.90.0 0.0.0.31 192.168.90.0 0.0.0.31
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit ip 192.168.90.0 0.0.0.31 any
+ permit ip any 192.168.90.0 0.0.0.31
+
+ip access-list extended VLAN_100_IN
+ permit ip 192.168.100.0 0.0.0.7 192.168.100.0 0.0.0.7
+ permit udp any eq bootpc any eq bootps
+ permit udp any eq bootps any eq bootpc
+ permit icmp 192.168.100.0 0.0.0.7 192.168.90.0 0.0.0.31 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.90.0 0.0.0.31 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.10.0 0.0.0.31 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.10.0 0.0.0.31 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.20.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.20.0 0.0.0.63 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.30.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.30.0 0.0.0.63 established
+ permit icmp 192.168.100.0 0.0.0.7 192.168.40.0 0.0.0.63 echo-reply
+ permit tcp 192.168.100.0 0.0.0.7 192.168.40.0 0.0.0.63 established
+ permit ip 192.168.100.0 0.0.0.7 192.168.50.0 0.0.0.7
+ permit tcp any 192.168.100.0 0.0.0.7 established
+ deny ip 192.168.100.0 0.0.0.7 192.168.0.0 0.0.255.255
+ permit ip 192.168.100.0 0.0.0.7 any
+ permit ip any 192.168.100.0 0.0.0.7
+
+# SSH
+service password-encryption
+
+# desactivar la búsqueda DNS
+# (por el nombre de dominio a agregar)
+no ip domain-lookup
+
+ip domain name utec.edu.uy
+
+# se especifica el largo de las claves
+crypto key generate rsa
+# luego ingresar 2048 (cant. de bits)
+
+# crear usuario (credencial omitida por seguridad)
+# username <USUARIO_OMITIDO> secret <VALOR_OMITIDO>
+
+# agregar a una white-list (ACL) el IP del equipo desde el que me estoy conectando.
+access-list 7 permit host 192.168.90.10
+
+# configurar condiciones de login
+login block-for 180 attempts 4 within 120
+
+# Habilitar versión 2 de SSH (es la más segura)
+ip ssh version 2
+
+# las líneas VTY son conexiones virtuales remotas al dispositivo
+# son 16 en total, por eso van 
+# del 0 al 15 inclusive
+line vty 0 15
+
+login local
+
+transport input ssh
+
+# tiempo de inactividad para cerrar sesión
+exec-timeout 5
+
+# agregar la white-list (ACL) como base activa de usuarios autorizados
+access-class 7 in
+
+# Configurar contraseña para entrar a la consola (omitida por seguridad)
+line console 0
+# password <VALOR_OMITIDO>
+login
+end
+exit
+
+# Peristir en la startup-config
+conf t
+
+# S3.7 runtime — 2026-09-23
+# Se agregó en ambos Core, antes del deny inter-VLAN de VLAN_50_IN:
+# 99 permit tcp 192.168.50.0 0.0.0.31 192.168.110.0 0.0.0.31 established
+# Motivo: permitir el retorno TCP de SMB iniciado desde BRANCH hacia FS-HQ.
+# Se validó con TCP/445 desde WIN-MGMT-BR-01; no se registran secretos.
+end
+write memory
+
+# S1.3–S1.6 — continuidad documentada
+# S1.3: CorevIOS-1 es el servidor DHCP central; este Core conserva las rutas
+# OSPF hacia BRANCH y los gateways HSRP HQ sin pools locales duplicados.
+# S1.4 (Pendiente): conservar VLAN 10/50/60/90/100, NAT/Internet y guests
+# aislados; verificar pre/post antes de cualquier ajuste.
+# S1.5 (Pendiente): aplicar sólo la segmentación mínima autorizada en la matriz
+# de ACL y validar contadores, permitidos y denegados con rollback preparado.
+# S1.6 (Pendiente): pruebas DNS/SMB/rutas/aislamiento y failover de enlaces
+# Core–Dist, con estado antes/durante/después y tiempos reales.

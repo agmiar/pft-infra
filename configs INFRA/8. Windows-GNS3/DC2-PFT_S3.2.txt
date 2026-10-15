@@ -1,0 +1,18 @@
+# S3.2 — DC2-PFT — 2026-09-22
+#
+# Nodo: Windows Server 2022, DC2-PFT, dominio pft.test.
+# IP comprobada desde DC1: 192.168.115.12/27.
+#
+[Active Directory Sites and Services]
+site = BRANCH
+server_object = CN=DC2-PFT,CN=Servers,CN=branch,CN=Sites,CN=Configuration,DC=pft,DC=test
+subnets_for_site = 192.168.110.0/27, 192.168.115.0/27, 192.168.120.0/26, 192.168.130.0/26, 192.168.140.0/26, 192.168.150.0/26, 192.168.160.0/27
+site_link = DEFAULTIPSITELINK
+site_link_sites = HQ, BRANCH, Default-First-Site-Name
+
+[Validation]
+nltest_dsgetsite_remote = branch
+replication = 0/5 failures as source and destination in repadmin /replsummary
+evidence = .agents/evidencias/S3/2026-09-22_S3.2_AD-Sites_subnets_prueba.txt
+secrets = not recorded
+

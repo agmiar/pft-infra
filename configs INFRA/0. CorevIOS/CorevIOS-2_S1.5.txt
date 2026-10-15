@@ -1,0 +1,23 @@
+CorevIOS-2 — S1.5
+
+Implementación persistida:
+- interface Vlan160
+  description BACKUP_VLAN
+  ip address 192.168.160.3 255.255.255.224
+  standby 160 ip 192.168.160.1
+  standby 160 preempt
+  ip access-group VLAN_160_IN in
+- VLAN_160_IN: misma política que CorevIOS-1; incluye OSPF/HSRP para mantener la redundancia y deniega redes internas no autorizadas.
+- VLAN_50_IN: permisos específicos DC1/FS-HQ→BKP-1 antes de la denegación RFC1918.
+- Configuración guardada con write memory.
+
+Resultado:
+- CorevIOS-2 quedó HSRP standby para VLAN160.
+- La SVI participa en OSPF después de la corrección de la ACL.
+
+No se registran claves ni contraseñas.
+
+[runtime_cierre_2026-09-25]
+resultado = La política VLAN_160_IN permanece sincronizada con CorevIOS-1; la prueba de aceptación se ejecutó con la topología activa y no requirió cambios adicionales en este Core.
+estado = Aprobado
+evidence = .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md

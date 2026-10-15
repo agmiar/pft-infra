@@ -1,0 +1,23 @@
+# WebUbuntuServer-1 — S4.1/S4.2 — 2026-09-25
+
+[Network]
+ipv4_dmz = 192.168.100.6/29
+connected_to = ADvIOS-10 Gi1/1, access VLAN 100
+temporary_nat = 192.168.122.89 used only for installation SSH; remove before final topology closure
+
+[Application]
+frontend = image local construida desde frontend LDAP; etiqueta Usuario LDAP o correo
+backend = pft/sienep-api:2026-09-25-ldap-jndi
+backend_source = Spring Security + JWT conservados; proveedor local y RBAC no eliminados
+ports_runtime = TCP/80 web, TCP/8080 API; TCP/9000 no publicado
+checks = /login HTTP 200; /v3/api-docs HTTP 200; login LDAP válido HTTP 200; contraseña inválida HTTP 401
+ldap = bind JNDI simple real contra 192.168.50.12:389; acepta usuario@pft.test y PFT\\usuario
+ldap_mapping = administrator -> usuario de aplicación administrativo; secretos sólo en runtime
+minio = no se publicó por falta de acceso de red del laboratorio
+
+[Evidence]
+control_s41 = .agents/evidencias/S4/2026-09-25_S4.1_app_control.md
+control_s42 = .agents/evidencias/S4/2026-09-25_S4.2_LDAP_incidente.md
+source_backend = runtime/transfer/sienep-backend-ldap-jndi-20260925.zip
+
+Secrets: no se registran contraseñas, tokens, claves ni valores de sesión.

@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pft-sienep-postgres
+    restart: unless-stopped
+    networks: [pft-s4]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?missing POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missing POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?missing POSTGRES_DB}
+    volumes:
+      - pft_sienep_postgres:/var/lib/postgresql/data
+      - ./backend/docker/db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  sienep-api:
+    image: pft/sienep-api:2026-09-25-ldap-jndi
+    container_name: pft-sienep-api
+    restart: unless-stopped
+    networks: [pft-s4]
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-develop}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?missing POSTGRES_DB}?currentSchema=proyecto
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?missing POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?missing POSTGRES_PASSWORD}
+      # El proveedor de objetos no está disponible en el appliance Web sin
+      # descargar una imagen externa. Se conserva la configuración de la
+      # aplicación y se deja el endpoint aislado para no exponer otro puerto.
+      MINIO_ENDPOINT: http://127.0.0.1:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-access-key}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-secret-key}
+      MINIO_BUCKET: ${MINIO_BUCKET:-sienep-reportes}
+      MINIO_PROFILE_BUCKET: ${MINIO_PROFILE_BUCKET:-sienep-perfiles}
+      MINIO_CERTIFICADOS_BUCKET: ${MINIO_CERTIFICADOS_BUCKET:-sienep-certificados}
+      MINIO_PRESIGNED_EXPIRY_MINUTES: ${MINIO_PRESIGNED_EXPIRY_MINUTES:-60}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:?missing FRONTEND_ORIGIN}
+      LDAP_ENABLED: ${LDAP_ENABLED:-true}
+      LDAP_URL: ${LDAP_URL:-ldap://192.168.50.12:389}
+      LDAP_DOMAIN: ${LDAP_DOMAIN:-pft.test}
+      LDAP_USER_MAPPING: ${LDAP_USER_MAPPING:-administrator=admin@utec.edu.uy}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      SESSION_COOKIE_SAME_SITE: ${SESSION_COOKIE_SAME_SITE:-Lax}
+      SECURITY_SECRET_KEY: ${SECURITY_SECRET_KEY:-sienep-dev-secret-key-minimo-32-chars}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  sienep-web:
+    image: pft/sienep-web:2026-09-25
+    container_name: pft-sienep-web
+    restart: unless-stopped
+    networks: [pft-s4]
+    ports:
+      - "80:80"
+    environment:
+      API_BASE_URL: http://sienep-api:8080
+      API_VERSION: v1
+    depends_on:
+      - sienep-api
+
+networks:
+  pft-s4:
+
+volumes:
+  pft_sienep_postgres:

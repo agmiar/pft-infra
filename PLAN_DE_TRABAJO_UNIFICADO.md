@@ -1,201 +1,120 @@
-# Plan de trabajo unificado — PFT-S1 en GNS3
+# Plan de trabajo unificado — PFT-S1 / S4
 
-**Propósito.** Este es el documento operativo único para ejecutar y supervisar el hito. Integra el flujo de trabajo y el TO-DO: establece el método de control, los requisitos trazables, el orden de ejecución y los criterios de los hitos 50 %, 75 % y 100 %.
+**Estado:** Pendiente de implementación. **Fecha de replanificación:** 2026-09-19.
 
-**Estado inicial (2026-08-29).** El material disponible describe un diseño; no una implementación comprobada. No declarar alta disponibilidad física ni cumplimiento de RTO/RPO hasta completar y registrar las pruebas de aceptación.
+**Exclusiones explícitas del operador — 2026-10-10:** S0.2, S0.3, S0.4 y P3.1 no se ejecutarán ni se exigirán como compuertas de este hito. S5 se implementa sobre el estado operativo existente y con las limitaciones de trazabilidad que correspondan.
 
-## Cómo se opera este plan
+Este plan reemplaza la línea base pre-S4, archivada en `.agents/historico/pre-s4-2026-09-19/`. Conserva las evidencias históricas como antecedente, pero no las usa para acreditar los requisitos S4 hasta revalidarlos en la arquitectura HQ–BRANCH.
 
-Cada cambio se ejecuta mediante un ciclo **PIV**: **Planificar → Implementar → Verificar → decisión humana**. Si algo falla o es ambiguo, se conserva evidencia, se aplica el rollback previsto cuando corresponda y se abre un PIV correctivo; no se avanza por apreciación visual de la topología.
+## Alcance acordado
 
-| Momento | Responsabilidad del supervisor | Condición para avanzar |
+- Dos sedes lógicas: **HQ** (Edificio A, POP, Core, DMZ y Datacenter) y **BRANCH** (Edificios B y C).
+- Cuatro enlaces L3 existentes Core–Dist reutilizados como tránsito HQ–BRANCH; OSPF, autenticación de vecinos y ACL mínimas. Sin extender VLAN entre sedes.
+- PVE-1/HQ y PVE-2/BRANCH son nodos independientes. No hay clúster Proxmox, réplica de VM ni failover automático de VM.
+- AD DS/DNS con DC1/HQ y DC2/BRANCH; DHCP central en CorevIOS-1 con relay en BRANCH; AD Sites and Services obligatorio.
+- FS-HQ, BKP-1 y ZBX-1 mínimos; dos clientes Windows de gestión como appliances QEMU independientes dentro de GNS3, fuera de PVE; aplicación local en Docker sobre WebUbuntuServer-1.
+- PostgreSQL/Patroni como infraestructura HA quedan fuera. PostgreSQL incluido en el `docker compose` de la aplicación es una dependencia local no-HA.
+
+## Reglas de operación
+
+1. Ejecutar PIV: planificar, implementar un cambio pequeño, verificar y decidir.
+2. Capturar pre/post y rollback antes de persistir cambios. No inventar puertos, resultados, versiones ni secretos.
+3. Usar sólo estados `Pendiente`, `Aprobado`, `Fallido` o `Bloqueado`.
+4. Si falla, registrar incidente, impacto, evidencia, rollback y condición de reanudación.
+5. Las tareas se ejecutan una por una tras confirmación del operador. Los artefactos de evidencia se crean sólo al iniciar la tarea.
+
+## Modelo de ejecución acordado
+
+La implementación es lineal S0 → S5. Se evita la verificación repetitiva: cada fase conserva un único preestado/backup y realiza una **compuerta mínima** al terminar, sólo para confirmar que se puede iniciar la siguiente. Las pruebas de costo o impacto se concentran en S5: caída de DC, caída de enlace, restauración de FS-HQ y matriz T01–T12. Este modelo no elimina las capturas obligatorias ni permite declarar resultados sin prueba real.
+
+## Fases y compuertas
+
+| Fase | Tareas | Objetivo de cierre |
 |---|---|---|
-| Planificar | Contrastar diseño y estado real; delimitar cambio, dependencia, riesgo, prueba y rollback. | No quedan datos críticos desconocidos ni marcadores por sustituir. |
-| Implementar | Aplicar un cambio pequeño y controlado, sin combinar cambios no relacionados. | Se conserva configuración anterior y rollback ejecutable. |
-| Verificar | Ejecutar pruebas positivas, negativas y de resiliencia; registrar salidas, contadores, tiempos y resultado. | Los criterios medibles se cumplen sin degradación no aceptada. |
-| Decidir | Marcar `Aprobado`, `Fallido` o `Bloqueado`; actualizar evidencias y autorizar el siguiente PIV. | Los fallos de seguridad, disponibilidad o integridad están resueltos o impiden avanzar. |
+| S0 — Rebaselinar | S0.1–S0.4 | Copia recuperable, inventario real, capacidad y rollback confirmados. |
+| S1 — Red de sedes | S1.1–S1.6 | HQ/BRANCH separados por L3, OSPF y DHCP relay comprobados. |
+| S2 — Virtualización | S2.1–S2.4 | PVE independientes, redes de gestión/VM, VMs de servicio, appliances GNS3 de clientes y recuperación manual documentadas. |
+| S3 — AD y archivos | S3.1–S3.7 | AD Sites, usuarios, GPO, SMB, clientes y DNS/DHCP por sede validados. |
+| S4 — App y backup | S4.1–S4.4 | Webapp LDAP/JWT local, backup por hito y restauración demostrada. |
+| S5 — Observabilidad y cierre | S5.1–S5.4 | Zabbix mínimo, fallas, matriz T01–T12 y paquete de defensa completos. |
 
-Toda aprobación debe registrar fecha, responsable, comandos/acciones, resultado y ubicación de evidencia. Antes de persistir un cambio (`write memory`, cambio definitivo en VM o servicio), completar la prueba del PIV correspondiente.
-
-### Fuentes de verdad
-
-Leer antes de actuar, en este orden:
-
-1. [Plano ejecutivo](/home/agmiar/Desktop/PFT-S1/.agents/PLANO_EJECUTIVO_REESTRUCTURACION_HA.md): arquitectura, direccionamiento, migración, pruebas y rollback.
-2. [Matriz ACL y runbook](/home/agmiar/Desktop/PFT-S1/.agents/ACL_MATRIZ_Y_RUNBOOK.md): única norma para ACL.
-3. [Decisiones de alcance](/home/agmiar/Desktop/PFT-S1/.agents/INSIGHTS_CONVERSACION_REESTRUCTURACION_HA.md).
-4. Este documento.
-5. [Registro de evidencias](/home/agmiar/Desktop/PFT-S1/.agents/EVIDENCIAS_DE_IMPLEMENTACION.md).
-
-### Reglas y límites permanentes
-
-- Mantener una copia recuperable del proyecto GNS3, configuraciones Cisco, VMs y discos antes de migrar; retenerla hasta aprobar la ventana integrada.
-- Trabajar desde consola local o administración autorizada. Para red, cambiar un Core por vez; para servicios, un componente o hipótesis por vez.
-- Capturar estado antes y después de cada cambio; usar nombres como `AAAA-MM-DD_PIV-03_ACL-Core1_pre.txt`.
-- Nunca aplicar placeholders (`<IP_WEB_DMZ>`, `<NTP1>`, IP de gestión o secretos de ejemplo). No incluir contraseñas, claves privadas, communities ni secretos SNMPv3 en Markdown o evidencias.
-- Detener y preservar evidencia ante pérdida inesperada de conectividad, dos escritores, pérdida de quorum, swap sostenido, disco insuficiente o resultado ambiguo.
-- La práctica ofrece HA **lógica de servicios** dentro de un único host GNS3, no tolerancia a la caída del host físico. DHCP en CorevIOS-1 y Zabbix en PVE-2 son SPOF aceptados.
-- Las ACL de SVI no aíslan tráfico local de VLAN 50 (Patroni, etcd y VRRP). PostgreSQL, Patroni y etcd no usan TLS en este laboratorio aislado; no trasladar esta decisión a producción.
-- Quedan fuera de alcance: WSUS, DHCP redundante, réplica/arranque HA de VMs Proxmox, backup/WAL/PITR, migración de aplicación/esquema/datos, TLS/certificados, monitoreo del frontend y custodia/rotación de secretos.
-
-## Requisitos trazables
-
-| ID | Requisito | Criterio de cierre |
-|---|---|---|
-| RQ-01 | Ampliar VLAN 50 a `192.168.50.0/27` sin alterar las demás VLAN. | HSRP, OSPF y NAT usan `/27` en ambos lados y hay conectividad validada. |
-| RQ-02 | Aplicar únicamente las ACL normativas. | Sin marcadores; cada SVI tiene el adjunto esperado y pasan las pruebas. |
-| RQ-03 | Monitorear servicios definidos e infraestructura de red por SNMPv3. | Infraestructura inventariada sondeada; sin end hosts en Zabbix. |
-| RQ-04 | Mantener AD DS y DNS redundantes. | Ante caída de un PVE, el DC restante resuelve DNS y autentica. |
-| RQ-05 | Implementar PostgreSQL HA con Patroni como única autoridad de promoción. | Un `primary`, VIP en el primario y sin failback automático. |
-| RQ-06 | Mantener RPO 0 para transacciones confirmadas mediante réplica síncrona estricta. | Si cae la réplica se bloquean escrituras y se conservan lecturas. |
-| RQ-07 | Alcanzar RTO PostgreSQL de hasta 60 s ante caída de primario. | CRUD por VIP vuelve dentro del umbral medido. |
-| RQ-08 | Evitar doble escritor ante partición de red. | Un único nodo acepta escrituras en la prueba de partición. |
-| RQ-09 | Validar capacidad de la ventana integrada. | Sin swap, 2–3 GB RAM libres sostenidos y sin saturación atribuible a recursos. |
-
-Cada requisito debe terminar con resultado, fecha, responsable y referencia a evidencia en `EVIDENCIAS_DE_IMPLEMENTACION.md`.
-
----
-
-## Fase 1 — Alcanzar 50 % del trabajo terminado
-
-**Objetivo acumulado.** Disponer de una plataforma conocida, respaldada y estable, con VLAN 50 ampliada y la red base validada. Esta fase comprende P0, P1 y P2. No desplegar servicios HA ni aplicar ACL funcionales antes de aprobarla.
-
-### 1. Gobierno, resguardo y capacidad basal (P0)
+### S0 — Rebaselinar
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P0.2 | Leer las fuentes de verdad y confirmar exclusiones/SPOF. | Acta de alcance: HA lógica; sin WSUS, DHCP redundante, HA de VM, PITR, TLS, migración, frontend ni custodia de claves. |
-| P0.3 | Respaldar `.gns3project`, `running-config`, configuración de VMs y discos/estado anterior recuperable. | Rutas, fecha y prueba de acceso; no confundir con PITR. |
-| P0.4 | Validar KVM, virtualización anidada, imágenes/ISOs, licencias y baseline: PVE 8.4.x, Ubuntu 24.04.4, PostgreSQL 16.15, Patroni 4.0.10, etcd 3.5.x, Keepalived 2.2.8 y Zabbix 7.0 LTS. Crear discos QEMU independientes. | Versiones, hash ISO, salida KVM/nested e inventario de discos; ningún qcow2 compartido. Si falta una versión, abrir decisión correctiva. |
-| P0.5 | Desde un host temporal validar salida exclusiva por Border NAT a repositorios HTTPS y NTP externo. | Evidencia de conectividad; tras crear AD sólo el PDC sincroniza NTP externo y clientes usan AD DNS. |
-| P0.6 | Medir RAM, swap, disco, CPU e I/O; reservar 2–3 GB RAM y 30 GB disco. | Línea base y decisión de continuar o reducir carga. |
-| P0.7 | Definir criterios de aborto, cronómetro de fallos y rollback por paquete. | Control de aborto y rollback de red, ACL, servicios y Web DMZ documentado; no exige fecha, hora ni duración de una ventana predefinida. |
+| S0.1 | Archivar diseño pre-S4 y registrar decisiones aprobadas. | Índice nuevo y decisión de alcance sin resultados supuestos. |
+| S0.2 | Respaldar proyecto GNS3, configuraciones, discos y estados actuales. | Lectura/hash y ubicación comprobadas. |
+| S0.3 | Inventariar enlaces Core–Dist, puertos, VLAN, IP, rutas, PVE/DC y conflictos. | Tabla real; no se cambia cableado por inferencia. |
+| S0.4 | Medir 10–15 min de RAM, swap, CPU, I/O y disco con el perfil mínimo. | Sin swap y al menos 2 GiB libres; si no, reducir carga. |
 
-Observar 10–15 minutos la carga prevista o la red base. Si aparece swap, saturación sostenida o se incumplen márgenes, reducir carga o redimensionar antes de desplegar HA.
-
-### 2. Inventario real y compuertas técnicas (P1)
+### S1 — Red HQ y BRANCH
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P1.1 | Capturar en ambos Core SVI, HSRP, OSPF, trunks, EtherChannel, STP, ACL adjuntas y `NAT_INSIDE`; capturar NAT en ambos Border. | Salidas fechadas y respaldos por equipo. |
-| P1.2 | Inventariar interfaz, IP/máscara, gateway, VLAN, rol y versión de los nodos. | Tabla de topología/direccionamiento real; discrepancias como ítems correctivos. |
-| P1.3 | Confirmar IP estática, gateway, DNS y VLAN 100 de `WebUbuntuServer-1`. | `ip -br address`, rutas y pertenencia a DMZ; sin esto no hay ACL ni cliente Patroni. |
-| P1.6 | Validar marcadores de ACL/NTP y el registro externo de contraseñas. | Ningún placeholder llega a producción; secretos fuera de evidencias. |
+| S1.1 | Convertir los cuatro enlaces existentes Core–Dist a L3 después de preestado y rollback. | Cuatro `/30` en `10.0.5.0/30`–`10.0.8.0/30`; sin trunk/VLAN extendida. |
+| S1.2 | Configurar OSPF: área 0 HQ, área 10 BRANCH, vecinos autenticados y ruta por defecto controlada. | Rutas de ambas sedes; caída de un enlace reconverge ≤60 s medida. |
+| S1.3 | Crear VLAN/subredes BRANCH 110, 115, 120, 130, 140, 150 y 160. | SVIs/gateways y DHCP relay comprobados. |
+| S1.4 | Mantener HQ: VLAN 10, 50, 60, 90 y 100; preservar invitados VLAN 60 aislados. | No se altera NAT/Internet existente salvo evidencia y rollback. |
+| S1.5 | Aplicar segmentación mínima. | Sólo gestión→PVE, backup→destinos autorizados e invitados bloqueados hacia interno. |
+| S1.6 | Pruebas intersede positivas, negativas y de caída/restauración de enlaces. | DNS, SMB, rutas, aislamiento y tiempos registrados. |
 
-En ambos Core, capturar al menos:
-
-```cisco
-show running-config | section ^ip access-list|^access-list|^interface Vlan|ip access-group|ip nat
-show ip interface brief
-show ip interface Vlan50
-show ip interface Vlan60
-show ip interface Vlan90
-show ip interface Vlan100
-show standby brief
-show ip ospf neighbor
-show ip route 192.168.50.0
-show interfaces trunk
-show etherchannel summary
-show spanning-tree vlan 50
-```
-
-Si VLAN 50, HSRP, OSPF o NAT no coinciden con el diseño `/27`, si falta la IP de Web, si el cableado no coincide o hay colisión estática, detener y actualizar el plan antes de modificar.
-
-### 3. Capa 2, direccionamiento, enrutamiento, NAT y DHCP (P2)
-
-| ID | Acción | Precondición | Cierre mínimo |
-|---|---|---|---|
-| P2.1 | Incorporar `ADvIOS-9a` y `ADvIOS-9b` como par L2 dedicado de Datacenter: un uplink trunk a cada Core y un EtherChannel LACP interswitch que transporte sólo VLAN 50/99 (99 nativa). No conecta ni transporta VLAN 100. La asignación y validación de puertos se realiza al implementar. | Control P0.7 y topología GNS3 disponible | Port-channel trunk y STP operativos sin loop; no se instala aún ningún PVE. |
-| P2.2 | Ampliar Vlan50 a `/27` en ambos Core; actualizar OSPF y `NAT_INSIDE` a wildcard `0.0.0.31` en ambos Border. | P2.1 y control P0.7 | HSRP, vecinos, ruta y NAT funcionales; demás VLAN sin cambios. |
-| P2.3 | En CorevIOS-1 excluir `.1-.30` de VLAN 50; entregar DNS `.12/.13` y sufijo `pft.test` en pools aplicables. | P2.2 | Sin colisiones; no hay pool DHCP para VLAN 50/100. |
-| P2.4 | Probar HSRP, conectividad permitida, trunk/STP y failover HSRP controlado. | P2.2 y P2.3 | Resultados y tiempos; RQ-01 aprobado. |
-| P2.5 | Si hay fallo, restaurar puertos, `/29`, OSPF y NAT desde respaldo antes de investigar. | Resultado fallido | Rollback y estado estable documentados. |
-
-**Criterio del 50 %.** P0–P2 están aprobados, el inventario no tiene incógnitas críticas, RQ-01 tiene evidencia y la red permanece estable. Todo resultado fallido o bloqueado debe tener dependencia, responsable y condición de reanudación.
-
----
-
-## Fase 2 — Alcanzar 75 % del trabajo terminado
-
-**Objetivo acumulado.** Sumar segmentación ACL comprobada, plataforma Proxmox con quorum y servicios base AD/DNS/NTP/gestión. Esta fase comprende P3, P4 y P5. PostgreSQL HA no empieza hasta aprobar DNS, tiempo y replicación AD.
-
-### 4. ACL funcionales y segmentación (P3)
+### S2 — Virtualización y capacidad
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P3.1 | Instanciar ACL `PFT_*` del runbook con IP real de Web; confirmar rango RPC AD. | Sin marcadores aplicables a P3; las reglas SNMPv3 se incorporan en P7.2 tras configurar e inventariar gestión. |
-| P3.2 | Cargar ACL sin adjuntarlas; revisar sintaxis, nombres y contadores iniciales. | `show access-lists PFT_*`. |
-| P3.3 | Sustituir adjuntos SVI en un Core por vez; retirar filtros previos de VLAN 100 y adjuntar una sola ACL de entrada. | Capturas pre/post; una ACL IP por dirección. |
-| P3.4 | Ejecutar pruebas positivas, negativas, contadores y failover HSRP; repetir en el segundo Core antes de guardar. | Evidencias del runbook, incluidos denies Guests/DMZ y administración PVE. |
-| P3.5 | Documentar que tráfico local de VLAN 50 no está cubierto por ACL SVI. | Límite aceptado o control adicional aprobado fuera de alcance. |
-| P3.6 | Ante fallo, restaurar adjuntos reales del Core afectado. | Rollback comprobado; RQ-02 sólo tras P3.4. |
+| S2.1 | Separar gestión de PVE y bridges de VMs mediante segunda NIC. | PVE-1 `192.168.90.20`; PVE-2 `192.168.110.10`; acceso sólo desde gestión. |
+| S2.2 | Retirar PVE cluster/QDevice del diseño activo, conservando antecedentes. | Nodos independientes y recuperación manual declarada. |
+| S2.3 | Crear/ajustar DC1, DC2, FS-HQ y ZBX-1 en PVE; crear dos clientes Windows como appliances QEMU independientes dentro de GNS3. | Inventario de VMs de servicio y appliances de clientes, recursos, disco/ISO, enlaces y ubicación por sede. |
+| S2.4 | **Excluida por decisión expresa del operador humano (2026-09-20).** No se ejecutará ni acreditará la documentación de instalación, actualización, operación o recuperación manual PVE. | No aplica; se excluyen también el video/captura fechado y la prueba de caída de nodo o enlace. |
 
-Pruebas mínimas: desde VLAN 90, AD/DNS, PVE TCP/22 y 8006, y PostgreSQL VIP TCP/5432 para cuenta autorizada; desde Web DMZ, DNS de DC y SSL hacia la VIP; desde VLAN 60 negar PVE/gestión; desde VLAN 10/20/30/40 negar 22/8006; y desde DMZ no autorizada negar VLAN 90/VIP. Las pruebas SNMPv3 se ejecutan en P7.2. Confirmar incrementos de `permit` y `deny ... log`; un contador inmóvil puede ser tráfico same-VLAN.
-
-### 5. QDevice, Proxmox y quorum (P4)
+### S3 — AD, DNS, DHCP, GPO y archivos
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P4.1 | Crear QDevice Debian `.90.28` en Datacenter, conectado por `eth0` a `ADvIOS-1 Gi2/0` como access VLAN 90; revisar conflicto de IP estática, instalar SSH Server, `corosync-qnetd` y tercer etcd; validar VLAN 90 y tiempo. | Puerto, IP, conectividad, acceso SSH desde AlpineSSHClient-1, QNetd y etcd preparados; roles independientes documentados. |
-| P4.2 | Instalar PVE-1 `.50.10/27` y PVE-2 `.50.11/27`; asignar y confirmar sus puertos access VLAN 50, revisar conflictos de IP estática y configurar FQDN, hosts, DNS, tiempo y bridge VLAN 50. | Mapa de cableado PVE aprobado; puertos, IP, gateway, pares, DNS y tiempo correctos. |
-| P4.3 | Crear una VM temporal en cada PVE; desde ambas validar gateway `.1`, VM remota, QDevice `.90.28` y Web VLAN 100 por `vmbr0`; revisar MAC en switches. | Pruebas aprobadas y VMs temporales retiradas. Si falla, no crear clúster ni VMs definitivas. |
-| P4.4 | Crear clúster desde PVE-1, unir PVE-2 y configurar QDevice desde PVE-1. | `pvecm status`: tres votos y `Quorate: Yes`. |
-| P4.5 | Probar caída controlada de un PVE y recuperar estado sano; verificar ausencia de `pvesr`/recursos HA de VM. | Comportamiento documentado, sin prometer reinicio automático. |
+| S3.1 | Revalidar DC1/DC2, DNS cruzado, GC, FSMO, tiempo y DNS directo/inverso. | `dcdiag`, `repadmin`, `w32tm` y DNS desde ambas sedes. |
+| S3.2 | Crear AD Sites HQ/BRANCH, subredes y vínculo permanente. | `nltest /dsgetsite` y replicación intersede correctos. |
+| S3.3 | Crear árbol OU, 20 usuarios, cinco grupos por área, cinco cuentas admin y dos de servicio. | Membresías y delegaciones sin secretos. |
+| S3.4 | Configurar ámbitos DHCP HQ/BRANCH, exclusiones, reservas/opciones y relay. | `ipconfig /all` de ambos clientes. |
+| S3.5 | Aplicar GPO-01, 03, 05, 06 y 07; comprobar herencia/filtrado/excepción. | `gpresult /h`, eventos y prueba de excepción TI. |
+| S3.6 | Implementar FS-HQ y shares SMB por área con AGDLP. | Acceso permitido/denegado desde HQ y BRANCH. |
+| S3.7 | Instalar Windows cliente y unir los appliances GNS3 WIN-MGMT-HQ-01 y WIN-MGMT-BR-01 al dominio. | DNS, login, GPO, PVE autorizado y SMB validados. |
 
-### 6. AD DS, DNS, NTP, DHCP y estaciones de gestión (P5)
-
-| ID | Acción | Cierre mínimo |
-|---|---|---|
-| P5.1 | Crear DC1 AD DS + DNS `pft.test`; agregar DC2 como DC/DNS en PVE distinto. Tras validar ambos DNS, configurar `WebUbuntuServer-2` (frontend que será renombrado a `WebUbuntuServer-1`) para usar `.12/.13` y registrar la resolución efectiva requerida para cerrar P1.3. | Roles, IP/DNS cruzado y réplica inicial; P1.3 sólo se cierra con DNS efectivo verificado en el frontend. |
-| P5.2 | Configurar zonas directa/reversa y registros PVE, PG, VIP, Zabbix y Web; crear OUs, grupos AGDLP y GPO base. | Configuración sin secretos y Web con IP real. |
-| P5.3 | Configurar tiempo: PDC con NTP autorizado; DC2 y miembros por jerarquía del dominio. | `w32tm` y fuentes verificadas. |
-| P5.4 | Sustituir `mgmtPC-1/2` por Windows, confirmar sus puertos access VLAN 90, renovar DHCP y revisar conflictos de lease, instalar drivers/agente, unir al dominio y mover a OU MGMT. | Mapa de cableado de clientes, leases sin conflicto, DNS `.12/.13`, SRV, GPO y acceso PVE autorizado. |
-| P5.5 | Verificar `dcdiag`, `repadmin`, DNS, autenticación y GPO con un PVE caído. | RQ-04 aprobado; cualquier fallo bloquea P6. |
-
-**Criterio del 75 %.** P0–P5 están aprobados; RQ-01, RQ-02 y RQ-04 tienen evidencia; los dos PVE tienen quorum con QDevice, y AD/DNS/tiempo funcionan durante la caída controlada de un PVE.
-
----
-
-## Fase 3 — Alcanzar 100 % del trabajo terminado
-
-**Objetivo acumulado.** Completar PostgreSQL HA, VIP, cliente DMZ, Zabbix, pruebas integradas, capacidad y cierre. Esta fase comprende P6 y P7.
-
-### 7. PostgreSQL HA, VIP y frontend de prueba (P6)
+### S4 — Aplicación y recuperación
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P6.1 | Instalar etcd en PG-1 `.14` y PG-2 `.15`; completar clúster de tres miembros con QDevice y validar quorum. | `etcdctl endpoint status` sano antes de Patroni. |
-| P6.2 | Instalar PostgreSQL, Patroni y Keepalived; deshabilitar PostgreSQL de paquete competidor. | Servicios/configuración validados; secretos fuera de evidencias. |
-| P6.3 | Configurar Patroni como promoción exclusiva, sincronía estricta, `pg_hba` mínimo sin TLS y reincorporación; iniciar líder y standby. | Un `Leader`, un `Sync Standby` y replicación síncrona. |
-| P6.4 | Configurar Keepalived VRRP unicast para publicar VIP `.16` sólo si Patroni responde `/primary`; prohibir promociones alternativas. | Una única VIP y `keepalived --config-test` aprobado. |
-| P6.5 | Instalar cliente PostgreSQL en Web; crear BD, usuario y tabla **de prueba** por líder; acceder únicamente a `postgres.pft.test`/VIP. | CRUD de prueba por VIP, sin TLS y sin IP directa de PG. |
-| P6.6 | Ensayar por separado caída de primario/PVE, caída de réplica, partición y reincorporación, con cronómetro y evidencia PVE/etcd/Patroni/VIP/CRUD. | RQ-05 a RQ-08 aprobados; failover ≤60 s y sin doble escritor. |
-| P6.7 | Ante doble escritor, VIP duplicada o divergencia, aislar el posible primario antiguo y detener. | Incidente/recuperación documentados; no declarar HA. |
+| S4.1 | Desplegar React, Spring Boot y PostgreSQL local de la app en Docker sobre WebUbuntuServer-1. | PostgreSQL no expuesto; API y frontend operativos en DMZ. |
+| S4.2 | Integrar LDAP interno a la API y conservar JWT/RBAC dinámico de aplicación. | Login correcto/fallido y eventos AD; LDAPS queda fuera de alcance documentado. |
+| S4.3 | Implementar BKP-1 y backup manual por hito de DC1 System State y FS-HQ. | Baseline, pre/post demo y retención de tres puntos verificables. |
+| S4.4 | Restaurar FS-HQ o su servicio en entorno controlado. | SMB/permisos funcionales tras restauración; no revertir DC por snapshot. |
 
-Para cada ensayo registrar antes, durante y después: `pvecm status`, `etcdctl endpoint status`, `patronictl list`, dueño de VIP, estado de réplica y transacción. Aceptación: estado normal con un líder, sync standby, única VIP y CRUD; caída del primario con promoción/VIP/CRUD ≤60 s; caída de réplica con lecturas disponibles y nuevas escrituras bloqueadas; partición sin dos primarios ni dos escritores; reintegración del antiguo primario como réplica, sin failback automático.
-
-### 8. Zabbix, capacidad integrada, cierre y rollback retenido (P7)
+### S5 — Monitoreo, pruebas y entrega
 
 | ID | Acción | Cierre mínimo |
 |---|---|---|
-| P7.1 | Instalar Zabbix en PVE-2 con retención corta; Agent 2 en PVE, DC y PG; no reutilizar `appdb`. | Inventario de hosts y plantillas de servicio. |
-| P7.2 | Configurar SNMPv3 e inventariar las IP de gestión de Core, distribución, acceso, Border, ISP y red intermedia; incorporarlos a Zabbix. No incluir end hosts. Ajustar las ACL SNMP sólo con las IP verificadas. | Sondas correctas, sin end hosts incluido frontend; SNMPv3 y ACL SNMP validados, sin secretos en evidencias. |
-| P7.3 | Probar alerta y recuperación de cada familia. | Historial de alertas y recuperación. |
-| P7.4 | Ejecutar ventana integrada 10–15 min con perfil crítico, CRUD y failover representativo; medir recursos. | Sin swap, 2–3 GB RAM libres, 30 GB disco libre y RQ-09 aprobado. |
-| P7.5 | Revisar evidencias y actualizar plano/runbook si difieren de la realidad; cerrar/desbloquear pendientes. | RQ-01…RQ-09 con estado, fecha, responsable y referencia. |
-| P7.6 | Retener respaldos, discos/BD anterior y rollback hasta aprobar ventana completa. | Acta de cierre; no destruir activos previos durante el hito. |
+| S5.1 | Desplegar ZBX-1 con MariaDB local. | PVE, Core, DC, clientes y FS-HQ inventariados. |
+| S5.2 | Configurar agentes y SNMPv3 de Core; recolectar eventos Windows relevantes. | CPU/RAM/disco/enlaces y login válido/fallido visibles. |
+| S5.3 | Ejecutar T01–T12 y fallas de DC, enlace y restauración. | Resultado esperado/obtenido, tiempos y correcciones. |
+| S5.4 | Generar documento final, diagramas, videos fechados, presentación y proyecto portable. | Defensa reproducible; activos pre-S4 retenidos hasta cierre. |
 
-**Criterio del 100 %.** P0–P7 están cerrados; RQ-01…RQ-09 tienen evidencia suficiente; no quedan bloqueos P0/P1. El informe final separa resultados demostrados, fallos, riesgos aceptados y fuera de alcance.
+## RTO/RPO y límites aceptados
 
-## Cierre y autorización entre fases
+| Servicio | Objetivo | Límite declarado |
+|---|---|---|
+| AD/DNS | RTO ≤5 min; sin RPO para cambios no replicados. | Un DC disponible debe resolver/autenticar. |
+| Enlace HQ–BRANCH | Reconvergencia ≤60 s ante un enlace. | Si caen los cuatro, no hay servicio intersede. |
+| FS-HQ | RTO ≤30 min manual; RPO desde último backup por hito. | Sin HA automática. |
+| ZBX-1 | Recuperación manual, sin RTO comprometido. | Observabilidad es SPOF. |
+| Host GNS3 | Sin RTO/RPO. | Un único host físico es SPOF fuera de alcance. |
 
-Antes de pasar al siguiente paquete o fase, el supervisor debe responder **sí** a todas:
+## Excepción de secuencia aprobada — 2026-09-20
 
-- ¿El cambio coincide con un plan aprobado y tiene rollback?
-- ¿Inventario, interfaces, IP y dependencias son reales y no supuestos?
-- ¿Las pruebas funcionales y de denegación pasaron con evidencia fechada?
-- ¿Se comprobó el fallo relevante sin ocultar los SPOF aceptados?
-- ¿Los recursos del host mantienen los márgenes?
-- ¿Se actualizaron evidencias y documentación si el estado real difiere del diseño?
+S1.5 y S1.6 quedan deliberadamente pendientes hasta completar S4.3. La segmentación de S1.5 incluye el flujo `backup → BKP-1`, pero `BKP-1` se implementa formalmente en S4.3. Por tanto, no se aplicarán ACL con marcadores ni se declarará cerrada la fase S1 antes de disponer de `BKP-1`, sus protocolos/puertos autorizados y las pruebas reales. Una vez terminado S4.3, se retomarán S1.5 y luego S1.6 con preestado, pruebas y rollback propios.
 
-Si alguna respuesta es no, continuar en **Planificar**; no autorizar el siguiente hito. Conservar como mínimo inventario real, respaldos pre/post, topología final, IP/roles, configuraciones saneadas, estados PVE/AD/Patroni/etcd, pruebas ACL, capturas Zabbix, cronometrajes y decisiones.
+## Exclusiones posteriores — 2026-10-10
+
+Por decisión explícita del operador, quedan fuera de este hito S0.2 (respaldo/hash adicional), S0.3 (nuevo inventario operativo), S0.4 (nueva medición de capacidad) y P3.1 (revisión documental adicional de ACL instanciadas). Estas exclusiones no bloquean la implementación de S5 y se conservarán como limitaciones del cierre.
+
+## Decisión registrada — clientes de gestión — 2026-09-20
+
+`WIN-MGMT-HQ-01` y `WIN-MGMT-BR-01` son equipos cliente Windows independientes del plano de servidores. Se implementan como appliances QEMU independientes dentro del proyecto GNS3, de forma análoga a `AlpineSSHClient-1`, y no como VMs de Proxmox. Los clientes se conectan a VLAN 90/HQ y VLAN 110/BRANCH, respectivamente. La ISO aprobada es `en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso`; la instalación y unión al dominio se validan en S3.7.

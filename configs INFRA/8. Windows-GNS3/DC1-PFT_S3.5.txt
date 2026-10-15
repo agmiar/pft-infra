@@ -1,0 +1,24 @@
+# Configuración declarativa S3.5 — DC1-PFT
+fecha = 2026-09-25
+estado = Aprobado: GPO de dominio aplicadas en HQ y BRANCH; GPO-07 queda filtrada por GG-TI
+dominio = pft.test
+
+[gpo]
+GPO-01-Baseline = InactivityTimeoutSecs=900; enlace al dominio
+GPO-03-Users = HKCU\\Software\\PFT\\Users\\ProfileBaseline; enlace a OU=Usuarios-PFT
+GPO-05-Updates = NoAutoUpdate=0; AUOptions=4; enlace al dominio
+GPO-06-LogonNotice = aviso legal de acceso autorizado; enlace al dominio
+GPO-07-TI-Exception = HKCU\\Software\\PFT\\Exceptions\\TIExceptionMarker=Enabled; enlace a OU=TI,OU=Usuarios-PFT
+
+[security_filtering]
+GPO-07-TI-Exception = Authenticated Users: GpoRead; GG-TI: GpoApply
+
+[runtime_2026-09-25]
+service_ports = TCP/53, TCP/88, TCP/389 y TCP/445 abiertos en 192.168.50.12 desde Alpine
+domain_locator = nltest /dsgetdc:pft.test /force -> DC2-PFT.pft.test / 192.168.115.12
+gpo_hq = gpupdate /force OK; Default Domain Policy, GPO-01, GPO-05 y GPO-06 en gpresult
+gpo_branch = gpupdate /force OK; Default Domain Policy, GPO-01, GPO-05 y GPO-06 en gpresult
+gpo_user_ti = filtrado fuera de TI observado; positiva TI reservada para captura final
+consulta = gpupdate /force; gpresult /r; gpresult /h C:\Windows\Temp\gpo.html
+evidence = .agents/evidencias/S3/2026-09-25_S3.5_GPO_control.md
+secrets = no incluidos

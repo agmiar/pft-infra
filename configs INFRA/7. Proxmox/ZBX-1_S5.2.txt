@@ -1,0 +1,24 @@
+# S5.2 — ZBX-1 — actualización runtime 2026-10-12/13
+#
+# VM de monitoreo Zabbix en PVE-2. No se registran contraseñas ni secretos.
+
+[PVE]
+node = PVE-2
+vmid = 301
+state = running
+onboot = 1
+disk = disco existente de 32 GiB conservado
+
+[Network]
+interface = eth0 / ens3
+connected_to = PVE-2 vmbr0 / VLAN 115
+ipv4 = 192.168.115.17/27
+gateway = 192.168.115.1
+
+[Validation origin]
+dc2_agent_ping = 1 desde 192.168.115.17 hacia 192.168.115.12
+dc2_hostname = DC2-PFT
+dc2_eventlog_item = eventlog[Security,,,,^4625$,,skip]; itemid=70772; 6 filas history_log
+windows_clients = agent.ping=1 para WIN-MGMT-HQ-01 192.168.90.12 y WIN-MGMT-BR-01 192.168.110.11
+t10 = triggers 32735 (HQ) y 32758 (BR); recuperación registrada con eventos de valor 0
+evidence = .agents/evidencias/S5/2026-10-12_T10_clientes_alertas_recuperacion.md; .agents/evidencias/S5/2026-10-12_validacion_evento_4625_DC2.md

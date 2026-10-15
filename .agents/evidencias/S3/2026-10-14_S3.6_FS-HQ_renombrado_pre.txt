@@ -1,0 +1,34 @@
+Fecha: 2026-10-14
+Tarea: S3.6 — preestado real de FS-HQ antes del renombrado
+Equipo: FS-HQ / VM 103
+Origen de ejecución: WIN-MGMT-HQ-01, sesión PowerShell elevada, Enter-PSSession FS-HQ
+
+Comando: Get-SmbShare | Select Name,Path
+Resultado real:
+ADMIN$        C:\Windows
+administracion C:\shares\administracion
+C$            C:\
+finanzas      C:\shares\finanzas
+IPC$
+operaciones   C:\shares\operaciones
+rrhh          C:\shares\rrhh
+ti            C:\shares\ti
+
+Comando: Get-SmbShareAccess -Name administracion,finanzas,rrhh,operaciones,ti | Select Name,AccountName,AccessRight
+Resultado real relevante:
+finanzas      PFT\GG-Administradores      Full
+finanzas      PFT\DL_FS_Docentes_RW       Change
+rrhh          PFT\GG-Administradores      Full
+rrhh          PFT\DL_FS_Estudiantes_RW   Change
+operaciones   PFT\GG-Administradores      Full
+operaciones   PFT\DL_FS_Lab-IT_RW         Change
+administracion PFT\GG-Administradores     Full
+administracion PFT\dl_fs_administracion_rw Change
+ti            PFT\GG-Administradores      Full
+ti            PFT\dl_fs_ti_rw             Change
+
+Consulta real en DC1-PFT: Get-ADGroupMember GG-Administradores | Select Name,SamAccountName
+Resultado: admin.amiranda, admin.bcollazo, admin.cfernandez, admin.dsilva y admin.estevez.
+La cuenta Administrator no pertenecía al grupo en el preestado.
+
+Limitación: el cmdlet Get-ADGroupMember ejecutado en FS-HQ no pudo contactar AD; la consulta de membresía se realizó en DC1-PFT mediante la misma sesión administrativa.

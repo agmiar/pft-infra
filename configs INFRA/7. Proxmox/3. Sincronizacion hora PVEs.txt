@@ -1,3 +1,14 @@
+# ESTADO DOCUMENTAL S2.2 — 2026-09-20
+# PVE-1: vmbr0 sobre ens3 para datos/VMs, sin IPv4 del host; vmbr1 sobre ens4,
+#        192.168.90.20/27, gateway 192.168.90.1 para gestión.
+# PVE-2: vmbr0 sobre ens3 para datos/VMs, sin IPv4 del host; vmbr1 sobre ens4,
+#        192.168.110.10/27, gateway 192.168.110.1 para gestión.
+# Ambos: pve-cluster activo como filesystem local; corosync y
+# corosync-qdevice inactivos/deshabilitados; sin clúster PFT-CLUSTER activo.
+# PVE-QDEVICE 192.168.90.28: VM GNS3 detenida y conservada como antecedente.
+# Recuperación de VMs/nodos: manual; no hay pvesr ni recursos HA acreditados.
+# Evidencia: .agents/evidencias/S2/2026-09-20_S2.2_PVE_post.txt
+
 # Una vez creados ambos PVE's (Proxmox Virtual Environments)
 cp -a /etc/chrony/chrony.conf /etc/chrony/chrony.conf.pre-P4.2
 printf '\n# P4.2: fuente NTP externa validada por P0.5\nserver 164.73.225.4 iburst\n' >> /etc/chrony/chrony.conf

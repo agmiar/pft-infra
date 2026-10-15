@@ -1,0 +1,50 @@
+# S2.3 — WIN-MGMT-HQ-01 — 2026-09-20
+#
+# Rol: cliente Windows de gestión HQ como appliance independiente dentro de GNS3.
+# Decisión asentada: no es una VM de Proxmox; PVE conserva sólo las VMs de
+# servicios definidas en S2.3.
+
+[GNS3]
+project_name = PFT-sprint2-preview1
+project_id = 235f2725-d822-47d0-b422-2497b9167cc8
+node_id = 9b3bf1d3-7dc3-4b9c-91fc-cb0f8892506b
+node_type = qemu
+template_name = Windows 10 Client LTSC 2021
+template_id = ac8ee5bc-adf2-484b-a143-809bbcd7dbbb
+console = vnc:5901
+state = running; Windows 10 LTSC instalado
+
+[Media and resources]
+iso = /home/agmiar/Desktop/PFT-S1/ISOs/en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso
+iso_md5 = b5a7be560dbd73619945129e52be1b5f
+base_disk = empty30G.qcow2
+disk_size = 30 GiB
+vcpus = 2
+ram = 2048 MiB
+nic_model = e1000
+
+[Network]
+interface = eth0
+connected_to = ADvIOS-1 Gi0/0
+link_id = 3795d122-24f4-44a1-9546-0e566f76d482
+switchport_mode = access
+vlan = 90
+addressing = DHCP
+ipv4_observada = 192.168.90.12/27
+gateway_observado = 192.168.90.1
+dns_observado = 192.168.50.12, 192.168.115.12
+
+[Acceptance status]
+status = S2.3/S3.7 Aprobado; agente Zabbix y T10 de alerta/recuperación verificados 2026-10-12; PVE-1 y SMB pendientes como pruebas independientes
+verified = ISO montada, recurso creado, enlace GNS3 persistido y puerto ADvIOS-1 Gi0/0 en VLAN 90
+pending = acceso autorizado a PVE-1 desde la estación, sesión SMB permitida/denegada y prueba de usuario TI
+credentials = no registradas
+
+[Zabbix / S5.2 / T10]
+agent = Zabbix Agent 2 7.4.12
+agent_status = Running; Automatic; agent.ping=1 desde ZBX-1 (192.168.115.17)
+availability_item = agent.ping; system.hostname = WIN-MGMT-HQ-01
+failure_test = API GNS3 detuvo y volvió a iniciar el nodo; trigger 32735 registrado como Windows: Zabbix agent is not available (for 3m)
+recovery_test = nodo iniciado por API; eventos de recuperación 17978/23219 con valor 0; agent.ping=1 desde ZBX-1
+current_state = nodo GNS3 started; IP 192.168.90.12/27; T10 Aprobado
+evidence = .agents/evidencias/S5/2026-10-12_T10_clientes_alertas_recuperacion.md

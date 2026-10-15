@@ -1,3 +1,16 @@
+# ESTADO DOCUMENTAL S2.2 — 2026-09-20
+#
+# PVE-QDEVICE (192.168.90.28) quedó fuera del diseño activo. El nodo GNS3
+# está detenido; no participa como QDevice/QNetd ni como miembro etcd activo.
+# En PVE-1 y PVE-2: no existe /etc/pve/corosync.conf, corosync y
+# corosync-qdevice están inactivos/deshabilitados y cada PVE opera como nodo
+# independiente con recuperación manual. El paquete corosync-qdevice y los
+# antecedentes locales se conservan para rollback hasta el cierre total.
+#
+# Las instrucciones de este archivo son el procedimiento histórico para crear
+# el QDevice. No deben ejecutarse en la configuración actual sin autorización
+# expresa y un nuevo preestado. Evidencia: .agents/evidencias/S2/2026-09-20_S2.2_PVE_post.txt
+
 # Descargar Debian 12 oficial
 En el host Ubuntu, abrir una terminal
 cd ~/Downloads

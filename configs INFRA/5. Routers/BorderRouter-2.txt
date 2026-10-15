@@ -19,12 +19,14 @@ interface GigabitEthernet0/1
  description Hacia CorevIOS-1 Gi3/3
  ip address 10.0.4.2 255.255.255.252
  ip nat inside
+ ip ospf authentication message-digest
  no shutdown
 
 interface GigabitEthernet0/2
  description Hacia CorevIOS-2 Gi3/3
  ip address 10.0.2.2 255.255.255.252
  ip nat inside
+ ip ospf authentication message-digest
  no shutdown
 
 # Configuración de NAT (PAT)
@@ -36,6 +38,8 @@ ip access-list standard NAT_INSIDE
  permit 192.168.50.0 0.0.0.7
  permit 192.168.60.0 0.0.0.63
  permit 192.168.90.0 0.0.0.31
+ permit host 192.168.110.10
+ permit host 192.168.115.17
  permit 192.168.100.0 0.0.0.7
  permit 10.0.0.0 0.255.255.255
 
@@ -45,6 +49,9 @@ ip nat inside source list NAT_INSIDE interface GigabitEthernet0/0 overload
 ip route 0.0.0.0 0.0.0.0 200.0.0.5
 
 # OSPF
+# S1.2 — autenticación MD5 y default controlada (verificado/persistido 2026-09-20)
+# Runtime verificado: router-id 200.0.0.6, 2 vecinos FULL y default-information
+# originate desde la ruta estática al ISP. Clave MD5 omitida por seguridad.
 router ospf 1
  router-id 200.0.0.6
  network 10.0.4.0 0.0.0.3 area 0
@@ -54,3 +61,10 @@ router ospf 1
 end
 write memory
 
+# S1.4–S1.6 — continuidad y pruebas (Pendiente)
+# S1.4: conservar NAT_INSIDE, PAT y la ruta por defecto al ISP; no asumir que
+# BRANCH tiene salida NAT hasta validarlo con prueba real.
+# S1.5: aplicar únicamente las reglas de segmentación autorizadas por matriz y
+# verificar que VLAN 60 quede aislada de las redes internas.
+# S1.6: verificar default OSPF por ambos bordes, DNS/SMB, aislamiento y caída/
+# restauración de enlaces; documentar antes/durante/después y rollback.

@@ -1,0 +1,20 @@
+Fecha: 2026-10-14
+Tarea: S3.6 — postestado de acceso administrativo
+
+Corrección aplicada:
+1. Se agregó `Administrator` a `GG-Administradores` en DC1-PFT.
+2. Se confirmó posteriormente la membresía: Administrator, admin.amiranda, admin.bcollazo, admin.cfernandez, admin.dsilva y admin.estevez.
+3. Se recrearon los cinco shares con `PFT\GG-Administradores` en Full y `PFT\Administrator` en Full.
+
+ACL share final real:
+- Administracion: GG-Administradores Full; Administrator Full; dl_fs_administracion_rw Change.
+- Docentes: GG-Administradores Full; Administrator Full; DL_FS_Docentes_RW Change.
+- Estudiantes: GG-Administradores Full; Administrator Full; DL_FS_Estudiantes_RW Change.
+- TI: GG-Administradores Full; Administrator Full; dl_fs_ti_rw Change.
+- Lab-IT: GG-Administradores Full; Administrator Full; DL_FS_Lab-IT_RW Change.
+
+ACL NTFS final real:
+- Las cinco carpetas: NT AUTHORITY\SYSTEM Full y BUILTIN\Administrators Full.
+- Cada carpeta conserva su DL_FS_*_RW correspondiente en Modify.
+
+Resultado: Aprobado.

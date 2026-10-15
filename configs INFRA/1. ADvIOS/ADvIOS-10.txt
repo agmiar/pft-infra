@@ -18,3 +18,21 @@ interface range Gi1/1 - 2
 end
 write memory
 
+# S4.1/S4.2 runtime — 2026-09-25
+# El enlace real del WebUbuntuServer-1 está en Gi1/1 y se verificó como
+# access VLAN 100. Se retiró port-security sticky de este puerto porque el
+# MAC del bridge del servidor cambió al reiniciar el appliance; el puerto quedó
+# persistente con write memory.
+interface Gi1/1
+ description WebUbuntuServer-1_DMZ_VLAN100
+ switchport mode access
+ switchport access vlan 100
+ no switchport port-security
+ no switchport port-security mac-address sticky
+ spanning-tree portfast
+ no shutdown
+
+# Prueba runtime desde Alpine: 192.168.100.6 TCP/22, TCP/80 y TCP/8080
+# abiertos; TCP/9000 no publicado. La aplicación respondió /login HTTP 200
+# y la API respondió /v3/api-docs HTTP 200. No se registran tokens ni claves.
+evidence = .agents/evidencias/S4/2026-09-25_S4.1_app_control.md

@@ -1,5 +1,21 @@
 hostname AccvIOS-2
 
+# S1.3 — VLANs BRANCH transportadas por los trunks hacia ambos Dist.
+vlan 110
+ name BRANCH-GESTION
+vlan 115
+ name BRANCH-SERVIDORES
+vlan 120
+ name BRANCH-FINANZAS
+vlan 130
+ name BRANCH-RRHH
+vlan 140
+ name BRANCH-TI
+vlan 150
+ name BRANCH-OPERACIONES
+vlan 160
+ name BRANCH-BACKUP
+
 interface range Gi0/1 - 2
  switchport trunk encapsulation dot1q
  switchport mode trunk
@@ -18,3 +34,12 @@ interface Gi1/3
 end
 write memory
 
+# S1.3–S1.6 — orden y límites (S1.3 Aprobado; S1.4–S1.6 Pendientes)
+# S1.3: VLAN 110/115/120/130/140/150/160 creadas y transportadas por Gi0/1–2;
+# configuración persistida y puertos de acceso fuera de la prueba conservados.
+# S1.4: mantener VLAN HQ 10/50/60/90/100, native VLAN 99 y STP sin cambios
+# no respaldados por pre/post.
+# S1.5: segmentación mínima sólo en los puntos L3 de la matriz; no declarar
+# aislamiento por la mera presencia de VLANs en este switch.
+# S1.6: validar trunks, DNS/SMB, rutas, aislamiento de invitados y recuperación
+# de enlaces, con evidencia fechada y rollback de la fase si falla.

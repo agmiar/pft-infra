@@ -1,0 +1,47 @@
+# Configuración declarativa S3.6 — FS-HQ
+fecha = 2026-09-25
+estado = Aprobado: SMB, enumeración de cinco shares y casos permitido/denegado verificados
+vmid = 103
+host = PVE-1
+nombre = FS-HQ
+os = Windows Server 2022 Standard Evaluation Desktop Experience
+cpu = 2 vCPU
+ram = 2048 MiB
+disk = 32 GiB; local-lvm:vm-103-disk-0
+storage_bus = SATA0; corrección desde SCSI sin borrar volumen
+ipv4 = 192.168.50.18/27
+gateway = 192.168.50.1
+dns = 192.168.50.12, 192.168.115.12
+dominio = pft.test
+rol = FS-FileServer instalado correctamente
+grupos_locales = DL_FS_Administracion_RW, DL_FS_Docentes_RW, DL_FS_Estudiantes_RW, DL_FS_TI_RW, DL_FS_Lab-IT_RW
+agdlp = GG-Administracion -> DL_FS_Administracion_RW; GG-Docentes -> DL_FS_Docentes_RW; GG-Estudiantes -> DL_FS_Estudiantes_RW; GG-TI -> DL_FS_TI_RW; GG-Lab-IT -> DL_FS_Lab-IT_RW
+shares = Administracion, Docentes, Estudiantes, TI, Lab-IT
+share_acl = DL_FS_<area>_RW Change; PFT\GG-Administradores Full; PFT\Administrator Full
+ntfs_acl = SYSTEM/Administrators Full; DL_FS_<area>_RW Modify; herencia retirada
+
+[runtime_2026-09-25]
+service_port = TCP/445 abierto en 192.168.50.18
+shares_runtime = net view \\192.168.50.18 -> administracion, finanzas, operaciones, rrhh, ti
+positive_negative = identidad adm01 permitió Administracion y recibió STATUS_ACCESS_DENIED en Finanzas; Administrator recibió Access is denied en Administracion/RRHH
+client_matrix = casos reales HQ verificados; repetición completa de cinco áreas reservada para demo
+consulta = Test-NetConnection 192.168.50.18 -Port 445; net view \\FS-HQ; dir \\FS-HQ\Administracion; dir \\FS-HQ\Finanzas
+evidence = .agents/evidencias/S3/2026-09-25_S3.6_SMB_control.md; grupos renombrados y ACLs conservadas en .agents/evidencias/S3/2026-10-14_S3.3_AD-functional_rename_post.md
+secrets = no incluidos
+
+[decision_2026-10-14]
+status = Aprobado: aplicado y verificado en runtime
+target_directories_and_shares = Administracion, Docentes, Estudiantes, TI, Lab-IT
+rename_map = Finanzas->Docentes; RRHH->Estudiantes; Operaciones->Lab-IT; Administracion->Administracion; TI->TI
+operator_confirmation = decisión confirmada por el operador; sesión VNC operativa desde WIN-MGMT-HQ-01
+control = .agents/evidencias/S3/2026-10-14_S3.6_FS-HQ_renombrado_control.md
+runtime_post = Get-SmbShare y net view \\FS-HQ confirmaron Administracion, Docentes, Estudiantes, TI y Lab-IT
+
+[decision_2026-10-14_admin_access]
+status = Aprobado: membresía, ACL y acceso efectivo verificados
+identity_under_test = PFT\\Administrator
+target = Full en Administracion, Docentes, Estudiantes, TI y Lab-IT
+intended_control = pertenencia a GG-Administradores y ACL share/NTFS coherentes
+observed_issue = Access is denied registrado en evidencia S3.6 anterior
+control = .agents/evidencias/S3/2026-10-14_S3.6_FS-HQ_admin_access_control.md
+runtime_post = PFT\Administrator creó y eliminó archivo temporal en los cinco UNC sin error

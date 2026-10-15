@@ -1,0 +1,42 @@
+# S2.3 — INVENTARIO PVE Y DECISIÓN DE CLIENTES — 2026-09-20
+#
+# Decisión asentada: WIN-MGMT-HQ-01 y WIN-MGMT-BR-01 no son VMs de Proxmox.
+# Son appliances QEMU independientes dentro de GNS3, documentados en:
+# configs INFRA/8. Windows-GNS3/WIN-MGMT-HQ-01.txt
+# configs INFRA/8. Windows-GNS3/WIN-MGMT-BR-01.txt
+#
+# Las VMs PVE 104 y 105, creadas bajo la interpretación anterior, fueron
+# retiradas después de comprobar que estaban detenidas y sin SO instalado.
+# No recrear esos VMID como clientes Windows.
+
+[PVE-1 / HQ]
+node = PVE-1
+service_vms = 101 DC1; 103 FS-HQ
+client_vms = ninguno
+state_observed = PVE-1 online; VM 101 DC1 y VM 103 FS-HQ running, verificado 2026-09-24 por API local
+management = 192.168.90.20/27 por vmbr1
+
+[PVE-2 / BRANCH]
+node = PVE-2
+service_vms = 102 DC2; 301 ZBX-1
+client_vms = ninguno
+state_observed = PVE-2 online; VM 102 DC2 running y VM 301 ZBX-1 running, verificado 2026-10-12/13 por consola/API local
+management = 192.168.110.10/27 por vmbr1
+
+[Windows clients outside PVE]
+WIN-MGMT-HQ-01 = GNS3 QEMU appliance; ADvIOS-1 Gi0/0; VLAN 90
+WIN-MGMT-BR-01 = GNS3 QEMU appliance; AccvIOS-1 Gi0/0; VLAN 110
+iso = /home/agmiar/Desktop/PFT-S1/ISOs/en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso
+
+[Limitations]
+# Este inventario no acredita instalación de Windows, lease DHCP, DNS,
+# unión al dominio, GPO, SMB ni acceso a PVE. Esas pruebas corresponden a
+# S3.4 y S3.7. No se registran credenciales ni secretos.
+# Evidencia runtime: .agents/evidencias/S2/2026-09-20_S2.3_clientes_post.txt
+# Acceso GUI PVE: .agents/evidencias/S3/2026-09-24_S3.7_PVE_access_post.txt
+
+[S5 runtime 2026-10-12/13]
+vm_102 = DC2; 192.168.115.12/27; running; onboot persistido; agente/persistencia 4625 validados desde ZBX-1
+vm_301 = ZBX-1; 192.168.115.17/27; running; onboot persistido; origen real de las validaciones de agentes y eventos
+windows_clients = WIN-MGMT-HQ-01 192.168.90.12/27 y WIN-MGMT-BR-01 192.168.110.11/27; ambos GNS3 started
+evidence = .agents/evidencias/S5/2026-10-12_T10_clientes_alertas_recuperacion.md; .agents/evidencias/S5/2026-10-12_validacion_evento_4625_DC2.md

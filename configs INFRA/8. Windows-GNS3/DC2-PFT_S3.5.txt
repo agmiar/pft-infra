@@ -1,0 +1,26 @@
+# Configuración declarativa S3.5 — DC2-PFT
+fecha = 2026-09-25
+estado = Aprobado: DC2 operativo en BRANCH; agente Zabbix/eventos 4625 validados desde ZBX-1
+dominio = pft.test
+rol = DC adicional de BRANCH; la política GPO se administra desde el directorio replicado
+
+[replicated_objects]
+objects = GPO-01-Baseline, GPO-03-Users, GPO-05-Updates, GPO-06-LogonNotice, GPO-07-TI-Exception
+
+[runtime_2026-09-25]
+service_ports = TCP/53, TCP/88, TCP/389 y TCP/445 abiertos en 192.168.115.12 desde Alpine
+domain_locator = nltest /dsgetdc:pft.test /force -> DC2-PFT.pft.test / 192.168.115.12
+client_policy = gpupdate /force OK en WIN-MGMT-HQ-01 y WIN-MGMT-BR-01
+gpresult = Default Domain Policy, GPO-01, GPO-05 y GPO-06 aplicadas en ambos clientes
+gpo_user_ti = filtrado fuera de TI observado; positiva TI reservada para captura final
+consulta = nltest /dsgetdc:pft.test /force; gpupdate /force; gpresult /r
+evidence = .agents/evidencias/S3/2026-09-25_S3.5_GPO_control.md
+secrets = no incluidos
+
+[Zabbix / S5.2]
+agent = Zabbix Agent 2 7.4.12
+agent_status = Running; agent.ping=1 desde ZBX-1 (192.168.115.17); system.hostname=DC2-PFT
+eventlog_item = eventlog[Security,,,,^4625$,,skip]; itemid=70772; 6 registros en history_log
+direct_probe = ZBX_NOTSUPPORTED esperado al probar eventlog con zabbix_get en modo pasivo individual; la ingesta histórica activa está verificada
+storage = disco existente sata0 de 60 GiB conservado; VM 102 y arranque automático persistidos en PVE-2
+evidence = .agents/evidencias/S5/2026-10-12_validacion_evento_4625_DC2.md

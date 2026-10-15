@@ -1,0 +1,15 @@
+# ADvIOS-9a — runtime S1.5/S2.2 — 2026-09-25
+
+hostname = ADvIOS-9a
+interface = Gi0/3
+description = PVE-1_SERVER_BRIDGE_VLAN50
+switchport_mode = access
+access_vlan = 50
+spanning_tree = portfast
+state = connected
+macs_observed = bc24.1109.8cac, bc24.11ef.26ed
+persistencia = write memory ejecutado
+
+Resultado: el bridge de servidores de PVE-1 aprende MAC en VLAN 50. La advertencia anterior de VLAN inexistente fue corregida creando VLAN 50 y reasignando Gi0/3.
+Rollback: devolver Gi0/3 a su configuración anterior sólo con preestado y prueba posterior.
+evidence = .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md

@@ -22,6 +22,18 @@ Las evidencias anteriores están preservadas en `.agents/historico/pre-s4-2026-0
 
 La revalidación del 2026-10-12 confirmó que DC2 responde `5/5` ICMP y TCP/10050 desde `DistvIOS-2`, y `3/3` ICMP/TCP abierto desde un origen temporal same-VLAN. La dirección temporal fue retirada y la ruta original de PVE quedó restaurada. Desde ZBX-1, `agent.ping=1` y `system.hostname=DC2-PFT`; el ítem 4625 de DC2 mantiene seis registros en `history_log`. Ver `evidencias/S5/2026-10-12_reintento_conectividad_DC2.md` y `evidencias/S5/2026-10-12_validacion_evento_4625_DC2.md`.
 
+## Revalidación S3.1 — 2026-10-14
+
+**Estado: Aprobado.** La captura inicial mostró un bloqueo real de conectividad/DNS hacia `DC2-PFT` y quedó conservada como incidente en `.agents/evidencias/S3/2026-10-14_S3.1_AD-DNS_incidente.md`. La revalidación posterior aportada desde las consolas de DC1/DC2 y desde BRANCH confirmó TCP/53, /389 y /445, DNS directo/SRV, `dcdiag` PASS, `repadmin` con `0/5` fallos en origen y destino, tiempo sincronizado y sitios `hq`/`branch`. Postestado y capturas: `.agents/evidencias/S3/2026-10-14_S3.1_AD-DNS_post.md`. Persisten como limitación documentada eventos DFSR históricos, aunque el test DFSR y la replicación actual resultaron correctos. No se ejecutaron cambios técnicos ni rollback.
+
+## Revalidación S3.2/S3.3 — 2026-10-14
+
+**S3.2: Aprobado.** Las 11 subredes de la topología vigente quedaron configuradas y replicadas en DC1-PFT y DC2-PFT: seis en HQ (`192.168.10.0/27`, `192.168.50.0/27`, `192.168.60.0/26`, `192.168.90.0/27`, `192.168.100.0/29`, `192.168.160.0/27`) y cinco en BRANCH (`192.168.20.0/26`, `192.168.30.0/26`, `192.168.40.0/26`, `192.168.110.0/27`, `192.168.115.0/27`). Las subredes obsoletas 120–150 fueron retiradas de AD. La sincronización forzada terminó sin errores. Evidencia: `.agents/evidencias/S3/2026-10-14_S3.2_AD-Sites_subnets_post.md`.
+
+**S3.3 — criterio adicional de uniformidad: Aprobado.** Los equipos ya fueron ubicados en OUs con alcance de GPO y las funciones fueron alineadas: `Finanzas` pasó a `Docentes`, `RRHH` a `Estudiantes` y `Operaciones` a `Lab-IT`; también se renombraron grupos funcionales y cuentas. Los grupos de gestión heredados de PVE/DB/Zabbix continúan vacíos y no fueron asignados ni eliminados por falta de autorización de roles. Evidencias: `.agents/evidencias/S3/2026-10-14_S3.3_AD-OUs_groups_GPOs_revalidacion.md`, `.agents/evidencias/S3/2026-10-14_S3.3_AD-computers_GPO_post.md` y `.agents/evidencias/S3/2026-10-14_S3.3_AD-functional_rename_post.md`.
+
+**Corrección S3.3 de equipos/GPO — Aprobado con limitación.** `FS-HQ` quedó en `OU=Servers,OU=PFT`; `WIN-MGMT-HQ-01` y `WIN-MGMT-BR-01` quedaron en `OU=Clientes,OU=Equipos-PFT`. Las GPO PFT fueron enlazadas a las ramas que contienen usuarios y equipos reales y la sincronización AD terminó con resultado 0. DC2 confirmó las ubicaciones de equipo; su consulta independiente de herencia GPO devolvió el error COM `0x80072020`, por lo que queda como limitación de lectura y no como fallo de la modificación. Evidencia: `.agents/evidencias/S3/2026-10-14_S3.3_AD-computers_GPO_post.md`.
+
 ## Seguimiento complementario PX.Y
 
 La tarea P3.1 fue solicitada el 2026-09-20 como revisión documental de la línea base ACL anterior. No modifica la secuencia activa S0–S5 ni acredita requisitos por sí sola.
@@ -29,6 +41,18 @@ La tarea P3.1 fue solicitada el 2026-09-20 como revisión documental de la líne
 | Tarea | Estado | Resultado / referencia |
 |---|---|---|
 | P3.1 | Excluido | Excluido por decisión explícita del operador el 2026-10-10. La falta de revisión documental adicional de ACL queda como limitación y no bloquea S5. Evidencia histórica: `.agents/evidencias/P3/2026-09-20_P3.1_ACL_control.md`. |
+
+## Decisión complementaria S3.6 — 2026-10-14
+
+**Estado:** Aprobado.
+
+El operador confirmó que los nombres finales de los directorios y shares de `FS-HQ` deben ser `Administracion`, `Docentes`, `Estudiantes`, `TI` y `Lab-IT`. El mapeo aplicado fue `Finanzas→Docentes`, `RRHH→Estudiantes` y `Operaciones→Lab-IT`; `Administracion` y `TI` permanecieron sin cambio. La verificación real con `Get-SmbShare`, `Get-SmbShareAccess` y `net view \\FS-HQ` confirmó rutas, nombres y ACL. Evidencias: `.agents/evidencias/S3/2026-10-14_S3.6_FS-HQ_renombrado_control.md`, `2026-10-14_S3.6_FS-HQ_renombrado_pre.txt`, `2026-10-14_S3.6_FS-HQ_renombrado_post.txt` y `2026-10-14_S3.6_FS-HQ_renombrado_prueba.md`.
+
+## Revisión complementaria S3.6 — acceso administrativo — 2026-10-14
+
+**Estado:** Aprobado.
+
+La evidencia existente registraba `Access is denied` para `pft\\Administrator` en recursos de FS-HQ. La verificación real confirmó que la cuenta no estaba en `GG-Administradores`; se agregó, se mantuvieron las ACL por área y se añadió `PFT\\Administrator` en `Full` en los cinco shares. `Test-Path` y pruebas temporales de creación/eliminación funcionaron en los cinco UNC. Evidencias: `.agents/evidencias/S3/2026-10-14_S3.6_FS-HQ_admin_access_control.md`, `2026-10-14_S3.6_FS-HQ_admin_access_pre.txt`, `2026-10-14_S3.6_FS-HQ_admin_access_post.txt` y `2026-10-14_S3.6_FS-HQ_admin_access_prueba.md`.
 
 ## Convención
 

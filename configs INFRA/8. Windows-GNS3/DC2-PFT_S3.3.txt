@@ -1,0 +1,25 @@
+# S3.3 — DC2-PFT — 2026-09-22
+#
+# Nodo: Windows Server 2022, DC2-PFT, dominio pft.test.
+# IP comprobada: 192.168.115.12/27.
+# S3.3 se administra en el directorio replicado; la prueba se ejecutó contra DC1.
+# No se registran contraseñas ni secretos.
+
+[Directory_replication_scope]
+domain = pft.test
+objects_created_on = DC1-PFT / 192.168.50.12
+expected_replica = DC2-PFT / 192.168.115.12
+site = BRANCH
+
+[Objects]
+area_ous = OU=Usuarios-PFT,DC=pft,DC=test and five child area OUs: Administracion, Docentes, Estudiantes, TI, Lab-IT
+client_ou = OU=Clientes,OU=Equipos-PFT,DC=pft,DC=test
+area_users = 20: adm01-adm04, doc01-doc04, est01-est04, ti01-ti04, lab01-lab04
+global_area_groups = 5
+administrative_accounts = 5
+service_accounts = 2
+
+[Validation]
+replication_precondition = repadmin /replsummary was 0/5 failures in S3.2
+directory_validation = runtime queries against DC1 returned all required objects
+evidence = .agents/evidencias/S3/2026-10-14_S3.3_AD-functional_rename_post.md

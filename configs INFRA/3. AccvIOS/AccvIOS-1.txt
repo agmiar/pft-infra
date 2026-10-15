@@ -1,10 +1,37 @@
 hostname AccvIOS-1
 
+# S1.3 — VLANs BRANCH transportadas por los trunks hacia ambos Dist.
+vlan 110
+ name BRANCH-GESTION
+vlan 115
+ name BRANCH-SERVIDORES
+vlan 120
+ name BRANCH-FINANZAS
+vlan 130
+ name BRANCH-RRHH
+vlan 140
+ name BRANCH-TI
+vlan 150
+ name BRANCH-OPERACIONES
+vlan 160
+ name BRANCH-BACKUP
+
 interface range Gi0/1 - 2
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 99
  switchport nonegotiate
+
+# S2.3 (2026-09-20): cliente Windows como appliance QEMU independiente
+# dentro de GNS3; no es una VM de Proxmox. Enlace persistido en el proyecto
+# PFT-sprint2-preview1 hacia WIN-MGMT-BR-01, VLAN 110.
+interface Gi0/0
+ description WIN-MGMT-BR-01_GNS
+ switchport mode access
+ switchport access vlan 110
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
 
 interface range Gi1/1 - 2
  switchport mode access
@@ -15,6 +42,49 @@ interface range Gi1/1 - 2
  switchport port-security mac-address sticky
  spanning-tree portfast
 
+# S3.1 (2026-09-22): interfaces IOSv reales del enlace PVE-2.
+# En el API de GNS3 aparecen como adapters 7/0 y 8/0; en la consola IOSv
+# corresponden a Gi1/3 (gestión VLAN 110) y Gi2/0 (bridge de VMs VLAN 115).
+# S3.7 post 2026-09-24: ambos puertos quedaron connected y las MAC de PVE-2
+# volvieron a aprenderse dinámicamente después de reiniciar controladamente
+# el nodo PVE-1 que estaba saturado; no se modificaron los trunks.
+interface Gi1/3
+ description PVE-2_MANAGEMENT_VLAN110
+ switchport mode access
+ switchport access vlan 110
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Gi2/0
+ description PVE-2_VM_BRIDGE_VLAN115
+ switchport mode access
+ switchport access vlan 115
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
 end
 write memory
 
+# S1.3–S1.6 — orden y límites (S1.3 Aprobado; S1.4–S1.6 Pendientes)
+# S1.3: VLAN 110/115/120/130/140/150/160 creadas y transportadas por Gi0/1–2;
+# durante la prueba se usaron Gi1/1 (VLAN 120) y Gi1/2 (VLAN 110), y luego se
+# restauraron a VLAN 40. Trunks y persistencia fueron verificados.
+# S1.4: mantener VLAN HQ 10/50/60/90/100, native VLAN 99 y STP; no extender
+# cambios de NAT/ACL a este switch sin preestado y rollback.
+# S1.5: la segmentación L3 se aplicará en los SVIs/ruteadores definidos por la
+# matriz, no como ACL improvisada en puertos de acceso.
+# S1.6: comprobar transporte de VLAN y pruebas DNS/SMB/aislamiento/failover;
+# registrar estado antes/durante/después y restaurar sólo la fase en curso.
+# S2.3 — ISO montada en el appliance: /home/agmiar/Desktop/PFT-S1/ISOs/
+# en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso
+# Estado registrado: appliance detenido; SO, DHCP, dominio y GPO pendientes.
+
+# S1.5/S3.7 runtime — 2026-09-25
+# Gi1/3 = PVE-2 management VLAN 110; Gi2/0 = PVE-2 VM bridge VLAN 115;
+# Gi0/0 = WIN-MGMT-BR-01 VLAN 110. Los tres puertos quedaron conectados y
+# persistidos con write memory; PVE-2 22/8006 y la estación 3389 respondieron.
+# Evidencia: .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md

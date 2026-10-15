@@ -15,6 +15,17 @@ switchport port-security violation restrict
 switchport port-security mac-address sticky
 spanning-tree portfast
 
+# S2.3 (2026-09-20): cliente Windows como appliance QEMU independiente
+# dentro de GNS3; no es una VM de Proxmox. Enlace persistido en el proyecto
+# PFT-sprint2-preview1 hacia WIN-MGMT-HQ-01, VLAN 90.
+interface Gi0/0
+ description WIN-MGMT-HQ-01_GNS
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+
 interface Gi1/1
  switchport mode access
  switchport access vlan 90
@@ -24,6 +35,9 @@ interface Gi1/1
  switchport port-security mac-address sticky
  spanning-tree portfast
  
+# S2.2 (2026-09-20): este puerto conserva el enlace histórico de
+# PVE-QDEVICE 192.168.90.28 en VLAN 90. El nodo está detenido y no presta
+# QNetd/etcd activo; no se modificó el puerto como parte de S2.2.
 interface Gi2/0
  description PVE_QDEVICE_192.168.90.28
  switchport mode access
@@ -32,5 +46,51 @@ interface Gi2/0
  spanning-tree bpduguard enable
  no shutdown
 
+# S3.7 runtime — PVE-1 management, verificado después de recuperar
+# aprendizaje dinámico del bridge GNS3.
+interface Gi1/0
+ description PVE-1_MANAGEMENT_VLAN90
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ no shutdown
+
 end
 write memory
+
+# S1.5/S3.7 runtime — 2026-09-25
+# Access ports persistidos y verificados en la topología GNS3:
+interface Gi0/0
+ description WIN-MGMT-HQ-01_GNS
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+interface Gi0/3
+ description Alpine-SSHClient_VLAN90
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast
+ no shutdown
+interface Gi1/0
+ description PVE-1_MANAGEMENT_VLAN90
+ switchport mode access
+ switchport access vlan 90
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ no shutdown
+interface Gi2/1
+ description BKP-1_BACKUP_VLAN160
+ switchport mode access
+ switchport access vlan 160
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ no shutdown
+
+evidence = .agents/evidencias/S1/2026-09-25_S1.5_segmentacion_prueba.md
+
+# S2.3 — ISO montada en el appliance: /home/agmiar/Desktop/PFT-S1/ISOs/
+# en-us_windows_10_enterprise_ltsc_2021_x64_dvd_d289cf96.iso
+# Estado registrado: appliance detenido; SO, DHCP, dominio y GPO pendientes.

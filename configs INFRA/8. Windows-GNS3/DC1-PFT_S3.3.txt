@@ -1,0 +1,28 @@
+# S3.3 — DC1-PFT — 2026-09-22
+#
+# Nodo: Windows Server 2022, DC1-PFT, dominio pft.test.
+# IP comprobada: 192.168.50.12/27.
+# No se registran contraseñas ni secretos.
+
+[OUs]
+area_root = OU=Usuarios-PFT,DC=pft,DC=test
+area_ous = Administracion, Docentes, Estudiantes, TI, Lab-IT
+computer_root = OU=Equipos-PFT,DC=pft,DC=test
+client_ou = OU=Clientes,OU=Equipos-PFT,DC=pft,DC=test
+
+[Groups]
+global_area_groups = GG-Administracion, GG-Docentes, GG-Estudiantes, GG-TI, GG-Lab-IT
+administrators_group = GG-Administradores
+
+[Users]
+area_users = adm01-adm04, doc01-doc04, est01-est04, ti01-ti04, lab01-lab04
+administrative_accounts = admin.amiranda, admin.bcollazo, admin.cfernandez, admin.dsilva, admin.estevez
+service_accounts = svc_backup, svc_ldap_bind
+
+[Delegation_and_validation]
+domain_admin_members_added = admin.amiranda, admin.bcollazo
+backup_operator_member = svc_backup
+service_password_flag = PasswordNeverExpires=True for svc_backup and svc_ldap_bind
+functional_rename = Finanzas->Docentes; RRHH->Estudiantes; Operaciones->Lab-IT; fin->doc; rrhh->est; ops->lab
+resource_groups = DL_FS_Administracion_RW, DL_FS_Docentes_RW, DL_FS_Estudiantes_RW, DL_FS_TI_RW, DL_FS_Lab-IT_RW
+evidence = .agents/evidencias/S3/2026-10-14_S3.3_AD-functional_rename_post.md
